@@ -1,0 +1,6 @@
+{
+  "name": "MicroFMT 菌群移植精准诊疗平台",
+  "description": "面向菌群移植（FMT）的精准医疗临床科研一体化平台，包含3D微生态数字孪生、知识图谱与供受体智能匹配闭环",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
