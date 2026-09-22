@@ -29,11 +29,9 @@ import {
   SafetyRuleGate 
 } from '../types';
 import { 
-  mockDonors, 
-  mockBatches, 
-  mockMatchEvaluation, 
-  mockFMTProtocol, 
-  mockSafetyRules 
+  mockDonors,
+  mockBatches,
+  getPatientDataPackage
 } from '../data/mockMicroFmtData';
 
 interface DonorMatchingProtocolProps {
@@ -45,21 +43,43 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({
   patient,
   onNavigateTab
 }) => {
-  const [selectedDonor, setSelectedDonor] = useState<DonorProfile>(mockDonors[0]);
-  const [selectedBatch, setSelectedBatch] = useState<MicrobiotaBatch>(mockBatches[0]);
-  const [protocol, setProtocol] = useState<FMTTreatmentProtocol>(mockFMTProtocol);
-  const [ruleGates, setRuleGates] = useState<SafetyRuleGate[]>(mockSafetyRules);
+  const patientPackage = getPatientDataPackage(patient.id);
+  const matchedDonors = [...mockDonors].sort((a, b) => {
+    if (a.code === patient.recommendedDonorCode) return -1;
+    if (b.code === patient.recommendedDonorCode) return 1;
+    return 0;
+  });
+  const matchedBatches = [...mockBatches].sort((a, b) => {
+    if (a.donorCode === patient.recommendedDonorCode) return -1;
+    if (b.donorCode === patient.recommendedDonorCode) return 1;
+    return 0;
+  });
+  const evaluation = patientPackage.matchEvaluation;
+  const patientProtocol = patientPackage.fmtProtocol;
+  const patientRules = patientPackage.safetyRules;
+
+  const [selectedDonor, setSelectedDonor] = useState<DonorProfile>(matchedDonors[0]);
+  const [selectedBatch, setSelectedBatch] = useState<MicrobiotaBatch>(matchedBatches[0]);
+  const [protocol, setProtocol] = useState<FMTTreatmentProtocol>(patientProtocol);
+  const [ruleGates, setRuleGates] = useState<SafetyRuleGate[]>(patientRules);
   const [isPrescriptionSigned, setIsPrescriptionSigned] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<'matching' | 'batches' | 'protocol'>('matching');
 
+  React.useEffect(() => {
+    setSelectedDonor(matchedDonors[0]);
+    setSelectedBatch(matchedBatches[0]);
+    setProtocol(patientProtocol);
+    setRuleGates(patientRules);
+  }, [patient.id]);
+
   // SVG Radar Chart Coordinates calculation for 6 dimensions
   const radarDimensions = [
-    { label: '菌群互补度', score: mockMatchEvaluation.dimensions.microbiomeComplementarity, key: 'microbiome' },
-    { label: '功能互补度', score: mockMatchEvaluation.dimensions.functionalGain, key: 'functional' },
-    { label: '安全性评级', score: mockMatchEvaluation.dimensions.safetyProfile, key: 'safety' },
-    { label: '定植潜力', score: mockMatchEvaluation.dimensions.colonizationPotential, key: 'colonization' },
-    { label: '历史疗效', score: mockMatchEvaluation.dimensions.historicalEfficacy, key: 'history' },
-    { label: '疾病适配性', score: mockMatchEvaluation.dimensions.diseaseSuitability, key: 'disease' },
+    { label: '菌群互补度', score: evaluation.dimensions.microbiomeComplementarity, key: 'microbiome' },
+    { label: '功能互补度', score: evaluation.dimensions.functionalGain, key: 'functional' },
+    { label: '安全性评级', score: evaluation.dimensions.safetyProfile, key: 'safety' },
+    { label: '定植潜力', score: evaluation.dimensions.colonizationPotential, key: 'colonization' },
+    { label: '历史疗效', score: evaluation.dimensions.historicalEfficacy, key: 'history' },
+    { label: '疾病适配性', score: evaluation.dimensions.diseaseSuitability, key: 'disease' },
   ];
 
   const radarPoints = radarDimensions.map((d, i) => {
@@ -132,7 +152,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({
               <div className="text-right">
                 <span className="text-[10px] text-[#8996b8] block">综合匹配度</span>
                 <span className="text-xl font-bold font-mono text-[#20cfff]">
-                  {mockMatchEvaluation.overallScore}%
+                  {evaluation.overallScore}%
                 </span>
               </div>
             </div>
@@ -245,7 +265,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({
                 <Check className="w-3 h-3" /> 关键互补优势:
               </span>
               <ul className="space-y-1.5 text-[11px] text-[#eef4ff]">
-                {mockMatchEvaluation.advantages.map((adv, i) => (
+                {evaluation.advantages.map((adv, i) => (
                   <li key={i} className="flex items-start gap-1.5 bg-[#0c1429] p-2 rounded border border-[#2b4170]/40">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#23e6b1] mt-1.5 shrink-0"></span>
                     <span>{adv}</span>
@@ -259,7 +279,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({
                 <AlertTriangle className="w-3 h-3" /> 潜在微生态风险提示:
               </span>
               <ul className="space-y-1.5 text-[11px] text-[#8996b8]">
-                {mockMatchEvaluation.potentialRisks.map((risk, i) => (
+                {evaluation.potentialRisks.map((risk, i) => (
                   <li key={i} className="flex items-start gap-1.5 bg-[#0c1429] p-2 rounded border border-[#ffb84d]/30">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#ffb84d] mt-1.5 shrink-0"></span>
                     <span className="text-[#eef4ff]">{risk}</span>
@@ -270,7 +290,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({
 
             <div className="p-2.5 rounded-lg bg-[#0c1e38] border border-[#20cfff]/40 text-[11px]">
               <span className="font-semibold text-[#20cfff] block mb-0.5">AI综合决策建议:</span>
-              <p className="text-[#eef4ff] leading-relaxed">{mockMatchEvaluation.aiRecommendation}</p>
+              <p className="text-[#eef4ff] leading-relaxed">{evaluation.aiRecommendation}</p>
             </div>
           </div>
         </div>
@@ -289,7 +309,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({
 
             {/* Donor Selectable Cards */}
             <div className="grid grid-cols-3 gap-2.5 mb-3">
-              {mockDonors.map(donor => (
+              {matchedDonors.map(donor => (
                 <div
                   key={donor.id}
                   onClick={() => setSelectedDonor(donor)}
@@ -338,7 +358,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({
             <div className="mt-3">
               <span className="text-[11px] font-semibold text-[#8996b8] block mb-2">匹配待出库菌液批次 (超低温冷链跟踪):</span>
               <div className="space-y-1.5">
-                {mockBatches.map(batch => (
+                {matchedBatches.map(batch => (
                   <div
                     key={batch.batchNumber}
                     onClick={() => setSelectedBatch(batch)}

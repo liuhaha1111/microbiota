@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { ThreeGutDigitalTwin } from './ThreeGutDigitalTwin';
 import { ClinicalPatient } from '../types';
+import { getPatientDataPackage } from '../data/mockMicroFmtData';
 
 interface WorkbenchCockpitProps {
   currentPatient: ClinicalPatient;
@@ -31,6 +32,9 @@ export const WorkbenchCockpit: React.FC<WorkbenchCockpitProps> = ({
   onSelectPatient,
   onNavigateTab
 }) => {
+  const patientData = getPatientDataPackage(currentPatient.id);
+  const isHighRisk = currentPatient.riskLevel === 'high';
+
   return (
     <div id="workbench-cockpit-container" className="space-y-4">
       {/* 1. Top Core Metrics Bar */}
@@ -138,7 +142,7 @@ export const WorkbenchCockpit: React.FC<WorkbenchCockpitProps> = ({
             </div>
 
             {/* 3D WebGL Canvas */}
-            <ThreeGutDigitalTwin className="h-[490px]" />
+            <ThreeGutDigitalTwin className="h-[490px]" patient={currentPatient} />
           </div>
 
           {/* Treatment Path Pipeline */}
@@ -219,62 +223,64 @@ export const WorkbenchCockpit: React.FC<WorkbenchCockpitProps> = ({
               </div>
 
               <div className="space-y-2.5">
-                {/* Alert 1 */}
-                <div className="p-2.5 rounded-lg bg-[#241121] border border-[#ff536c]/40 text-xs">
+                {/* Dynamic Patient Specific Alert */}
+                <div className="p-2.5 rounded-lg bg-[#241121] border border-[#ff536c]/50 text-xs shadow-md">
                   <div className="flex items-center justify-between text-[#ff536c] font-bold text-[11px] mb-1">
                     <span className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#ff536c] animate-ping" />
-                      高热与急性腹泻预警 (P-2026-0719)
+                      当前受体重点警报 ({currentPatient.id})
                     </span>
-                    <span>10分钟前</span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#ff536c]/30 text-[#ff536c] font-medium">高优先级</span>
                   </div>
                   <p className="text-[#eef4ff] text-[11px] leading-relaxed">
-                    患者李国强 FMT后第3天体温升至38.4°C，CRP激增至58mg/L。排查二次感染，已锁定抗生素使用记录。
+                    <strong>{currentPatient.name}</strong>: {currentPatient.chiefComplaint}。
+                    微生态特征：{currentPatient.microbiomeSummary?.dominantDysbiosis || '菌群失衡明显'}。
                   </p>
-                  <div className="mt-2 flex justify-end">
+                  <div className="mt-2 flex justify-between items-center text-[10px]">
+                    <span className="text-[#ffb84d]">主治: {currentPatient.attendingPhysician}</span>
                     <button 
                       onClick={() => onNavigateTab('patient_center')}
-                      className="text-[10px] text-[#ff536c] hover:underline flex items-center gap-0.5 font-semibold"
+                      className="text-[#20cfff] hover:underline flex items-center gap-0.5 font-semibold"
                     >
-                      即刻调阅患者档案 <ArrowRight className="w-3 h-3" />
+                      调阅患者画像 <ArrowRight className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
 
-                {/* Alert 2 */}
-                <div className="p-2.5 rounded-lg bg-[#1a1c29] border border-[#ffb84d]/40 text-xs">
-                  <div className="flex items-center justify-between text-[#ffb84d] font-bold text-[11px] mb-1">
-                    <span>菌液效期与供体复筛提醒 (D-0102)</span>
-                    <span>1小时前</span>
+                {/* Patient Protocol / Matching Status */}
+                <div className="p-2.5 rounded-lg bg-[#1a1c29] border border-[#20cfff]/40 text-xs">
+                  <div className="flex items-center justify-between text-[#20cfff] font-bold text-[11px] mb-1">
+                    <span>供体配型方案 ({currentPatient.recommendedDonorCode || 'D-0102'})</span>
+                    <span className="text-[#23e6b1]">{currentPatient.currentPhase}</span>
                   </div>
                   <p className="text-[#8996b8] text-[11px] leading-relaxed">
-                    批次 FMT-2026-0819-B1 处于最佳活性窗口期 (剩162天)，已匹配待行患者张云清，请尽速签署执行医嘱。
+                    针对受体 {currentPatient.name} 的微生态缺损特征，已定制肠溶胶囊及菌液灌肠联合定植方案。
                   </p>
                   <div className="mt-2 flex justify-end">
                     <button 
                       onClick={() => onNavigateTab('donor_matching')}
                       className="text-[10px] text-[#20cfff] hover:underline flex items-center gap-0.5 font-semibold"
                     >
-                      查看供受体匹配方案 <ArrowRight className="w-3 h-3" />
+                      查看配型方案 <ArrowRight className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
 
-                {/* Alert 3 */}
+                {/* Follow-up / Trajectory */}
                 <div className="p-2.5 rounded-lg bg-[#101a33] border border-[#2b4170]/60 text-xs">
                   <div className="flex items-center justify-between text-[#23e6b1] font-bold text-[11px] mb-1">
-                    <span>12周长期随访内镜与钙卫蛋白复查</span>
-                    <span>今日安排</span>
+                    <span>{currentPatient.name} 的疗效随访与重构轨道</span>
+                    <span>最新: {currentPatient.lastFollowUp}</span>
                   </div>
                   <p className="text-[#8996b8] text-[11px] leading-relaxed">
-                    4位中度UC患者完成标准疗程满12周，系统推荐下发粪便钙卫蛋白(FC)居家自测盒及肠黏膜愈合复查问卷。
+                    钙卫蛋白(FC) {currentPatient.clinicalMarkers.fecalCalprotectin.value} μg/g，CRP {currentPatient.clinicalMarkers.crp.value} mg/L。
                   </p>
                   <div className="mt-2 flex justify-end">
                     <button 
                       onClick={() => onNavigateTab('efficacy_tracker')}
                       className="text-[10px] text-[#23e6b1] hover:underline flex items-center gap-0.5 font-semibold"
                     >
-                      查看随访轨道 <ArrowRight className="w-3 h-3" />
+                      查看重构追踪 <ArrowRight className="w-3 h-3" />
                     </button>
                   </div>
                 </div>

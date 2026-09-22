@@ -48,7 +48,16 @@ export const mockPatients: ClinicalPatient[] = [
       infectionScreening: '已完成(阴性)',
       contraindications: '无禁忌',
       physicianConfirmed: true,
-    }
+    },
+    microbiomeSummary: {
+      shannonDiversity: 2.15,
+      beneficialRatio: 18.5,
+      pathogenLoad: 42.8,
+      dominantDysbiosis: '普氏菌/AKK严重缺失，兼性大肠埃希菌激增'
+    },
+    recommendedDonorCode: 'D-0102',
+    targetDiseaseNodeId: 'dis-uc',
+    lesionFocusSegment: 'descending'
   },
   {
     id: 'P-2026-0719',
@@ -83,7 +92,16 @@ export const mockPatients: ClinicalPatient[] = [
       infectionScreening: '已完成(阴性)',
       contraindications: '无禁忌',
       physicianConfirmed: true,
-    }
+    },
+    microbiomeSummary: {
+      shannonDiversity: 1.42,
+      beneficialRatio: 5.2,
+      pathogenLoad: 68.4,
+      dominantDysbiosis: '产毒艰难梭菌爆发占位(28.5%)，次级胆汁酸定植抗力瓦解'
+    },
+    recommendedDonorCode: 'D-0102',
+    targetDiseaseNodeId: 'dis-cdi',
+    lesionFocusSegment: 'cecum'
   },
   {
     id: 'P-2026-0925',
@@ -118,7 +136,60 @@ export const mockPatients: ClinicalPatient[] = [
       infectionScreening: '已完成(阴性)',
       contraindications: '无禁忌',
       physicianConfirmed: true,
-    }
+    },
+    microbiomeSummary: {
+      shannonDiversity: 3.28,
+      beneficialRatio: 34.0,
+      pathogenLoad: 21.6,
+      dominantDysbiosis: '青春双歧杆菌严重缺失，脑肠轴5-HT高敏分泌'
+    },
+    recommendedDonorCode: 'D-0205',
+    targetDiseaseNodeId: 'dis-ibsd',
+    lesionFocusSegment: 'all'
+  },
+  {
+    id: 'P-2026-0612',
+    name: '陈思远',
+    gender: '男',
+    age: 29,
+    mrn: 'ZY-0762319',
+    contact: '136****8810',
+    primaryDiagnosis: '克罗恩病 (Crohn\'s Disease, 回盲部累及型, 活动期)',
+    stage: 'SES-CD内镜评分 9分 (回盲瓣节段性鹅卵石样溃疡)',
+    currentPhase: '评估期待',
+    attendingPhysician: '陈建国 主任医师 / MDT首席',
+    riskLevel: 'medium',
+    lastFollowUp: '2026-09-06',
+    chiefComplaint: '右下腹隐痛伴间歇性腹泻消瘦半年，肠镜示回盲瓣节段性环形深溃疡',
+    diagnosticTags: ['克罗恩病 (活动期)', 'AIEC黏附侵袭', '透壁性炎性渗出', '节段性溃疡'],
+    pastMedications: ['英夫利西单克隆抗体 (既往)', '美沙拉嗪口服缓释', '泼尼松片'],
+    allergies: ['无已知过敏'],
+    clinicalMarkers: {
+      crp: { value: 31.4, unit: 'mg/L', trend: 'up', isAbnormal: true },
+      esr: { value: 52, unit: 'mm/h', trend: 'up', isAbnormal: true },
+      fecalCalprotectin: { value: 710, unit: 'μg/g', trend: 'up', isAbnormal: true },
+      bmi: { value: 18.2, unit: 'kg/m²', trend: 'down', isAbnormal: true },
+      albumin: { value: 34.0, unit: 'g/L', trend: 'down', isAbnormal: true },
+      prealbumin: { value: 172, unit: 'mg/L', trend: 'down', isAbnormal: true },
+    },
+    adaptability: {
+      overallScore: 84,
+      dysbiosisScore: 79,
+      inflammationRisk: 74,
+      nutritionalRisk: '中等',
+      infectionScreening: '已完成(阴性)',
+      contraindications: '无禁忌',
+      physicianConfirmed: true,
+    },
+    microbiomeSummary: {
+      shannonDiversity: 1.95,
+      beneficialRatio: 14.2,
+      pathogenLoad: 46.5,
+      dominantDysbiosis: 'AIEC黏附侵袭性大肠杆菌富集，自噬与丁酸通路受损'
+    },
+    recommendedDonorCode: 'D-0102',
+    targetDiseaseNodeId: 'dis-uc',
+    lesionFocusSegment: 'ascending'
   }
 ];
 
@@ -555,32 +626,41 @@ export const mockLongitudinalPoints: LongitudinalTrackPoint[] = [
 export const mockKnowledgeNodes: KnowledgeNode[] = [
   // Diseases
   { id: 'dis-uc', name: '溃疡性结肠炎 (UC)', type: 'disease', categoryLabel: '消化系统自身免疫病', description: '肠黏膜慢性非特异性炎症，以浅表糜烂溃疡为特征，与微生态多样性崩溃强相关。', val: 28 },
-  { id: 'dis-cdi', name: '艰难梭菌感染 (CDI)', type: 'disease', categoryLabel: '感染性肠炎', description: '抗生素过度使用破坏定植抗力后，产毒艰难梭菌爆发繁殖引起的结肠炎。', val: 24 },
-  { id: 'dis-ibsd', name: '肠易激综合征 (IBS-D)', type: 'disease', categoryLabel: '功能性胃肠病', description: '脑-肠-菌群轴失衡所致的腹部隐痛与大便性状异常，黏膜屏障低度通透。', val: 20 },
+  { id: 'dis-cd', name: '克罗恩病 (Crohn\'s)', type: 'disease', categoryLabel: '透壁性肉芽肿炎', description: '全消化道各段均可累及的慢性透壁性肉芽肿性炎，以跳跃性鹅卵石样溃疡和回盲部病变为主。', val: 26 },
+  { id: 'dis-cdi', name: '艰难梭菌感染 (CDI)', type: 'disease', categoryLabel: '感染性肠炎', description: '抗生素过度使用破坏定植抗力后，产毒艰难梭菌爆发繁殖引起的结肠炎。', val: 25 },
+  { id: 'dis-ibsd', name: '肠易激综合征 (IBS-D)', type: 'disease', categoryLabel: '功能性胃肠病', description: '脑-肠-菌群轴失衡所致的腹部隐痛与大便性状异常，黏膜屏障低度通透。', val: 22 },
+  { id: 'dis-pouchitis', name: '贮袋炎 (Pouchitis)', type: 'disease', categoryLabel: 'FMT拓展适应症', description: '全结直肠切除回肠贮袋肛管吻合术(IPAA)后常见的非特异性炎症，微生态菌群紊乱严重。', val: 20 },
 
   // Microbes
-  { id: 'mic-akk', name: '嗜黏蛋白阿克曼氏菌', type: 'microbe', categoryLabel: '有益关键菌', description: '特异降解利用黏蛋白，刺激杯状细胞与紧密连接修复，改善宿主糖脂代谢与黏膜屏障。', val: 22 },
-  { id: 'mic-faecal', name: '普氏栖粪杆菌', type: 'microbe', categoryLabel: '有益丁酸生成菌', description: '抗炎核心菌，分泌MAM蛋白阻断NF-κB信号，患者溃疡活动期显著亏空。', val: 24 },
-  { id: 'mic-bifido', name: '长双歧杆菌', type: 'microbe', categoryLabel: '益生菌群', description: '酸化肠腔微环境，诱导抑炎细胞因子IL-10产生，对病原菌形成空间占位阻隔。', val: 18 },
-  { id: 'mic-ecoli', name: '大肠埃希氏菌', type: 'microbe', categoryLabel: '条件致病菌', description: '含致病岛及毒力因子，在氧化应激状态下优势扩增，释放LPS驱动炎性因子级联。', val: 18 },
-  { id: 'mic-cdiff', name: '艰难梭菌 (产毒株)', type: 'microbe', categoryLabel: '绝对致病菌', description: '分泌TcdA/TcdB毒素破坏细胞骨架，造成伪膜形成与严重上皮坏死。', val: 20 },
+  { id: 'mic-akk', name: '嗜黏蛋白阿克曼氏菌', type: 'microbe', categoryLabel: '有益关键菌', description: '特异降解利用黏蛋白，刺激杯状细胞与紧密连接修复，改善宿主糖脂代谢与黏膜屏障。', val: 24 },
+  { id: 'mic-faecal', name: '普氏栖粪杆菌', type: 'microbe', categoryLabel: '有益丁酸生成菌', description: '抗炎核心菌，分泌MAM蛋白阻断NF-κB信号，患者溃疡活动期显著亏空。', val: 25 },
+  { id: 'mic-bifido', name: '长双歧杆菌', type: 'microbe', categoryLabel: '益生菌群', description: '酸化肠腔微环境，诱导抑炎细胞因子IL-10产生，对病原菌形成空间占位阻隔。', val: 20 },
+  { id: 'mic-roseburia', name: '肠道罗斯氏菌 (Roseburia)', type: 'microbe', categoryLabel: '短链脂肪酸核心菌', description: '高产丁酸盐与共轭亚油酸，与黏膜免疫耐受维持密切相关，克罗恩及UC患者中丰度显著下降。', val: 21 },
+  { id: 'mic-bacteroides', name: '脆弱拟杆菌 (B. fragilis)', type: 'microbe', categoryLabel: '共生多糖A产生菌', description: '产生荚膜多糖A(PSA)，经树突状细胞刺激IL-10增生，但在肠黏膜严重破坏时具侵袭性。', val: 19 },
+  { id: 'mic-ecoli', name: '大肠埃希氏菌 (AIEC/STEC)', type: 'microbe', categoryLabel: '条件致病菌', description: '含致病岛及毒力因子，在氧化应激状态下优势扩增，释放LPS驱动炎性因子级联。', val: 20 },
+  { id: 'mic-cdiff', name: '艰难梭菌 (产毒株)', type: 'microbe', categoryLabel: '绝对致病菌', description: '分泌TcdA/TcdB毒素破坏细胞骨架，造成伪膜形成与严重上皮坏死。', val: 22 },
+  { id: 'mic-enterococcus', name: '粪肠球菌 (E. faecalis)', type: 'microbe', categoryLabel: '耐药条件致病菌', description: '分泌明胶酶破坏紧密连接蛋白，易形成顽固生物膜，加剧黏膜溃疡面氧化应激。', val: 19 },
 
   // Metabolites
-  { id: 'met-butyrate', name: '丁酸 (Butyrate)', type: 'metabolite', categoryLabel: '短链脂肪酸', description: '结肠上皮细胞主要供能物质(提供70%能量)，组蛋白去乙酰化酶(HDAC)抑制剂，促Treg分化。', val: 22 },
-  { id: 'met-scfa', name: '乙酸 / 丙酸 (SCFA)', type: 'metabolite', categoryLabel: '短链脂肪酸', description: '激活GPR41/43/109A受体，降低肠腔渗透压，促肠嗜铬细胞释放5-HT。', val: 18 },
-  { id: 'met-lps', name: '脂多糖内毒素 (LPS)', type: 'metabolite', categoryLabel: '促炎毒素', description: '革兰氏阴性菌外膜成分，与LBP结合激活TLR4/MD2复合物，诱发剧烈细胞因子风暴。', val: 20 },
-  { id: 'met-secba', name: '次级胆汁酸 (DCA/LCA)', type: 'metabolite', categoryLabel: '微生态代谢物', description: '由初级胆汁酸经7α-脱羟基作用转化，高浓度可直接抑制C. diff芽孢萌发。', val: 16 },
-  { id: 'met-indole', name: '吲哚-3-丙酸 (IPA)', type: 'metabolite', categoryLabel: '色氨酸代谢产物', description: '芳香烃受体(AhR)强效激动剂，维持潘氏细胞抗菌肽分泌与上皮完整性。', val: 15 },
+  { id: 'met-butyrate', name: '丁酸 (Butyrate)', type: 'metabolite', categoryLabel: '短链脂肪酸', description: '结肠上皮细胞主要供能物质(提供70%能量)，组蛋白去乙酰化酶(HDAC)抑制剂，促Treg分化。', val: 24 },
+  { id: 'met-scfa', name: '乙酸 / 丙酸 (SCFA)', type: 'metabolite', categoryLabel: '短链脂肪酸', description: '激活GPR41/43/109A受体，降低肠腔渗透压，促肠嗜铬细胞释放5-HT。', val: 20 },
+  { id: 'met-lps', name: '脂多糖内毒素 (LPS)', type: 'metabolite', categoryLabel: '促炎毒素', description: '革兰氏阴性菌外膜成分，与LBP结合激活TLR4/MD2复合物，诱发剧烈细胞因子风暴。', val: 22 },
+  { id: 'met-secba', name: '次级胆汁酸 (DCA/LCA)', type: 'metabolite', categoryLabel: '微生态代谢物', description: '由初级胆汁酸经7α-脱羟基作用转化，高浓度可直接抑制C. diff芽孢萌发。', val: 18 },
+  { id: 'met-indole', name: '吲哚-3-丙酸 (IPA)', type: 'metabolite', categoryLabel: '色氨酸代谢产物', description: '芳香烃受体(AhR)强效激动剂，维持潘氏细胞抗菌肽分泌与上皮完整性。', val: 17 },
+  { id: 'met-calprotectin', name: '粪便钙卫蛋白 (FC)', type: 'metabolite', categoryLabel: '黏膜炎性生物标志物', description: '嗜中性粒细胞活化释放的含钙结合蛋白，直接反映肠壁溃疡浸润与中性粒细胞迁徙活动度。', val: 21 },
 
-  // Immune Targets
-  { id: 'imm-il10', name: '白介素-10 (IL-10)', type: 'immune', categoryLabel: '抗炎细胞因子', description: '由Treg及调节性B细胞分泌，负调控促炎因子转录，维持黏膜免疫耐受。', val: 16 },
-  { id: 'imm-tnfa', name: '肿瘤坏死因子-α (TNF-α)', type: 'immune', categoryLabel: '促炎细胞因子', description: '炎症级联核心介质，增加黏膜微血管通透性，导致上皮坏死脱落。', val: 18 },
-  { id: 'imm-barrier', name: '紧密连接蛋白 (Claudin/ZO-1)', type: 'immune', categoryLabel: '黏膜屏障结构', description: '维持上皮细胞极性与选择性通透性的物理基础，抗击抗原渗透的核心防线。', val: 20 },
+  // Immune & Mucosal Targets
+  { id: 'imm-il10', name: '白介素-10 (IL-10)', type: 'immune', categoryLabel: '抗炎细胞因子', description: '由Treg及调节性B细胞分泌，负调控促炎因子转录，维持黏膜免疫耐受。', val: 18 },
+  { id: 'imm-il22', name: '白介素-22 (IL-22)', type: 'immune', categoryLabel: '黏膜修复因子', description: '由ILC3天然淋巴细胞分泌，强效刺激肠上皮干细胞增殖及紧密连接蛋白再生。', val: 18 },
+  { id: 'imm-tnfa', name: '肿瘤坏死因子-α (TNF-α)', type: 'immune', categoryLabel: '促炎细胞因子', description: '炎症级联核心介质，增加黏膜微血管通透性，导致上皮坏死脱落。', val: 20 },
+  { id: 'imm-tlr4', name: 'TLR4 / NF-κB 信号轴', type: 'immune', categoryLabel: '固有免疫受体通路', description: '识别菌源性内毒素LPS，激活IKK激酶复合物促进NF-κB入核，转录大量促炎因子。', val: 20 },
+  { id: 'imm-barrier', name: '紧密连接蛋白 (Claudin/ZO-1)', type: 'immune', categoryLabel: '黏膜屏障结构', description: '维持上皮细胞极性与选择性通透性的物理基础，抗击抗原渗透的核心防线。', val: 22 },
 
-  // Therapies
-  { id: 'the-fmt', name: '精准菌群移植 (MicroFMT)', type: 'therapy', categoryLabel: '微生态干预手段', description: '将健康供体功能性菌群整体移植入患者肠道，实现生态位重构与免疫重置。', val: 26 },
-  { id: 'the-superdonor', name: '超级供体 D-0102 配型', type: 'therapy', categoryLabel: '生物制剂', description: '具备超高Shannon多样性、富含AKK与普氏菌的高活菌级微囊化制剂。', val: 22 },
-  { id: 'the-diet', name: '益生元与抗性淀粉辅助', type: 'therapy', categoryLabel: '靶向营养干预', description: '为移植菌株定植提供特异性碳源营养基底，加速丁酸与多糖合成。', val: 16 }
+  // Therapies & FMT Regimens
+  { id: 'the-fmt', name: '精准菌群移植 (MicroFMT)', type: 'therapy', categoryLabel: '微生态干预手段', description: '将健康供体功能性菌群整体移植入患者肠道，实现生态位重构与免疫重置。', val: 28 },
+  { id: 'the-superdonor', name: '超级供体 D-0102 配型', type: 'therapy', categoryLabel: '临床级菌源制剂', description: '具备超高Shannon多样性(5.12)、富含AKK与普氏菌的高活菌级微囊化制剂。', val: 24 },
+  { id: 'the-colonoscopy', name: '肠镜直视下全结肠喷洒', type: 'therapy', categoryLabel: '内镜靶向给药', description: '经肠镜通道在回盲部及深部病灶溃疡面分段微滴布点喷洒，确保高密度原位接种。', val: 20 },
+  { id: 'the-diet', name: '益生元与抗性淀粉辅助', type: 'therapy', categoryLabel: '靶向营养干预', description: '为移植菌株定植提供特异性碳源营养基底，加速丁酸与多糖合成。', val: 18 }
 ];
 
 // Knowledge Graph Links
@@ -588,31 +668,61 @@ export const mockKnowledgeLinks: KnowledgeLink[] = [
   // Disease to Microbe
   { source: 'dis-uc', target: 'mic-faecal', relation: '伴随显著缺失', effect: 'negative' },
   { source: 'dis-uc', target: 'mic-akk', relation: '丰度锐减', effect: 'negative' },
+  { source: 'dis-uc', target: 'mic-roseburia', relation: '产丁酸菌显著耗竭', effect: 'negative' },
   { source: 'dis-uc', target: 'mic-ecoli', relation: '过度扩增', effect: 'positive' },
+  { source: 'dis-cd', target: 'mic-roseburia', relation: '多样性缺失伴黏附', effect: 'negative' },
+  { source: 'dis-cd', target: 'mic-ecoli', relation: 'AIEC黏附侵袭加重', effect: 'positive' },
   { source: 'dis-cdi', target: 'mic-cdiff', relation: '病原菌爆发繁殖', effect: 'positive' },
   { source: 'dis-cdi', target: 'mic-bifido', relation: '定植抗力丧失', effect: 'negative' },
+  { source: 'dis-ibsd', target: 'mic-bifido', relation: '双歧杆菌显著不足', effect: 'negative' },
+  { source: 'dis-pouchitis', target: 'mic-enterococcus', relation: '肠球菌生物膜占位', effect: 'positive' },
   
   // Microbe to Metabolite
   { source: 'mic-faecal', target: 'met-butyrate', relation: '高效生成合成', effect: 'positive' },
+  { source: 'mic-roseburia', target: 'met-butyrate', relation: '主要丁酸产生菌', effect: 'positive' },
   { source: 'mic-akk', target: 'met-scfa', relation: '产乙酸/丙酸', effect: 'positive' },
-  { source: 'mic-akk', target: 'imm-barrier', relation: '上调紧密连接蛋白表达', effect: 'positive' },
   { source: 'mic-bifido', target: 'met-scfa', relation: '分泌乙酸乳酸', effect: 'positive' },
+  { source: 'mic-bacteroides', target: 'imm-il10', relation: '多糖A诱导调节性T细胞', effect: 'positive' },
   { source: 'mic-ecoli', target: 'met-lps', relation: '大量释放游离内毒素', effect: 'positive' },
+  { source: 'mic-enterococcus', target: 'met-calprotectin', relation: '加剧上皮坏死中性粒细胞浸润', effect: 'positive' },
   { source: 'mic-faecal', target: 'met-indole', relation: '促进吲哚衍生物转化', effect: 'positive' },
   
   // Metabolite to Immune / Target
   { source: 'met-butyrate', target: 'imm-il10', relation: '诱导Treg分化分泌', effect: 'positive' },
   { source: 'met-butyrate', target: 'imm-barrier', relation: '供给结肠上皮能量加速修复', effect: 'positive' },
   { source: 'met-butyrate', target: 'imm-tnfa', relation: '强效抑制转录表达', effect: 'negative' },
-  { source: 'met-lps', target: 'imm-tnfa', relation: '激活TLR4通路触发释放', effect: 'positive' },
+  { source: 'met-indole', target: 'imm-il22', relation: '激动AhR受体促进IL-22表达', effect: 'positive' },
+  { source: 'met-lps', target: 'imm-tlr4', relation: '强力激活TLR4/MD2复合体', effect: 'positive' },
+  { source: 'imm-tlr4', target: 'imm-tnfa', relation: '触发NF-κB入核级联释放', effect: 'positive' },
+  { source: 'imm-tnfa', target: 'imm-barrier', relation: '降解ZO-1造成屏障渗漏', effect: 'negative' },
+  { source: 'imm-tnfa', target: 'met-calprotectin', relation: '促进粒细胞趋化与钙卫蛋白排泌', effect: 'positive' },
   { source: 'met-secba', target: 'mic-cdiff', relation: '抑制芽孢萌发与繁殖', effect: 'negative' },
+  { source: 'mic-akk', target: 'imm-barrier', relation: '上调紧密连接蛋白表达', effect: 'positive' },
   
   // Therapy to System
   { source: 'the-fmt', target: 'dis-uc', relation: '实现深度黏膜愈合与缓解', effect: 'positive' },
+  { source: 'the-fmt', target: 'dis-cd', relation: '促进透壁溃疡上皮再生', effect: 'positive' },
   { source: 'the-fmt', target: 'dis-cdi', relation: '临床治愈率高达90%+', effect: 'positive' },
   { source: 'the-superdonor', target: 'the-fmt', relation: '提供高丰度活性菌源', effect: 'positive' },
+  { source: 'the-colonoscopy', target: 'the-fmt', relation: '原位深部黏膜精准定植', effect: 'positive' },
   { source: 'the-fmt', target: 'mic-akk', relation: '补足缺失活菌定植', effect: 'positive' },
   { source: 'the-fmt', target: 'mic-faecal', relation: '生态重建供体定植', effect: 'positive' },
+  { source: 'the-fmt', target: 'mic-roseburia', relation: '恢复丁酸代谢生态位', effect: 'positive' },
   { source: 'the-fmt', target: 'mic-ecoli', relation: '菌群生态竞争挤出', effect: 'negative' },
   { source: 'the-diet', target: 'the-fmt', relation: '代谢基底协同增效', effect: 'positive' }
 ];
+
+// Re-export patient specific dynamic data getters
+export {
+  allPatientPackages,
+  getPatientDataPackage,
+  getPatientTaxa,
+  getPatientEcologicalLinks,
+  getPatientPathways,
+  getPatientMatchEvaluation,
+  getPatientFMTProtocol,
+  getPatientSafetyRules,
+  getPatientLongitudinalPoints,
+  getPatientMicrobiomeStats
+} from './patientSpecificData';
+

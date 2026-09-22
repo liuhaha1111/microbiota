@@ -26,12 +26,14 @@ import {
   SlidersHorizontal,
   Dna
 } from 'lucide-react';
-import { MicrobialTaxon, EcologicalLink, KnowledgeNode, KnowledgeLink } from '../types';
+import { MicrobialTaxon, EcologicalLink, KnowledgeNode, KnowledgeLink, ClinicalPatient } from '../types';
 import { 
   mockTaxa, 
   mockEcologicalLinks, 
   mockKnowledgeNodes, 
-  mockKnowledgeLinks 
+  mockKnowledgeLinks,
+  getPatientTaxa,
+  getPatientEcologicalLinks
 } from '../data/mockMicroFmtData';
 
 export interface MicrobiomeKnowledgeGraphProps {
@@ -40,6 +42,9 @@ export interface MicrobiomeKnowledgeGraphProps {
   className?: string;
   compact?: boolean;
   onSelectNode?: (node: any) => void;
+  patient?: ClinicalPatient;
+  taxa?: MicrobialTaxon[];
+  ecologicalLinks?: EcologicalLink[];
 }
 
 interface SimulatedNode {
@@ -71,7 +76,10 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
   initialSelectedId,
   className = '',
   compact = false,
-  onSelectNode
+  onSelectNode,
+  patient,
+  taxa,
+  ecologicalLinks
 }) => {
   const [graphMode, setGraphMode] = useState<'ecological' | 'multidomain'>(initialGraphMode);
   const [searchQuery, setSearchQuery] = useState('');
@@ -97,6 +105,15 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
 
   // Dynamic canvas dimensions via ResizeObserver
   const [dimensions, setDimensions] = useState({ width: 800, height: 520 });
+
+  // Effective data sources based on selected patient
+  const effectiveTaxa = useMemo(() => {
+    return taxa || (patient ? getPatientTaxa(patient.id) : mockTaxa);
+  }, [taxa, patient?.id]);
+
+  const effectiveEcoLinks = useMemo(() => {
+    return ecologicalLinks || (patient ? getPatientEcologicalLinks(patient.id) : mockEcologicalLinks);
+  }, [ecologicalLinks, patient?.id]);
 
   // Update container dimensions accurately with ResizeObserver
   useEffect(() => {
@@ -135,11 +152,10 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
     const centerY = h / 2;
 
     if (graphMode === 'ecological') {
-      // Ecological species network
-      // Adaptive radius scaling prevents nodes from getting clipped at container edges
+      // Ecological species network with patient's personalized taxa
       const effectiveRadius = Math.min(w * 0.32, h * 0.36, 175);
 
-      const nodes: SimulatedNode[] = mockTaxa.map((t, idx) => {
+      const nodes: SimulatedNode[] = effectiveTaxa.map((t, idx) => {
         let color = '#20cfff'; // beneficial
         let stroke = '#23e6b1';
         if (t.category === 'pathogen') {
@@ -153,7 +169,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
           stroke = '#397cff';
         }
 
-        const angle = (idx / mockTaxa.length) * Math.PI * 2;
+        const angle = (idx / effectiveTaxa.length) * Math.PI * 2;
         const nodeRadius = effectiveRadius + (idx % 2 === 0 ? 25 : -25);
         return {
           id: t.id,
@@ -172,7 +188,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
         };
       });
 
-      const links: SimulatedLink[] = mockEcologicalLinks.map(l => ({
+      const links: SimulatedLink[] = effectiveEcoLinks.map(l => ({
         source: l.source,
         target: l.target,
         relation: l.description,
@@ -231,21 +247,22 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
 
       return { initialNodes: nodes, initialLinks: links };
     }
-  }, [graphMode, dimensions]);
+  }, [graphMode, dimensions, effectiveTaxa, effectiveEcoLinks]);
 
   // Nodes state with dynamic force simulation
   const [nodes, setNodes] = useState<SimulatedNode[]>(initialNodes);
   const [links, setLinks] = useState<SimulatedLink[]>(initialLinks);
 
-  // Sync when mode changes
+  // Sync when mode or patient changes
   useEffect(() => {
     setNodes(initialNodes);
     setLinks(initialLinks);
     if (initialNodes.length > 0) {
-      const match = initialSelectedId ? initialNodes.find(n => n.id === initialSelectedId) : initialNodes[0];
+      const preferredId = initialSelectedId || (graphMode === 'multidomain' && patient?.targetDiseaseNodeId ? patient.targetDiseaseNodeId : undefined);
+      const match = preferredId ? initialNodes.find(n => n.id === preferredId) : initialNodes[0];
       setSelectedNode(match || initialNodes[0]);
     }
-  }, [initialNodes, initialLinks, initialSelectedId]);
+  }, [initialNodes, initialLinks, initialSelectedId, patient?.id, graphMode]);
 
   // Spring & Repulsion physics simulation with boundary bounce
   useEffect(() => {
@@ -867,16 +884,17 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                       onMouseEnter={() => setHoveredNodeId(node.id)}
                       onMouseLeave={() => setHoveredNodeId(null)}
                     >
-                      {/* Pulse halo for selected or search matched */}
+                      {/* Pulse halo for selected or search matched - stable glowing ring, no dizzy spinning */}
                       {(isSelected || isMatchSearch) && (
                         <circle
-                          r={node.val + 14}
+                          r={node.val + 13}
                           fill="none"
                           stroke={node.color}
-                          strokeWidth="2"
-                          strokeDasharray="4,3"
+                          strokeWidth="2.5"
                           opacity="0.9"
-                          className="animate-spin origin-center"
+                          style={{
+                            filter: `drop-shadow(0 0 8px ${node.color})`
+                          }}
                         />
                       )}
 
@@ -950,13 +968,14 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                   transform={`translate(${activeNode.x}, ${activeNode.y})`}
                 >
                   <circle
-                    r={activeNode.val + 16}
+                    r={activeNode.val + 15}
                     fill="none"
                     stroke={activeNode.color}
-                    strokeWidth="2"
-                    strokeDasharray="4,3"
+                    strokeWidth="2.5"
                     opacity="0.95"
-                    className="animate-spin origin-center"
+                    style={{
+                      filter: `drop-shadow(0 0 10px ${activeNode.color})`
+                    }}
                   />
                   <circle
                     r={activeNode.val + 7}

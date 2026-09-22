@@ -11,10 +11,15 @@ import {
   Activity,
   Maximize2
 } from 'lucide-react';
+import { ClinicalPatient } from '../types';
 import { MicrobiomeKnowledgeGraph } from './MicrobiomeKnowledgeGraph';
 import { ThreeGutDigitalTwin } from './ThreeGutDigitalTwin';
 
-export const KnowledgeGraphExplorer: React.FC = () => {
+interface KnowledgeGraphExplorerProps {
+  patient?: ClinicalPatient;
+}
+
+export const KnowledgeGraphExplorer: React.FC<KnowledgeGraphExplorerProps> = ({ patient }) => {
   const [activeSubMode, setActiveSubMode] = useState<'graph' | 'twin'>('graph');
 
   return (
@@ -27,7 +32,11 @@ export const KnowledgeGraphExplorer: React.FC = () => {
             微生态知识图谱与数字孪生全景交互中心
           </h2>
           <p className="text-xs text-[#8996b8] mt-0.5">
-            Microbiome Knowledge Graph & 3D Biological Twin Hub · 融合菌群组学、代谢通路、宿主免疫与FMT干预靶点
+            {patient ? (
+              <>当前受体: <span className="text-[#eef4ff] font-semibold">{patient.name}</span> ({patient.id}) · {patient.primaryDiagnosis.split(' ')[0]} · 融合菌群组学、代谢通路、宿主免疫与FMT干预靶点</>
+            ) : (
+              <>Microbiome Knowledge Graph & 3D Biological Twin Hub · 融合菌群组学、代谢通路、宿主免疫与FMT干预靶点</>
+            )}
           </p>
         </div>
 
@@ -59,6 +68,7 @@ export const KnowledgeGraphExplorer: React.FC = () => {
         <div className="space-y-4">
           <MicrobiomeKnowledgeGraph 
             mode="multidomain" 
+            patient={patient}
             className="h-[620px] min-h-[560px]"
           />
 
@@ -97,15 +107,18 @@ export const KnowledgeGraphExplorer: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          <ThreeGutDigitalTwin className="min-h-[580px]" />
+          <ThreeGutDigitalTwin 
+            patient={patient}
+            className="min-h-[580px]" 
+          />
           
           <div className="p-4 rounded-xl bg-[#101a33] border border-[#2b4170]/60 text-xs">
             <h4 className="font-semibold text-[#eef4ff] mb-2 flex items-center gap-1.5">
               <Info className="w-4 h-4 text-[#20cfff]" />
-              Gut Microbiome Digital Twin 核心技术架构
+              Gut Microbiome Digital Twin 大肠解剖多段高精发光孪生架构
             </h4>
             <p className="text-[#8996b8] leading-relaxed">
-              三维解剖模型精确还原结肠解剖曲率（回盲部、升结肠、横结肠、降结肠、乙状结肠与直肠）。内置多通道粒子动力学解算器，粒子颜色与流速根据宏基因组丰度谱实时映射：青蓝/翠绿粒子代表保护性厌氧菌，紫光代表中性共生菌，红橙辉光代表变形菌门炎性内毒素负荷。
+              三维大肠解剖模型严格还原 8 大解剖分区（盲肠、阑尾、升结肠、横结肠、降结肠、乙状结肠、直肠与肛管），各段具备真实的结肠袋（Haustra）肌层纹理与特征色彩。支持 3D 直接点击与交互式巡检，被选中的解剖部位将触发高亮度霓虹发光晕轮（Luminous Glow），非选中部位智能柔光弱化，并实时联动微生态代谢与受体病灶浸润信息。
             </p>
           </div>
         </div>

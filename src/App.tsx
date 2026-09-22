@@ -63,7 +63,7 @@ export default function App() {
             )}
 
             {activeTab === 'knowledge_graph' && (
-              <KnowledgeGraphExplorer />
+              <KnowledgeGraphExplorer patient={currentPatient} />
             )}
           </div>
         </main>

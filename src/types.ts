@@ -48,6 +48,17 @@ export interface ClinicalPatient {
     contraindications: '无禁忌' | '相对禁忌' | '绝对禁忌';
     physicianConfirmed: boolean;
   };
+
+  // Patient-specific microbiome summary and mapping helpers
+  microbiomeSummary?: {
+    shannonDiversity: number;
+    beneficialRatio: number;
+    pathogenLoad: number;
+    dominantDysbiosis: string;
+  };
+  recommendedDonorCode?: string;
+  targetDiseaseNodeId?: string;
+  lesionFocusSegment?: string;
 }
 
 // Microbial Taxa (Species/Genus level)

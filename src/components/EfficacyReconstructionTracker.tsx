@@ -17,7 +17,7 @@ import {
   RotateCcw
 } from 'lucide-react';
 import { ClinicalPatient, LongitudinalTrackPoint } from '../types';
-import { mockLongitudinalPoints } from '../data/mockMicroFmtData';
+import { getPatientDataPackage } from '../data/mockMicroFmtData';
 
 interface EfficacyReconstructionTrackerProps {
   patient: ClinicalPatient;
@@ -28,8 +28,25 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
   patient,
   onNavigateTab
 }) => {
-  const [selectedStageIndex, setSelectedStageIndex] = useState<number>(3); // Default to Week 4
-  const activePoint: LongitudinalTrackPoint = mockLongitudinalPoints[selectedStageIndex];
+  const patientPackage = getPatientDataPackage(patient.id);
+  const points: LongitudinalTrackPoint[] = patientPackage.longitudinalPoints;
+
+  // Set default stage according to patient currentPhase
+  const getDefaultStage = () => {
+    if (patient.currentPhase === '评估期待') return 0;
+    if (patient.currentPhase === '供体已匹配') return 1;
+    if (patient.currentPhase === '移植执行期') return 2;
+    return Math.min(3, points.length - 1);
+  };
+
+  const [selectedStageIndex, setSelectedStageIndex] = useState<number>(getDefaultStage());
+
+  React.useEffect(() => {
+    setSelectedStageIndex(getDefaultStage());
+  }, [patient.id]);
+
+  const activePoint: LongitudinalTrackPoint = points[selectedStageIndex] || points[0];
+  const baselinePoint: LongitudinalTrackPoint = points[0];
 
   return (
     <div id="efficacy-reconstruction-tracker" className="space-y-4">
@@ -55,7 +72,7 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
 
         {/* Interactive Milestones Timeline */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-          {mockLongitudinalPoints.map((pt, idx) => {
+          {points.map((pt, idx) => {
             const isSelected = selectedStageIndex === idx;
             const isPast = idx <= selectedStageIndex;
 
@@ -96,14 +113,14 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
           <div className="flex justify-between items-center text-[#8996b8] text-xs mb-1">
             <span>轨道一: 菌群多样性 (Shannon)</span>
             <span className="text-[10px] text-[#23e6b1] flex items-center gap-0.5">
-              <TrendingUp className="w-3 h-3" /> +110%
+              <TrendingUp className="w-3 h-3" /> +{Math.max(0, Math.round(((activePoint.shannonDiversity - baselinePoint.shannonDiversity) / Math.max(0.1, baselinePoint.shannonDiversity)) * 100))}%
             </span>
           </div>
           <div className="flex items-baseline justify-between mt-1">
             <span className="text-2xl font-bold font-mono text-[#eef4ff]">
               {activePoint.shannonDiversity.toFixed(2)}
             </span>
-            <span className="text-xs text-[#8996b8]">基线: 2.15 ➔ 目标: 4.5+</span>
+            <span className="text-xs text-[#8996b8]">基线: {baselinePoint.shannonDiversity.toFixed(2)} ➔ 目标: 4.5+</span>
           </div>
           <div className="w-full h-1.5 rounded-full bg-[#0c1429] mt-2 overflow-hidden">
             <div 
@@ -117,13 +134,15 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
         <div className="p-3.5 rounded-xl bg-[#101a33] border border-[#2b4170]/60 shadow-lg">
           <div className="flex justify-between items-center text-[#8996b8] text-xs mb-1">
             <span>轨道二: 供体菌定植率 (Engraftment)</span>
-            <span className="text-[10px] text-[#20cfff]">超级供体D-0102</span>
+            <span className="text-[10px] text-[#20cfff]">供体 {patient.recommendedDonorCode || 'D-0102'}</span>
           </div>
           <div className="flex items-baseline justify-between mt-1">
             <span className="text-2xl font-bold font-mono text-[#20cfff]">
               {activePoint.donorEngraftmentRate}%
             </span>
-            <span className="text-xs text-[#23e6b1]">稳态高效定植</span>
+            <span className="text-xs text-[#23e6b1]">
+              {activePoint.donorEngraftmentRate > 60 ? '稳态高效定植' : activePoint.donorEngraftmentRate > 20 ? '定植建立中' : '初期观察'}
+            </span>
           </div>
           <div className="w-full h-1.5 rounded-full bg-[#0c1429] mt-2 overflow-hidden">
             <div 
@@ -138,34 +157,36 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
           <div className="flex justify-between items-center text-[#8996b8] text-xs mb-1">
             <span>轨道三: 粪便钙卫蛋白 (FC)</span>
             <span className="text-[10px] text-[#23e6b1] flex items-center gap-0.5">
-              <TrendingDown className="w-3 h-3" /> -74% 骤降
+              <TrendingDown className="w-3 h-3" /> {baselinePoint.fecalCalprotectin > activePoint.fecalCalprotectin ? `-${Math.round(((baselinePoint.fecalCalprotectin - activePoint.fecalCalprotectin) / baselinePoint.fecalCalprotectin) * 100)}% 下降` : '基线水平'}
             </span>
           </div>
           <div className="flex items-baseline justify-between mt-1">
             <span className="text-2xl font-bold font-mono text-[#ffb84d]">
               {activePoint.fecalCalprotectin} <span className="text-xs text-[#8996b8] font-normal">μg/g</span>
             </span>
-            <span className="text-xs text-[#8996b8]">基线: 632 μg/g</span>
+            <span className="text-xs text-[#8996b8]">基线: {baselinePoint.fecalCalprotectin} μg/g</span>
           </div>
           <div className="w-full h-1.5 rounded-full bg-[#0c1429] mt-2 overflow-hidden">
             <div 
               className="h-full rounded-full bg-[#ffb84d]"
-              style={{ width: `${Math.min(100, (activePoint.fecalCalprotectin / 650) * 100)}%` }}
+              style={{ width: `${Math.min(100, (activePoint.fecalCalprotectin / Math.max(100, baselinePoint.fecalCalprotectin * 1.1)) * 100)}%` }}
             ></div>
           </div>
         </div>
 
-        {/* Track 4: Clinical Mayo Score */}
+        {/* Track 4: Clinical Score */}
         <div className="p-3.5 rounded-xl bg-[#101a33] border border-[#2b4170]/60 shadow-lg">
           <div className="flex justify-between items-center text-[#8996b8] text-xs mb-1">
-            <span>轨道四: 临床 Mayo 症状评分</span>
-            <span className="text-[10px] text-[#23e6b1]">临床缓解</span>
+            <span>轨道四: 临床症状评分 (Mayo/CDAI)</span>
+            <span className="text-[10px] text-[#23e6b1]">
+              {activePoint.mayoScore <= 2 ? '深度临床缓解' : activePoint.mayoScore <= 5 ? '部分应答改善' : '活动期监测'}
+            </span>
           </div>
           <div className="flex items-baseline justify-between mt-1">
             <span className="text-2xl font-bold font-mono text-[#23e6b1]">
               {activePoint.mayoScore} <span className="text-xs text-[#8996b8] font-normal">/ 12分</span>
             </span>
-            <span className="text-xs text-[#23e6b1]">无便血，便次恢复</span>
+            <span className="text-xs text-[#23e6b1]">基线: {baselinePoint.mayoScore} 分</span>
           </div>
           <div className="w-full h-1.5 rounded-full bg-[#0c1429] mt-2 overflow-hidden">
             <div 
@@ -192,7 +213,7 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
 
             {/* Visual comparative bar representing phylum shifts */}
             <div className="space-y-3">
-              {mockLongitudinalPoints.map((pt, idx) => (
+              {points.map((pt, idx) => (
                 <div key={idx} className="space-y-1">
                   <div className="flex justify-between items-center text-[11px] text-[#8996b8]">
                     <span className={`font-medium ${idx === selectedStageIndex ? 'text-[#20cfff] font-bold' : 'text-[#eef4ff]'}`}>
@@ -316,7 +337,7 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
                   <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#20cfff]/20 text-[#20cfff]">推荐</span>
                 </div>
                 <p className="text-[#eef4ff] text-[11px] leading-relaxed">
-                  患者第4周已达到临床缓解 (FC降至165，多样性指数提升至4.10)，定植率达到74%。无需立即追加FMT，继续维持口服高纤维抗性淀粉与低剂量美沙拉嗪。
+                  患者 {patient.name} 当前所选时段 ({activePoint.label})，定植率达到 {activePoint.donorEngraftmentRate}%，FC 为 {activePoint.fecalCalprotectin} μg/g (基线 {baselinePoint.fecalCalprotectin} μg/g)，多样性指数提升至 {activePoint.shannonDiversity.toFixed(2)}。建议结合供体菌群特征维持口服高纤维营养定植方案与定期随访。
                 </p>
               </div>
 

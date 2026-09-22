@@ -17,7 +17,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { ClinicalPatient, MicrobialTaxon } from '../types';
-import { mockTaxa, mockPathways } from '../data/mockMicroFmtData';
+import { getPatientDataPackage } from '../data/mockMicroFmtData';
 import { MicrobiomeKnowledgeGraph } from './MicrobiomeKnowledgeGraph';
 
 interface PatientIntelligenceCenterProps {
@@ -29,8 +29,20 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
   patient,
   onNavigateTab
 }) => {
-  const [selectedTaxon, setSelectedTaxon] = useState<MicrobialTaxon>(mockTaxa[0]);
+  const patientPackage = getPatientDataPackage(patient.id);
+  const taxa = patientPackage.taxa;
+  const pathways = patientPackage.pathways;
+  const stats = patientPackage.microbiomeStats;
+  const aiAdvice = patientPackage.aiAdvice;
+
+  const [selectedTaxon, setSelectedTaxon] = useState<MicrobialTaxon>(taxa[0] || {} as MicrobialTaxon);
   const [activeViewTab, setActiveViewTab] = useState<'network' | 'taxa_list'>('network');
+
+  React.useEffect(() => {
+    if (taxa.length > 0) {
+      setSelectedTaxon(taxa[0]);
+    }
+  }, [patient.id]);
 
   return (
     <div id="patient-intelligence-center" className="space-y-4">
@@ -233,6 +245,9 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                 mode="ecological" 
                 compact={true}
                 className="h-[540px] min-h-[480px]"
+                patient={patient}
+                taxa={taxa}
+                ecologicalLinks={patientPackage.ecologicalLinks}
                 onSelectNode={(taxon) => {
                   if (taxon && taxon.abundance !== undefined) {
                     setSelectedTaxon(taxon);
@@ -245,7 +260,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
               <div className="flex items-center justify-between pb-2 border-b border-[#1e2f57]">
                 <h4 className="font-semibold text-[#eef4ff] flex items-center gap-1.5">
                   <Layers className="w-4 h-4 text-[#20cfff]" />
-                  宿主肠道宏基因组关键优势与失衡菌群谱
+                  宿主肠道宏基因组关键优势与失衡菌群谱 ({patient.name})
                 </h4>
                 <span className="text-[10px] text-[#8996b8]">mNGS 深度测序</span>
               </div>
@@ -262,7 +277,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#1e2f57]/50 text-[11px]">
-                    {mockTaxa.map((t) => (
+                    {taxa.map((t) => (
                       <tr 
                         key={t.id} 
                         onClick={() => {
@@ -320,20 +335,20 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
             <div className="grid grid-cols-3 gap-3">
               <div className="p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/40 text-center">
                 <span className="text-[#8996b8] text-[10px] block">香农多样性指数</span>
-                <span className="font-mono font-bold text-lg text-[#ff536c] block my-0.5">2.15 ↓</span>
+                <span className="font-mono font-bold text-lg text-[#ff536c] block my-0.5">{stats.shannonDiversity.toFixed(2)} ↓</span>
                 <span className="text-[10px] text-[#8996b8]">正常参考: 4.5 - 5.5</span>
               </div>
 
               <div className="p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/40 text-center">
                 <span className="text-[#8996b8] text-[10px] block">有益菌丰度占比</span>
-                <span className="font-mono font-bold text-lg text-[#ffb84d] block my-0.5">18.5% ↓</span>
-                <span className="text-[10px] text-[#8996b8]">缺失 Akk / 普氏菌</span>
+                <span className="font-mono font-bold text-lg text-[#ffb84d] block my-0.5">{stats.beneficialRatio}% ↓</span>
+                <span className="text-[10px] text-[#8996b8]">有益菌群严重受损</span>
               </div>
 
               <div className="p-2.5 rounded-lg bg-[#0c1429] border border-[#ff536c]/40 text-center bg-[#241121]/50">
                 <span className="text-[#ff536c] text-[10px] block font-semibold">炎症/条件致病菌负荷</span>
-                <span className="font-mono font-bold text-lg text-[#ff536c] block my-0.5">42.8% ↑</span>
-                <span className="text-[10px] text-[#ff536c]">变形菌门异常扩增</span>
+                <span className="font-mono font-bold text-lg text-[#ff536c] block my-0.5">{stats.pathogenLoad}% ↑</span>
+                <span className="text-[10px] text-[#ff536c]">致病群落过度扩张</span>
               </div>
             </div>
           </div>
@@ -365,7 +380,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                   />
                   <path
                     className="text-[#20cfff]"
-                    strokeDasharray="86, 100"
+                    strokeDasharray={`${patient.adaptability.overallScore}, 100`}
                     strokeWidth="3.5"
                     strokeLinecap="round"
                     stroke="currentColor"
@@ -374,15 +389,17 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                   />
                 </svg>
                 <div className="absolute flex flex-col items-center">
-                  <span className="text-sm font-bold font-mono text-[#eef4ff]">86</span>
+                  <span className="text-sm font-bold font-mono text-[#eef4ff]">{patient.adaptability.overallScore}</span>
                   <span className="text-[8px] text-[#8996b8]">分值</span>
                 </div>
               </div>
 
               <div>
-                <span className="text-xs font-bold text-[#eef4ff] block">高适应度 (强烈推荐)</span>
+                <span className="text-xs font-bold text-[#eef4ff] block">
+                  {patient.adaptability.overallScore >= 80 ? '高适应度 (强烈推荐)' : '中高适应度 (严密监护)'}
+                </span>
                 <span className="text-[10px] text-[#8996b8] leading-tight block mt-0.5">
-                  重度失衡合并活动性结肠炎，常规抗炎应答差，符合移植指征
+                  {patient.adaptability.contraindications}
                 </span>
               </div>
             </div>
@@ -391,23 +408,23 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
             <div className="space-y-1.5 text-[11px]">
               <div className="flex justify-between items-center py-1 border-b border-[#1e2f57]/60">
                 <span className="text-[#8996b8]">菌群失衡度:</span>
-                <span className="font-mono font-bold text-[#ff536c]">72 / 100 (重度)</span>
+                <span className="font-mono font-bold text-[#ff536c]">{patient.adaptability.dysbiosisScore} / 100 (重度)</span>
               </div>
               <div className="flex justify-between items-center py-1 border-b border-[#1e2f57]/60">
                 <span className="text-[#8996b8]">黏膜炎症风险:</span>
-                <span className="font-mono font-bold text-[#ffb84d]">68 / 100 (中高)</span>
+                <span className="font-mono font-bold text-[#ffb84d]">{patient.adaptability.inflammationRisk} / 100 (评估)</span>
               </div>
               <div className="flex justify-between items-center py-1 border-b border-[#1e2f57]/60">
                 <span className="text-[#8996b8]">感染病原排查:</span>
-                <span className="font-semibold text-[#23e6b1]">✓ 全部阴性</span>
+                <span className="font-semibold text-[#23e6b1]">✓ {patient.clinicalMarkers.cdiffToxin ? 'C.diff 阳性(符合移植)' : '常规病原阴性'}</span>
               </div>
               <div className="flex justify-between items-center py-1 border-b border-[#1e2f57]/60">
                 <span className="text-[#8996b8]">绝对禁忌症:</span>
-                <span className="font-semibold text-[#23e6b1]">✓ 无穿孔/梗阻</span>
+                <span className="font-semibold text-[#23e6b1]">✓ 肠管无梗阻/穿孔</span>
               </div>
               <div className="flex justify-between items-center py-1">
-                <span className="text-[#8996b8]">医师临床核准:</span>
-                <span className="text-[#20cfff] font-bold">已签署同意</span>
+                <span className="text-[#8996b8]">推荐配型供体:</span>
+                <span className="text-[#20cfff] font-bold">{patient.recommendedDonorCode || 'D-0102'}</span>
               </div>
             </div>
           </div>
@@ -422,7 +439,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
             </h3>
 
             <div className="space-y-2">
-              {mockPathways.slice(0, 5).map(pw => (
+              {pathways.slice(0, 5).map(pw => (
                 <div key={pw.id} className="p-2 rounded bg-[#0c1429] border border-[#2b4170]/40">
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-[#eef4ff] text-[11px] truncate">{pw.name}</span>
@@ -444,7 +461,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
               <Sparkles className="w-3.5 h-3.5" /> 推荐临床策略 (AI决策辅助)
             </div>
             <p className="text-[#eef4ff] text-[11px] leading-relaxed">
-              建议实施 <strong>FMT + 靶向营养干预</strong> 联合方案。通过高活性供体菌液定植补足 Akkermansia 与产丁酸菌，配合口服高纤维抗性淀粉作为定植底物，并维持原抗炎用药。
+              {aiAdvice}
             </p>
             <button
               onClick={() => onNavigateTab('donor_matching')}
