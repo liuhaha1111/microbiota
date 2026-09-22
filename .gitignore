@@ -6,3 +6,13 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# 无头截图验证时产生的 Edge profile 目录（合计约 265MB，绝不能进仓库）
+.shots/
+.shots2/
+
+# 项目用 bun（bun.lock 已被跟踪），package-lock.json 是 npx 的副产物
+package-lock.json
+
+# AI 助手的工作记忆，属于本地上下文，不随代码发布
+.workbuddy-ai/

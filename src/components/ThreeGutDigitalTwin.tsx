@@ -12,10 +12,12 @@ import {
   X,
   Target,
   Eye,
-  Crosshair
+  Crosshair,
+  FileText
 } from 'lucide-react';
 
 import { ClinicalPatient } from '../types';
+import { getPatientLongitudinalPoints } from '../data/mockMicroFmtData';
 
 export interface ColonSegmentConfig {
   id: string;
@@ -201,6 +203,39 @@ export const COLON_SEGMENTS: ColonSegmentConfig[] = [
     microbiomeDesc: '微需氧至兼性厌氧交界带，局部上皮紧密连接完整性保障FMT菌液长时程无渗漏保留。',
   }
 ];
+
+/**
+ * 部位标签的落位策略。
+ *
+ * 锚点（COLON_SEGMENTS[].pinPosition）是 3D 里的解剖坐标，渲染循环会把它投影成屏幕坐标。
+ * 但标签不能压在锚点上——结肠模型本身只占画布中间一小块，标签盖上去会糊住解剖结构。
+ * 这里只声明「该往哪一侧让开」，「让开多少」由渲染循环按当前投影出的模型包围盒实时算，
+ * 因此容器尺寸变化、窗口缩放、自动旋转都不会让标签脱离模型。
+ */
+export const PIN_LABEL_PLACEMENT: Record<string, { side: 'left' | 'right' | 'top' | 'bottom' }> = {
+  ascending:  { side: 'left' },
+  cecum:      { side: 'left' },
+  appendix:   { side: 'left' },
+  descending: { side: 'right' },
+  sigmoid:    { side: 'right' },
+  transverse: { side: 'top' },
+  rectum:     { side: 'bottom' },
+  anal_canal: { side: 'bottom' },
+};
+
+/**
+ * 给定底色返回可读的前景色。
+ * 原先每个标签的激活态文字色是手写的（浅色底配深字、深色底配白字），
+ * 8 个部位各写一遍，改配色时极容易漏。这里按相对亮度算一次即可。
+ */
+function readableOn(hex: string): string {
+  const n = parseInt(hex.replace('#', ''), 16);
+  const r = (n >> 16) & 255;
+  const g = (n >> 8) & 255;
+  const b = n & 255;
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return lum > 0.6 ? '#091020' : '#ffffff';
+}
 
 /**
  * Creates custom 3D TubeGeometry with anatomically realistic Haustra pouches (结肠袋)
@@ -592,14 +627,59 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Auto determine mode from patient phase
-  const effectiveInitialMode = initialMode || (patient?.currentPhase === '随访监测期' ? 'reconstruction' : 'dysbiosis');
+   const effectiveInitialMode = initialMode || (patient?.currentPhase === '随访监测期' ? 'reconstruction' : 'dysbiosis');
   const [currentMode, setCurrentMode] = useState<'dysbiosis' | 'reconstruction'>(effectiveInitialMode);
   const [autoRotate, setAutoRotate] = useState<boolean>(false);
   const [activeSegmentId, setActiveSegmentId] = useState<string>('all');
   const [hoveredSegment, setHoveredSegment] = useState<{ id: string; name: string } | null>(null);
-  const [isHudCollapsed, setIsHudCollapsed] = useState<boolean>(false);
-  const [showAnatomyCard, setShowAnatomyCard] = useState<boolean>(true);
+  // 默认收起：展开态与右上角信息卡在垂直方向会互相遮挡，收起后 3D 视野更干净，
+  // 需要看实时参数时点一下即可展开。
+  const [isHudCollapsed, setIsHudCollapsed] = useState<boolean>(true);
+  // 默认收起：这张卡宽度占舞台右侧近一半，展开时会把降结肠、乙状结肠整段连同
+  // 它们右侧的标签一起盖住。点击任一部位标签会自动展开（见 handleSelectSegment），
+  // 看完细节点 × 收起即可回到干净的解剖视图。
+  const [showAnatomyCard, setShowAnatomyCard] = useState<boolean>(false);
   const [showPinBadges, setShowPinBadges] = useState<boolean>(true);
+  // 默认解剖透视：整体呈半透明玻璃壳体，点击标签后再为对应部位着色
+  const [ghostMode, setGhostMode] = useState<boolean>(true);
+  const ghostModeRef = useRef<boolean>(true);
+  // 悬停段 ID 走 ref：渲染循环只创建一次，靠 state 会读到旧闭包
+  const hoveredSegmentIdRef = useRef<string | null>(null);
+  // 渲染循环的 effect 只依赖 [currentMode]，因此循环内不能直接读 state——
+  // 那样读到的永远是 effect 创建时的旧值。以下三个都改走 ref 同步。
+  const activeSegmentIdRef = useRef<string>('all');
+  const autoRotateRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    ghostModeRef.current = ghostMode;
+  }, [ghostMode]);
+
+  useEffect(() => {
+    activeSegmentIdRef.current = activeSegmentId;
+  }, [activeSegmentId]);
+
+  useEffect(() => {
+    autoRotateRef.current = autoRotate;
+  }, [autoRotate]);
+
+  // 量取药丸尺寸：投影定位需要知道每个标签的实际宽高才能贴着模型外缘摆放。
+  // 字体异步加载会改变宽度，所以挂载后再补量一次。
+  useEffect(() => {
+    if (!showPinBadges) return;
+    const measure = () => {
+      COLON_SEGMENTS.forEach((seg) => {
+        const el = pinPillElementsRef.current[seg.id];
+        if (!el) return;
+        const w = el.offsetWidth;
+        const h = el.offsetHeight;
+        if (w > 0 && h > 0) pinSizeRef.current[seg.id] = { w, h };
+      });
+      measureFreeRect();
+    };
+    measure();
+    const timer = window.setTimeout(measure, 150);
+    return () => window.clearTimeout(timer);
+  }, [showPinBadges, showAnatomyCard]);
 
   // Active segment config object
   const activeSegmentConfig = useMemo(() => {
@@ -611,6 +691,95 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
     return getPatientSegmentClinicalNote(patient, activeSegmentId);
   }, [patient, activeSegmentId]);
 
+  // 「FMT 重构态」下的真实指标。
+  // 取随访时序的最后一点作为重构稳态、首点作为基线。
+  // 此前重构态的四个 HUD 指标是写死的（4.65 / 15 / 84.2% / 36），换患者也不变，
+  // 与「重构态」的名义不符，也和 3D 里几乎看不出模式差异的问题同源。
+  const reconStats = useMemo(() => {
+    const pts = patient ? getPatientLongitudinalPoints(patient.id) : [];
+    if (pts.length === 0) return null;
+    const baseline = pts[0];
+    const point = pts[pts.length - 1];
+    // 残余失衡度 = 基线失衡度按 Shannon 恢复比例下调，最高削减 80%
+    const targetShannon = 4.5;
+    const span = Math.max(0.1, targetShannon - baseline.shannonDiversity);
+    const recovery = Math.min(1, Math.max(0, (point.shannonDiversity - baseline.shannonDiversity) / span));
+    const baseDysbiosis = patient?.adaptability?.dysbiosisScore ?? 72;
+    return {
+      point,
+      baseline,
+      shannon: point.shannonDiversity,
+      engraftment: point.donorEngraftmentRate,
+      fecalCalprotectin: point.fecalCalprotectin,
+      scfa: point.scfaSynthesisScore,
+      relief: point.symptomReliefPercentage,
+      dysbiosisScore: Math.round(baseDysbiosis * (1 - recovery * 0.8))
+    };
+  }, [patient]);
+
+  // 部位标签的 DOM 引用：标签位置由渲染循环把 3D 锚点投影到屏幕坐标后写入，
+  // 不再用硬编码百分比。硬编码时模型只占画布中间约 1/3 宽度，标签却挂在 19%/20% 处，
+  // 与模型完全脱节；容器高度一变偏移还会继续放大。
+  //
+  // 每个标签由三部分组成，各自需要独立的引用：
+  //   wrapper —— 锚点坐标系原点，每帧被平移到投影出的屏幕坐标
+  //   dot     —— 落在锚点上的圆点（跟着 wrapper 走，无需单独写）
+  //   line    —— 从锚点指向药丸的引导线，长度/角度每帧重算
+  //   pill    —— 药丸按钮本体，相对锚点做偏移
+  const pinElementsRef = useRef<Record<string, HTMLDivElement | null>>({});
+  const pinLineElementsRef = useRef<Record<string, HTMLSpanElement | null>>({});
+  const pinPillElementsRef = useRef<Record<string, HTMLButtonElement | null>>({});
+  // 药丸尺寸只在挂载/缩放时量一次。每帧读 offsetWidth 会触发强制同步布局，
+  // 8 个标签 × 60fps 足够把帧率拖下来。
+  const pinSizeRef = useRef<Record<string, { w: number; h: number }>>({});
+  // 画布像素尺寸，供投影换算使用（resizeObserver 里同步）
+  const stageSizeRef = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
+  // 舞台里被浮层占掉的区域：页头工具条、底部图例条、右上角信息卡。
+  // 标签若落进这些区域就会被压在浮层下面「凭空消失」，所以先把可用矩形量出来。
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const headerBarRef = useRef<HTMLDivElement>(null);
+  const legendBarRef = useRef<HTMLDivElement>(null);
+  const anatomyCardRef = useRef<HTMLDivElement>(null);
+  const freeRectRef = useRef<{ left: number; right: number; top: number; bottom: number } | null>(null);
+
+  /**
+   * 量出舞台里「还能放标签」的矩形（相对 overlay 的左上角）。
+   * 页头工具条压住上沿、图例条压住下沿、信息卡压住右沿——标签落进去就会被盖住，
+   * 所以这三个浮层的实测位置直接决定可用边界。全部实测而非写死，
+   * 这样图例换行、卡片改宽、面板缩放都不需要回来改常量。
+   */
+  const measureFreeRect = () => {
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+    const box = overlay.getBoundingClientRect();
+    if (box.width <= 0 || box.height <= 0) return;
+    const next = { left: 4, right: box.width - 4, top: 4, bottom: box.height - 4 };
+
+    const header = headerBarRef.current;
+    if (header) {
+      const r = header.getBoundingClientRect();
+      if (r.height > 0) next.top = Math.max(next.top, r.bottom - box.top + 6);
+    }
+    const legend = legendBarRef.current;
+    if (legend) {
+      const r = legend.getBoundingClientRect();
+      if (r.height > 0) next.bottom = Math.min(next.bottom, r.top - box.top - 6);
+    }
+    const card = anatomyCardRef.current;
+    if (card) {
+      const r = card.getBoundingClientRect();
+      if (r.width > 0) next.right = Math.min(next.right, r.left - box.left - 6);
+    }
+    // 浮层把可用区挤没了（极窄容器）时直接放弃让位，至少保证标签可见
+    if (next.right - next.left < 120) next.right = box.width - 4;
+    if (next.bottom - next.top < 120) next.bottom = box.height - 4;
+    freeRectRef.current = next;
+    // 留一个调试锚点：标签落位不对时，直接看这个属性就知道可用区被谁挤小了
+    overlay.dataset.freeRect = [next.left, next.top, next.right, next.bottom]
+      .map((v) => Math.round(v))
+      .join(',');
+  };
+
   // Three.js Scene References
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -618,8 +787,6 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
   const animationFrameIdRef = useRef<number | null>(null);
   const modelGroupRef = useRef<THREE.Group | null>(null);
   const segmentMeshesRef = useRef<Record<string, THREE.Mesh>>({});
-  const haloMeshesRef = useRef<Record<string, THREE.Mesh>>({});
-  const beaconMeshRef = useRef<THREE.Mesh | null>(null);
   const dynamicLightRef = useRef<THREE.PointLight | null>(null);
   const particlesRef = useRef<THREE.Points | null>(null);
 
@@ -643,6 +810,7 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
     const container = containerRef.current;
     const width = container.clientWidth;
     const height = container.clientHeight;
+    stageSizeRef.current = { w: width, h: height };
 
     // 1. Scene
     const scene = new THREE.Scene();
@@ -660,29 +828,32 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.3;
+    renderer.toneMappingExposure = 1.05;
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
     // 4. Lighting System
-    const ambientLight = new THREE.AmbientLight(0x131f3d, 2.6);
+    // 注意：此前总光强过高（环境 2.6 + 主光 2.2 + 补光 1.2 + 轮廓光 1.6 + 点光 3.0），
+    // 叠加 ACES 色调映射后，浅色部位（如降结肠 #f2969d）会被冲成白色。
+    // 这里整体下调约 30%，保留层次的同时让解剖本色可读。
+    const ambientLight = new THREE.AmbientLight(0x131f3d, 1.8);
     scene.add(ambientLight);
 
-    const mainKeyLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    const mainKeyLight = new THREE.DirectionalLight(0xffffff, 1.8);
     mainKeyLight.position.set(12, 22, 25);
     scene.add(mainKeyLight);
 
-    const softFillLight = new THREE.DirectionalLight(0x3a86ff, 1.2);
+    const softFillLight = new THREE.DirectionalLight(0x3a86ff, 0.9);
     softFillLight.position.set(-18, -8, 15);
     scene.add(softFillLight);
 
-    const backRimLight = new THREE.DirectionalLight(0x20cfff, 1.6);
+    const backRimLight = new THREE.DirectionalLight(0x20cfff, 1.1);
     backRimLight.position.set(0, -15, -20);
     scene.add(backRimLight);
 
     // Dynamic Focused Spotlight that highlights the active segment
-    const dynamicSpotLight = new THREE.PointLight(0xffffff, 3.0, 30);
+    const dynamicSpotLight = new THREE.PointLight(0xffffff, 1.8, 30);
     dynamicSpotLight.position.set(0, 0, 8);
     scene.add(dynamicSpotLight);
     dynamicLightRef.current = dynamicSpotLight;
@@ -696,7 +867,6 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
 
     // 6. Build the 8 Anatomical Colon Segments
     segmentMeshesRef.current = {};
-    haloMeshesRef.current = {};
 
     COLON_SEGMENTS.forEach((seg) => {
       const segCurve = new THREE.CatmullRomCurve3(seg.points, false, 'centripetal', 0.5);
@@ -728,49 +898,9 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
       mesh.userData = { segmentId: seg.id, segmentName: seg.name };
       modelGroup.add(mesh);
       segmentMeshesRef.current[seg.id] = mesh;
-
-      // Outer Glowing Halo Corona Mesh
-      const haloGeom = createHaustraTubeGeometry(
-        segCurve,
-        Math.max(22, seg.points.length * 8),
-        seg.radius * 1.22,
-        16,
-        seg.pouchCount,
-        seg.pouchAmplitude * 0.5
-      );
-
-      const haloMat = new THREE.MeshBasicMaterial({
-        color: seg.glowColor,
-        transparent: true,
-        opacity: 0.0,
-        blending: THREE.AdditiveBlending,
-        side: THREE.BackSide,
-        depthWrite: false,
-      });
-
-      const haloMesh = new THREE.Mesh(haloGeom, haloMat);
-      haloMesh.userData = { isHalo: true, parentSegmentId: seg.id };
-      haloMesh.visible = false;
-      modelGroup.add(haloMesh);
-      haloMeshesRef.current[seg.id] = haloMesh;
     });
 
-    // 7. Active Segment 3D Target Beacon Indicator
-    const beaconGeometry = new THREE.TorusGeometry(1.6, 0.12, 16, 40);
-    const beaconMaterial = new THREE.MeshBasicMaterial({
-      color: 0x20cfff,
-      transparent: true,
-      opacity: 0.0,
-      blending: THREE.AdditiveBlending,
-      side: THREE.DoubleSide,
-      depthWrite: false
-    });
-    const beaconMesh = new THREE.Mesh(beaconGeometry, beaconMaterial);
-    beaconMesh.visible = false;
-    modelGroup.add(beaconMesh);
-    beaconMeshRef.current = beaconMesh;
-
-    // 8. Continuous Full Colon Curve for Microbial Particle Flow
+    // 7. Continuous Full Colon Curve for Microbial Particle Flow
     const fullColonPathPoints: THREE.Vector3[] = [
       new THREE.Vector3(-6.8, -7.2, 0.6), // Appendix/Cecum start
       new THREE.Vector3(-7.2, -5.8, 0.8),
@@ -800,13 +930,11 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
     const particleGeometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
-    const sizes = new Float32Array(particleCount);
 
     const progressArray = new Float32Array(particleCount);
     const speedArray = new Float32Array(particleCount);
     const offsetRadiusArray = new Float32Array(particleCount);
     const offsetAngleArray = new Float32Array(particleCount);
-    const particleTypeArray = new Float32Array(particleCount); // 0: beneficial, 1: commensal, 2: pathogen
 
     const isDysbiosis = currentMode === 'dysbiosis';
 
@@ -829,7 +957,6 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
         else if (rand < 0.92) pType = 1; // Commensal (Violet)
         else pType = 2; // Residual pathogen
       }
-      particleTypeArray[i] = pType;
 
       const col = new THREE.Color();
       if (pType === 0) {
@@ -843,7 +970,6 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
       colors[i * 3] = col.r;
       colors[i * 3 + 1] = col.g;
       colors[i * 3 + 2] = col.b;
-      sizes[i] = pType === 0 ? 1.4 : pType === 2 ? 1.9 : 1.2;
 
       const pt = continuousColonCurve.getPointAt(progress);
       positions[i * 3] = pt.x;
@@ -853,13 +979,36 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
 
     particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    particleGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+    // PointsMaterial 只认 uniform 的 size，不支持逐顶点 size 属性（旧代码注册的
+    // size 缓冲区会被 three.js 静默忽略）。默认点精灵是方块，这里生成一张径向渐变
+    // 贴图，让菌群粒子渲染成柔和圆点，而不是截图中那种像素方块。
+    const createParticleSprite = (): THREE.CanvasTexture | null => {
+      const px = 64;
+      const canvas = document.createElement('canvas');
+      canvas.width = px;
+      canvas.height = px;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return null;
+      const grad = ctx.createRadialGradient(px / 2, px / 2, 0, px / 2, px / 2, px / 2);
+      grad.addColorStop(0, 'rgba(255,255,255,1)');
+      grad.addColorStop(0.3, 'rgba(255,255,255,0.9)');
+      grad.addColorStop(0.65, 'rgba(255,255,255,0.28)');
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, px, px);
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    };
+    const particleSprite = createParticleSprite();
 
     const particleMaterial = new THREE.PointsMaterial({
-      size: 1.4,
+      size: 1.7,
       vertexColors: true,
+      map: particleSprite ?? undefined,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.7,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
@@ -870,6 +1019,11 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
 
     // 9. Animation & Render Loop
     const clock = new THREE.Clock();
+    // 投影复用的临时向量：每帧 8 次投影，避免在循环里反复 new Vector3
+    const pinProjectVec = new THREE.Vector3();
+    // 量取「1 个模型单位 = 多少屏幕像素」用的两个探针点
+    const probeA = new THREE.Vector3();
+    const probeB = new THREE.Vector3();
 
     const animate = () => {
       animationFrameIdRef.current = requestAnimationFrame(animate);
@@ -877,60 +1031,79 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
       const time = clock.getElapsedTime();
 
       // Slow auto rotate if explicitly toggled by user
-      if (autoRotate && !isDraggingRef.current && modelGroupRef.current) {
+      if (autoRotateRef.current && !isDraggingRef.current && modelGroupRef.current) {
         modelRotationRef.current.y += delta * 0.25;
         modelGroupRef.current.rotation.y = modelRotationRef.current.y;
       }
 
       // Dynamic Segment Glowing Update
-      const isAll = activeSegmentId === 'all';
-      const activeSeg = COLON_SEGMENTS.find(s => s.id === activeSegmentId);
+      const currentActiveId = activeSegmentIdRef.current;
+      const isAll = currentActiveId === 'all';
+      const isGhost = ghostModeRef.current;
 
       COLON_SEGMENTS.forEach((seg) => {
         const mesh = segmentMeshesRef.current[seg.id];
-        const haloMesh = haloMeshesRef.current[seg.id];
         if (!mesh) return;
 
-        const isSelected = activeSegmentId === seg.id;
-        const isHovered = hoveredSegment?.id === seg.id;
+        const isSelected = currentActiveId === seg.id;
+        const isHovered = hoveredSegmentIdRef.current === seg.id;
         const mat = mesh.material as THREE.MeshPhysicalMaterial;
 
         if (isSelected) {
-          // Intense vivid glowing pulse on selected segment
-          const pulse = Math.sin(time * 3.8) * 0.5 + 0.5; // 0 to 1
-          mat.color.set(seg.glowColor);
-          mat.emissive.set(seg.glowColor);
-          mat.emissiveIntensity = 2.2 + pulse * 1.2; // 2.2 - 3.4
-          mat.opacity = 1.0;
-          mat.roughness = 0.12;
-
-          if (haloMesh) {
-            haloMesh.visible = true;
-            const haloMat = haloMesh.material as THREE.MeshBasicMaterial;
-            haloMat.opacity = 0.5 + pulse * 0.4;
-          }
-
-          // Move spotlight to this active segment
-          if (dynamicLightRef.current) {
-            dynamicLightRef.current.color.set(seg.glowColor);
-            dynamicLightRef.current.position.set(seg.pinPosition.x, seg.pinPosition.y, seg.pinPosition.z + 3.5);
-            dynamicLightRef.current.intensity = 5.5 + pulse * 2.5;
-          }
-        } else if (isAll) {
-          // Panoramic view - all segments in their clean, distinct anatomical colors
+          // 选中态：干净的实体着色，无脉冲、无光晕、无定位环
           mat.color.set(seg.baseColor);
           mat.emissive.set(seg.baseColor);
-          mat.emissiveIntensity = isHovered ? 0.95 : 0.35;
-          mat.opacity = isHovered ? 1.0 : 0.92;
-          mat.roughness = 0.25;
+          mat.emissiveIntensity = 0.55;
+          mat.opacity = 1.0;
+          mat.roughness = 0.3;
+          mat.metalness = 0.1;
+          mat.clearcoat = 0.6;
+          mat.clearcoatRoughness = 0.2;
+          mat.specularIntensity = 0.7;
+          mat.depthWrite = true;
+          mat.side = THREE.DoubleSide;
 
-          if (haloMesh) {
-            haloMesh.visible = isHovered;
-            if (isHovered) {
-              const haloMat = haloMesh.material as THREE.MeshBasicMaterial;
-              haloMat.opacity = 0.35;
-            }
+          // 聚光灯跟随选中段：纯白、固定强度，避免叠加色彩后过曝
+          if (dynamicLightRef.current) {
+            dynamicLightRef.current.color.set(0xffffff);
+            dynamicLightRef.current.position.set(seg.pinPosition.x, seg.pinPosition.y, seg.pinPosition.z + 4);
+            dynamicLightRef.current.intensity = 1.4;
           }
+        } else if (isGhost) {
+          // 解剖透视（未着色）：整体统一为半透明玻璃壳体，不带部位色彩；
+          // 悬停时浮现该部位即将被赋予的颜色作为提示，点击后才真正着色。
+          // 色调随模式变化：失衡态为冷灰蓝（炎性），重构态转为健康黏膜暖粉，
+          // 否则两个模式在 3D 里完全看不出区别。
+          if (isHovered) {
+            mat.color.set(seg.baseColor).multiplyScalar(0.75);
+            mat.emissive.set(seg.baseColor);
+            mat.emissiveIntensity = 0.8;
+            mat.opacity = 0.34;
+          } else {
+            mat.color.set(isDysbiosis ? 0x9fb4d4 : 0xe9a6b4).multiplyScalar(0.42);
+            mat.emissive.set(isDysbiosis ? 0x2b4a7a : 0x6b2f42);
+            mat.emissiveIntensity = 0.55;
+            mat.opacity = isDysbiosis ? 0.2 : 0.24;
+          }
+          mat.roughness = 0.9;
+          mat.metalness = 0.0;
+          mat.clearcoat = 0.0;
+          mat.specularIntensity = 0.15;
+          mat.depthWrite = false;
+          mat.side = THREE.FrontSide;
+        } else if (isAll) {
+          // Panoramic view - all segments in their clean, distinct anatomical colors
+          // 重构态整体提亮一档，体现黏膜修复后的健康光泽（仍保留各段解剖本色）
+          mat.color.set(seg.baseColor);
+          mat.emissive.set(seg.baseColor);
+          mat.emissiveIntensity = isHovered ? 0.85 : (isDysbiosis ? 0.35 : 0.55);
+          mat.opacity = isHovered ? 1.0 : 0.92;
+          mat.roughness = isDysbiosis ? 0.25 : 0.32;
+          mat.metalness = 0.1;
+          mat.clearcoat = 0.85;
+          mat.specularIntensity = 1.0;
+          mat.depthWrite = true;
+          mat.side = THREE.DoubleSide;
         } else {
           // Another segment is selected: dim unselected segments cleanly for maximum contrast
           mat.color.set(seg.baseColor);
@@ -938,39 +1111,37 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
           mat.emissiveIntensity = isHovered ? 0.4 : 0.05;
           mat.opacity = isHovered ? 0.75 : 0.36;
           mat.roughness = 0.55;
-
-          if (haloMesh) {
-            haloMesh.visible = false;
-          }
+          mat.metalness = 0.1;
+          mat.clearcoat = 0.85;
+          mat.specularIntensity = 1.0;
+          mat.depthWrite = true;
+          mat.side = THREE.DoubleSide;
         }
       });
 
-      // Target Beacon Ring Animation on active segment
-      if (beaconMeshRef.current) {
-        if (!isAll && activeSeg) {
-          beaconMeshRef.current.visible = true;
-          beaconMeshRef.current.position.set(activeSeg.pinPosition.x, activeSeg.pinPosition.y, activeSeg.pinPosition.z);
-          beaconMeshRef.current.rotation.z += delta * 1.5;
-          const ringPulse = Math.sin(time * 3.8) * 0.5 + 0.5;
-          const beaconMat = beaconMeshRef.current.material as THREE.MeshBasicMaterial;
-          beaconMat.color.set(activeSeg.glowColor);
-          beaconMat.opacity = 0.4 + ringPulse * 0.45;
-          const scale = 1.0 + ringPulse * 0.25;
-          beaconMeshRef.current.scale.set(scale, scale, scale);
-        } else {
-          beaconMeshRef.current.visible = false;
-        }
+      // 全景态下把补光收回中央，避免停留在上一次选中部位
+      if (isAll && dynamicLightRef.current) {
+        dynamicLightRef.current.color.set(0xffffff);
+        dynamicLightRef.current.position.set(0, 0, 8);
+        dynamicLightRef.current.intensity = 1.6;
       }
 
       // Update Microbial Particles Flow
       if (particlesRef.current) {
+        // 透视模式下管壁近乎透明，必须压暗粒子，否则叠加发光会糊成一片白
+        const pMat = particlesRef.current.material as THREE.PointsMaterial;
+        pMat.opacity = isGhost ? 0.22 : 0.6;
+        pMat.size = isGhost ? 1.15 : 1.5;
+
         const pPositions = particlesRef.current.geometry.attributes.position.array as Float32Array;
+        // 重构态下菌群已建立稳定定植，流动更快、更活跃；失衡态则迟缓淤滞
+        const flowScale = isDysbiosis ? 1 : 1.75;
         for (let i = 0; i < particleCount; i++) {
-          progressArray[i] = (progressArray[i] + speedArray[i]) % 1.0;
+          progressArray[i] = (progressArray[i] + speedArray[i] * flowScale) % 1.0;
           const pt = continuousColonCurve.getPointAt(progressArray[i]);
 
           const rad = offsetRadiusArray[i];
-          const ang = offsetAngleArray[i] + time * 0.5;
+          const ang = offsetAngleArray[i] + time * (isDysbiosis ? 0.5 : 0.9);
           const ox = Math.cos(ang) * rad;
           const oz = Math.sin(ang) * rad;
 
@@ -979,6 +1150,212 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
           pPositions[i * 3 + 2] = pt.z + oz;
         }
         particlesRef.current.geometry.attributes.position.needsUpdate = true;
+      }
+
+      // ---- 部位标签跟随 3D 锚点 ----
+      // 标签是 DOM，位置在这里逐帧写入：先把 8 个解剖锚点连同各自的管径一起投影成屏幕范围，
+      // 得到结肠模型真正占用的矩形；再让每个标签朝合适的一侧贴到模型外缘。
+      // 「合适」= 优先本侧；本侧被信息卡 / 图例条挡住时改走负荷最小的可用侧。
+      // 这样标签永远紧贴模型、互不压叠，也不会被浮层吃掉。
+      const stageW = stageSizeRef.current.w;
+      const stageH = stageSizeRef.current.h;
+      if (stageW > 0 && stageH > 0) {
+        // 每单位长度对应多少屏幕像素：投影 (0,0,0.6) 与 (1,0,0.6) 求差
+        probeA.set(0, 0, 0.6);
+        modelGroup.localToWorld(probeA);
+        probeA.project(camera);
+        probeB.set(1, 0, 0.6);
+        modelGroup.localToWorld(probeB);
+        probeB.project(camera);
+        const unitPx = Math.abs((probeB.x - probeA.x) * 0.5 * stageW) || 16;
+
+        const anchorScreen: Record<string, { x: number; y: number; z: number }> = {};
+        let modelLeft = Infinity;
+        let modelRight = -Infinity;
+        let modelTop = Infinity;
+        let modelBottom = -Infinity;
+
+        COLON_SEGMENTS.forEach((seg) => {
+          pinProjectVec.set(seg.pinPosition.x, seg.pinPosition.y, seg.pinPosition.z);
+          modelGroup.localToWorld(pinProjectVec);
+          pinProjectVec.project(camera);
+          const x = (pinProjectVec.x * 0.5 + 0.5) * stageW;
+          const y = (-pinProjectVec.y * 0.5 + 0.5) * stageH;
+          anchorScreen[seg.id] = { x, y, z: pinProjectVec.z };
+          // 锚点在管中心线上，按该段管径向外扩，才是模型真正的轮廓
+          const pad = seg.radius * unitPx;
+          modelLeft = Math.min(modelLeft, x - pad);
+          modelRight = Math.max(modelRight, x + pad);
+          modelTop = Math.min(modelTop, y - pad);
+          modelBottom = Math.max(modelBottom, y + pad);
+        });
+        modelLeft -= 4;
+        modelRight += 4;
+        modelTop -= 4;
+        modelBottom += 4;
+
+        const free = freeRectRef.current ?? { left: 4, right: stageW - 4, top: 4, bottom: stageH - 4 };
+        const GAP = 12;
+        const OPPOSITE: Record<string, string> = { left: 'right', right: 'left', top: 'bottom', bottom: 'top' };
+        // 备选顺序：先同侧，再左右两侧，最后才翻到正对侧（翻正对侧要绕整条模型，线会很长）
+        const SIDE_TRIES: Record<string, string[]> = {
+          left: ['left', 'right', 'top', 'bottom'],
+          right: ['right', 'left', 'top', 'bottom'],
+          top: ['top', 'left', 'right', 'bottom'],
+          bottom: ['bottom', 'left', 'right', 'top'],
+        };
+
+        const buildCandidate = (
+          side: string,
+          anchor: { x: number; y: number },
+          size: { w: number; h: number }
+        ) => {
+          let x = anchor.x;
+          let y = anchor.y;
+          if (side === 'left') x = modelLeft - GAP - size.w / 2;
+          else if (side === 'right') x = modelRight + GAP + size.w / 2;
+          else if (side === 'top') y = modelTop - GAP - size.h / 2;
+          else y = modelBottom + GAP + size.h / 2;
+          // 夹进可用区域（可用区域已让开页头工具条、图例条与信息卡）
+          x = Math.min(Math.max(x, free.left + size.w / 2), free.right - size.w / 2);
+          y = Math.min(Math.max(y, free.top + size.h / 2), free.bottom - size.h / 2);
+          const clear =
+            side === 'left'
+              ? x + size.w / 2 <= modelLeft + 2
+              : side === 'right'
+                ? x - size.w / 2 >= modelRight - 2
+                : side === 'top'
+                  ? y + size.h / 2 <= modelTop + 2
+                  : y - size.h / 2 >= modelBottom - 2;
+          const inside =
+            x - size.w / 2 >= free.left - 0.5 &&
+            x + size.w / 2 <= free.right + 0.5 &&
+            y - size.h / 2 >= free.top - 0.5 &&
+            y + size.h / 2 <= free.bottom + 0.5;
+          return { x, y, clear, inside };
+        };
+
+        const load: Record<string, number> = { left: 0, right: 0, top: 0, bottom: 0 };
+        const placed: Record<string, { x: number; y: number }> = {};
+        const placedSide: Record<string, string> = {};
+        const pending: string[] = [];
+
+        // 第一轮：本侧放得下的直接落位
+        COLON_SEGMENTS.forEach((seg) => {
+          const anchor = anchorScreen[seg.id];
+          if (!anchor) return;
+          const size = pinSizeRef.current[seg.id] ?? { w: 64, h: 20 };
+          const preferred = PIN_LABEL_PLACEMENT[seg.id]?.side ?? 'right';
+          const cand = buildCandidate(preferred, anchor, size);
+          if (cand.clear && cand.inside) {
+            placed[seg.id] = { x: cand.x, y: cand.y };
+            placedSide[seg.id] = preferred;
+            load[preferred] += 1;
+          } else {
+            pending.push(seg.id);
+          }
+        });
+
+        // 第二轮：本侧放不下的（例如右侧被信息卡占掉）改走负荷最小的可用侧
+        pending.forEach((id) => {
+          const anchor = anchorScreen[id];
+          if (!anchor) return;
+          const size = pinSizeRef.current[id] ?? { w: 64, h: 20 };
+          const preferred = PIN_LABEL_PLACEMENT[id]?.side ?? 'right';
+          let bestSide: string | null = null;
+          let bestX = 0;
+          let bestY = 0;
+          let bestScore = Number.POSITIVE_INFINITY;
+          SIDE_TRIES[preferred].forEach((side) => {
+            const cand = buildCandidate(side, anchor, size);
+            if (!cand.clear || !cand.inside) return;
+            // 同侧越空越优先；翻到正对侧额外罚一点，避免出现贯穿整条模型的引线
+            const score =
+              load[side] * 10 + (side === OPPOSITE[preferred] ? 25 : 0) + Math.abs(cand.y - anchor.y) / 1000;
+            if (score < bestScore) {
+              bestScore = score;
+              bestSide = side;
+              bestX = cand.x;
+              bestY = cand.y;
+            }
+          });
+          if (bestSide) {
+            placed[id] = { x: bestX, y: bestY };
+            placedSide[id] = bestSide;
+            load[bestSide] += 1;
+          } else {
+            // 四处都放不下（容器极窄）时退回本侧并夹紧，至少保证可见
+            const fallback = buildCandidate(preferred, anchor, size);
+            placed[id] = { x: fallback.x, y: fallback.y };
+            placedSide[id] = preferred;
+          }
+        });
+
+        // 同侧防重叠：左/右沿纵轴排开，上/下沿横轴排开。
+        // 正向压一遍后若越过可用区域下沿，再反向压回来，保证整列仍在可用区域内。
+        (['left', 'right', 'top', 'bottom'] as const).forEach((side) => {
+          const ids = Object.keys(placed).filter((id) => placedSide[id] === side);
+          if (ids.length < 2) return;
+          const vertical = side === 'left' || side === 'right';
+          const MIN_GAP = 6;
+          const items = ids
+            .map((id) => {
+              const size = pinSizeRef.current[id] ?? { w: 64, h: 20 };
+              return { id, pos: vertical ? placed[id].y : placed[id].x, extent: vertical ? size.h : size.w };
+            })
+            .sort((a, b) => a.pos - b.pos);
+          const limitLow = vertical ? free.top : free.left;
+          const limitHigh = vertical ? free.bottom : free.right;
+
+          for (let i = 1; i < items.length; i++) {
+            const minPos = items[i - 1].pos + items[i - 1].extent / 2 + MIN_GAP + items[i].extent / 2;
+            if (items[i].pos < minPos) items[i].pos = minPos;
+          }
+          const tail = items[items.length - 1];
+          if (tail.pos + tail.extent / 2 > limitHigh) {
+            tail.pos = limitHigh - tail.extent / 2;
+            for (let i = items.length - 2; i >= 0; i--) {
+              const maxPos = items[i + 1].pos - items[i + 1].extent / 2 - MIN_GAP - items[i].extent / 2;
+              if (items[i].pos > maxPos) items[i].pos = maxPos;
+            }
+          }
+          items.forEach((it) => {
+            const clamped = Math.min(Math.max(it.pos, limitLow + it.extent / 2), limitHigh - it.extent / 2);
+            if (vertical) placed[it.id].y = clamped;
+            else placed[it.id].x = clamped;
+          });
+        });
+
+        COLON_SEGMENTS.forEach((seg) => {
+          const wrapper = pinElementsRef.current[seg.id];
+          const anchor = anchorScreen[seg.id];
+          const target = placed[seg.id];
+          if (!wrapper || !anchor || !target) return;
+
+          // 锚点跑到相机背后（NDC z > 1）时整块藏起来，避免出现镜像的鬼影标签
+          const visible = anchor.z <= 1;
+          wrapper.style.opacity = visible ? '1' : '0';
+          if (!visible) return;
+
+          wrapper.style.transform = `translate3d(${anchor.x.toFixed(1)}px, ${anchor.y.toFixed(1)}px, 0)`;
+
+          const dx = target.x - anchor.x;
+          const dy = target.y - anchor.y;
+          const pill = pinPillElementsRef.current[seg.id];
+          if (pill) {
+            // 选中态轻微放大。scale 必须写进这条 transform 里——药丸的位置由本行独占，
+            // 用 Tailwind 的 scale-110 类会被这里的行内样式直接覆盖掉。
+            const scale = currentActiveId === seg.id ? 1.08 : 1;
+            pill.style.transform = `translate3d(${dx.toFixed(1)}px, ${dy.toFixed(1)}px, 0) translate(-50%, -50%) scale(${scale})`;
+          }
+
+          const line = pinLineElementsRef.current[seg.id];
+          if (line) {
+            const len = Math.max(0, Math.hypot(dx, dy) - 6);
+            line.style.width = `${len.toFixed(1)}px`;
+            line.style.transform = `rotate(${(Math.atan2(dy, dx) * 180) / Math.PI}deg)`;
+          }
+        });
       }
 
       renderer.render(scene, camera);
@@ -994,6 +1371,8 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
           camera.aspect = newW / newH;
           camera.updateProjectionMatrix();
           renderer.setSize(newW, newH);
+          stageSizeRef.current = { w: newW, h: newH };
+          measureFreeRect();
         }
       }
     });
@@ -1050,11 +1429,13 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
           const segId = hitMesh.userData.segmentId;
           const segName = hitMesh.userData.segmentName;
           if (segId) {
+            hoveredSegmentIdRef.current = segId;
             setHoveredSegment({ id: segId, name: segName });
             domElement.style.cursor = 'pointer';
             return;
           }
         }
+        hoveredSegmentIdRef.current = null;
         setHoveredSegment(null);
         domElement.style.cursor = 'grab';
       }
@@ -1105,6 +1486,19 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
       domElement.removeEventListener('wheel', handleWheel);
 
       renderer.dispose();
+      // 释放场景资源：几何体 / 材质 / 贴图。
+      // 原先只 dispose 了 renderer，切换 currentMode 重建场景时显存会持续累积。
+      scene.traverse((obj: THREE.Object3D) => {
+        const meshLike = obj as THREE.Mesh;
+        if (meshLike.geometry) meshLike.geometry.dispose();
+        const matLike = meshLike.material as THREE.Material | THREE.Material[] | undefined;
+        if (Array.isArray(matLike)) {
+          matLike.forEach((m) => m.dispose());
+        } else if (matLike) {
+          matLike.dispose();
+        }
+      });
+      particleSprite?.dispose();
       if (container.contains(domElement)) {
         container.removeChild(domElement);
       }
@@ -1127,16 +1521,13 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
   return (
     <div id="three-gut-container-card" className={`relative rounded-xl border border-[#1e2f57] bg-[#0c1429] overflow-hidden select-none ${className}`}>
       {/* Top Header Bar: Anatomical Title & View Controls */}
-      <div id="three-gut-header-bar" className="absolute top-3 left-3 right-3 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+      <div id="three-gut-header-bar" ref={headerBarRef} className="absolute top-3 left-3 right-3 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
         {/* Left: Anatomical Digital Twin Brand & Pin Toggle */}
         <div className="flex items-center gap-2 p-1.5 rounded-lg bg-[#091127]/90 border border-[#2b4170]/70 backdrop-blur-md pointer-events-auto shadow-lg">
           <div className="flex items-center gap-1.5 px-2 py-0.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#20cfff] shadow-[0_0_8px_#20cfff] animate-pulse"></span>
             <span className="text-xs font-bold text-[#eef4ff] tracking-wide">
               大肠解剖结构 · 3D高精孪生
-            </span>
-            <span className="text-[10px] text-[#20cfff] bg-[#20cfff]/10 px-1.5 py-0.5 rounded border border-[#20cfff]/30">
-              8大解剖分区
             </span>
           </div>
 
@@ -1151,7 +1542,19 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
-            <span>{showPinBadges ? '解剖标签: 显示' : '解剖标签: 隐藏'}</span>
+            <span>标签</span>
+          </button>
+
+          <button
+            id="toggle-anatomy-card"
+            onClick={() => setShowAnatomyCard(!showAnatomyCard)}
+            title={showAnatomyCard ? '收起部位详解卡' : '展开部位详解卡'}
+            className={`px-2 py-1 rounded text-xs transition-colors flex items-center gap-1 font-medium ${
+              showAnatomyCard ? 'bg-[#20cfff]/20 text-[#20cfff]' : 'text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347]'
+            }`}
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>详解</span>
           </button>
         </div>
 
@@ -1185,6 +1588,23 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
 
           <div className="h-3.5 w-[1px] bg-[#1e2f57] mx-0.5"></div>
 
+          {/* 解剖透视 / 彩色实体 显示模式 */}
+          <button
+            id="ghost-mode-toggle"
+            onClick={() => setGhostMode(!ghostMode)}
+            title={ghostMode ? '当前为半透明解剖透视，点击切换为彩色实体' : '当前为彩色实体，点击切换为半透明解剖透视'}
+            className={`px-2 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
+              ghostMode
+                ? 'bg-[#815cff]/20 text-[#b592ff] border border-[#815cff]/50'
+                : 'text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347]'
+            }`}
+          >
+            <Eye className="w-3.5 h-3.5" />
+            {ghostMode ? '解剖透视' : '彩色实体'}
+          </button>
+
+          <div className="h-3.5 w-[1px] bg-[#1e2f57] mx-0.5"></div>
+
           <button
             id="auto-rotate-toggle"
             onClick={() => setAutoRotate(!autoRotate)}
@@ -1213,128 +1633,62 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
         className="w-full h-full min-h-[480px] cursor-grab active:cursor-grabbing"
       />
 
-      {/* Overlay: Interactive Anatomical Pin Badges (Directly corresponding to Reference Diagram) */}
+      {/* Overlay: Interactive Anatomical Pin Badges */}
+      {/* 位置不写死：每帧由渲染循环把 3D 锚点投影成屏幕坐标后写入 transform */}
       {showPinBadges && (
-        <div id="anatomical-pin-overlay" className="absolute inset-0 pointer-events-none z-10">
-          {/* Transverse Colon Pin (Top center) */}
-          <div className="absolute top-[16%] left-[48%] -translate-x-1/2 pointer-events-auto">
-            <button
-              onClick={() => handleSelectSegment('transverse')}
-              className={`group flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-all border shadow-lg backdrop-blur-sm ${
-                activeSegmentId === 'transverse'
-                  ? 'bg-[#84cc16] text-[#091020] border-[#a3e635] shadow-[0_0_14px_rgba(132,204,22,0.6)] scale-110 ring-2 ring-white/50'
-                  : 'bg-[#091127]/85 text-[#84cc16] border-[#84cc16]/50 hover:bg-[#84cc16]/20'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-[#84cc16] shrink-0 group-hover:scale-125 transition-transform" />
-              <span>横结肠</span>
-            </button>
-          </div>
-
-          {/* Ascending Colon Pin (Left) */}
-          <div className="absolute top-[40%] left-[20%] pointer-events-auto">
-            <button
-              onClick={() => handleSelectSegment('ascending')}
-              className={`group flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-all border shadow-lg backdrop-blur-sm ${
-                activeSegmentId === 'ascending'
-                  ? 'bg-[#3a86ff] text-white border-[#60a5fa] shadow-[0_0_14px_rgba(58,134,255,0.6)] scale-110 ring-2 ring-white/50'
-                  : 'bg-[#091127]/85 text-[#3a86ff] border-[#3a86ff]/50 hover:bg-[#3a86ff]/20'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-[#3a86ff] shrink-0 group-hover:scale-125 transition-transform" />
-              <span>升结肠</span>
-            </button>
-          </div>
-
-          {/* Cecum Pin (Bottom Left) */}
-          <div className="absolute top-[63%] left-[19%] pointer-events-auto">
-            <button
-              onClick={() => handleSelectSegment('cecum')}
-              className={`group flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-all border shadow-lg backdrop-blur-sm ${
-                activeSegmentId === 'cecum'
-                  ? 'bg-[#f2969d] text-[#091020] border-[#fb7185] shadow-[0_0_14px_rgba(242,150,157,0.6)] scale-110 ring-2 ring-white/50'
-                  : 'bg-[#091127]/85 text-[#f2969d] border-[#f2969d]/50 hover:bg-[#f2969d]/20'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-[#f2969d] shrink-0 group-hover:scale-125 transition-transform" />
-              <span>盲肠</span>
-            </button>
-          </div>
-
-          {/* Appendix Pin (Bottommost Left) */}
-          <div className="absolute top-[78%] left-[22%] pointer-events-auto">
-            <button
-              onClick={() => handleSelectSegment('appendix')}
-              className={`group flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-all border shadow-lg backdrop-blur-sm ${
-                activeSegmentId === 'appendix'
-                  ? 'bg-[#d90429] text-white border-[#ff1e38] shadow-[0_0_14px_rgba(217,4,41,0.6)] scale-110 ring-2 ring-white/50'
-                  : 'bg-[#091127]/85 text-[#ff4d6d] border-[#d90429]/50 hover:bg-[#d90429]/20'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-[#d90429] shrink-0 group-hover:scale-125 transition-transform" />
-              <span>阑尾</span>
-            </button>
-          </div>
-
-          {/* Descending Colon Pin (Right) */}
-          <div className="absolute top-[40%] right-[20%] pointer-events-auto">
-            <button
-              onClick={() => handleSelectSegment('descending')}
-              className={`group flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-all border shadow-lg backdrop-blur-sm ${
-                activeSegmentId === 'descending'
-                  ? 'bg-[#ff6b81] text-[#091020] border-[#f43f5e] shadow-[0_0_14px_rgba(255,107,129,0.6)] scale-110 ring-2 ring-white/50'
-                  : 'bg-[#091127]/85 text-[#ff6b81] border-[#ff6b81]/50 hover:bg-[#ff6b81]/20'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-[#ff6b81] shrink-0 group-hover:scale-125 transition-transform" />
-              <span>降结肠</span>
-            </button>
-          </div>
-
-          {/* Sigmoid Colon Pin (Bottom Right) */}
-          <div className="absolute top-[66%] right-[28%] pointer-events-auto">
-            <button
-              onClick={() => handleSelectSegment('sigmoid')}
-              className={`group flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-all border shadow-lg backdrop-blur-sm ${
-                activeSegmentId === 'sigmoid'
-                  ? 'bg-[#fbbf24] text-[#091020] border-[#fde047] shadow-[0_0_14px_rgba(251,191,36,0.6)] scale-110 ring-2 ring-white/50'
-                  : 'bg-[#091127]/85 text-[#fbbf24] border-[#fbbf24]/50 hover:bg-[#fbbf24]/20'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-[#fbbf24] shrink-0 group-hover:scale-125 transition-transform" />
-              <span>乙状结肠</span>
-            </button>
-          </div>
-
-          {/* Rectum Pin (Bottom Center) */}
-          <div className="absolute top-[75%] left-[48%] -translate-x-1/2 pointer-events-auto">
-            <button
-              onClick={() => handleSelectSegment('rectum')}
-              className={`group flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-all border shadow-lg backdrop-blur-sm ${
-                activeSegmentId === 'rectum'
-                  ? 'bg-[#e11d48] text-white border-[#f43f5e] shadow-[0_0_14px_rgba(225,29,72,0.6)] scale-110 ring-2 ring-white/50'
-                  : 'bg-[#091127]/85 text-[#e11d48] border-[#e11d48]/50 hover:bg-[#e11d48]/20'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-[#e11d48] shrink-0 group-hover:scale-125 transition-transform" />
-              <span>直肠</span>
-            </button>
-          </div>
-
-          {/* Anal Canal Pin (Bottommost Center) */}
-          <div className="absolute top-[88%] left-[48%] -translate-x-1/2 pointer-events-auto">
-            <button
-              onClick={() => handleSelectSegment('anal_canal')}
-              className={`group flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-all border shadow-lg backdrop-blur-sm ${
-                activeSegmentId === 'anal_canal'
-                  ? 'bg-[#991b1b] text-white border-[#ef4444] shadow-[0_0_14px_rgba(153,27,27,0.6)] scale-110 ring-2 ring-white/50'
-                  : 'bg-[#091127]/85 text-[#f87171] border-[#991b1b]/50 hover:bg-[#991b1b]/20'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-[#991b1b] shrink-0 group-hover:scale-125 transition-transform" />
-              <span>肛管</span>
-            </button>
-          </div>
+        <div id="anatomical-pin-overlay" ref={overlayRef} className="absolute inset-0 pointer-events-none z-10">
+          {COLON_SEGMENTS.map((seg) => {
+            const isActive = activeSegmentId === seg.id;
+            const onColor = readableOn(seg.hexColor);
+            return (
+              <div
+                key={seg.id}
+                ref={(el) => { pinElementsRef.current[seg.id] = el; }}
+                className="absolute left-0 top-0 pointer-events-none opacity-0 transition-opacity duration-200"
+                style={{ willChange: 'transform' }}
+              >
+                {/* 锚点圆点：精确落在解剖位置上 */}
+                <span
+                  className="absolute rounded-full ring-1 ring-white/70"
+                  style={{
+                    width: 7,
+                    height: 7,
+                    marginLeft: -3.5,
+                    marginTop: -3.5,
+                    background: seg.hexColor,
+                    boxShadow: `0 0 8px ${seg.hexColor}`
+                  }}
+                />
+                {/* 引导线：从锚点指向药丸，长度与角度由渲染循环写入 */}
+                <span
+                  ref={(el) => { pinLineElementsRef.current[seg.id] = el; }}
+                  className="absolute left-0 top-0 h-px origin-top-left"
+                  style={{ background: `${seg.hexColor}b3` }}
+                />
+                {/* 药丸按钮：相对锚点偏移，避免压住模型 */}
+                <button
+                  ref={(el) => { pinPillElementsRef.current[seg.id] = el; }}
+                  onClick={() => handleSelectSegment(seg.id)}
+                  title={`${seg.name} · ${seg.latinName}`}
+                  className={`group absolute left-0 top-0 flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold whitespace-nowrap border backdrop-blur-sm pointer-events-auto transition-shadow duration-150 ${
+                    isActive ? 'ring-2 ring-white/50' : 'hover:brightness-125'
+                  }`}
+                  style={{
+                    color: isActive ? onColor : seg.hexColor,
+                    background: isActive ? seg.hexColor : 'rgba(9,17,39,0.88)',
+                    borderColor: isActive ? seg.hexColor : `${seg.hexColor}80`,
+                    boxShadow: isActive ? `0 0 14px ${seg.hexColor}99` : '0 2px 10px rgba(0,0,0,0.4)'
+                  }}
+                >
+                  <span
+                    className="w-2 h-2 rounded-full shrink-0 group-hover:scale-125 transition-transform"
+                    style={{ background: isActive ? onColor : seg.hexColor }}
+                  />
+                  <span>{seg.name}</span>
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -1343,8 +1697,8 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
         <div 
           className="absolute bottom-16 left-1/2 -translate-x-1/2 pointer-events-none z-30 px-3 py-1 rounded-full bg-[#091127]/95 border border-[#20cfff] text-xs text-[#eef4ff] shadow-2xl backdrop-blur-md flex items-center gap-2"
         >
-          <Crosshair className="w-3.5 h-3.5 text-[#20cfff] animate-spin" />
-          <span>点击高亮发光: <strong>{hoveredSegment.name}</strong></span>
+          <Crosshair className="w-3.5 h-3.5 text-[#20cfff]" />
+          <span>点击着色: <strong>{hoveredSegment.name}</strong></span>
         </div>
       )}
 
@@ -1352,7 +1706,8 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
       {showAnatomyCard && (
         <div 
           id="segment-anatomy-card"
-          className="absolute top-14 right-3 z-20 w-84 max-w-[calc(100%-24px)] rounded-xl bg-[#091127]/95 border border-[#2b4170] shadow-2xl backdrop-blur-md p-3.5 text-xs animate-in fade-in duration-200"
+          ref={anatomyCardRef}
+          className="absolute top-14 right-3 z-20 w-84 max-w-[calc(100%-24px)] max-h-[calc(100%-165px)] overflow-y-auto rounded-xl bg-[#091127]/95 border border-[#2b4170] shadow-2xl backdrop-blur-md p-3.5 text-xs animate-in fade-in duration-200"
         >
           {/* Card Header */}
           <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#1e2f57]">
@@ -1423,6 +1778,41 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
               </div>
             )}
 
+            {/* 模式语境条：明确当前 3D 呈现的是哪个阶段的微生态状态。
+                此前信息卡不随模式切换，重构态下仍在展示急性期病理描述。 */}
+            <div className={`p-2 rounded border flex items-center justify-between ${
+              currentMode === 'dysbiosis'
+                ? 'bg-[#210e19] border-[#ff536c]/40'
+                : 'bg-[#0c2019] border-[#23e6b1]/40'
+            }`}>
+              <span className={`font-semibold flex items-center gap-1 ${
+                currentMode === 'dysbiosis' ? 'text-[#ff536c]' : 'text-[#23e6b1]'
+              }`}>
+                <Eye className="w-3 h-3" />
+                {currentMode === 'dysbiosis' ? '呈现：治疗前微生态失衡态' : '呈现：FMT 后微生态重构稳态'}
+              </span>
+              <span className="text-[10px] text-[#8996b8] font-mono">
+                {currentMode === 'dysbiosis'
+                  ? (reconStats ? `基线 ${reconStats.baseline.date}` : '基线')
+                  : (reconStats ? `${reconStats.point.date}` : '随访')}
+              </span>
+            </div>
+
+            {/* 重构态实测：用随访末段的真实指标，替代原先写死的展示值 */}
+            {currentMode === 'reconstruction' && reconStats && (
+              <div className="p-2.5 rounded bg-[#0c2019] border border-[#23e6b1]/40 text-[#bff3e2]">
+                <span className="text-[10px] font-bold block mb-1 text-[#23e6b1]">
+                  重构稳态实测 ({reconStats.point.label}):
+                </span>
+                <p className="leading-relaxed text-[11px] text-[#eef4ff]">
+                  供体菌定植率 {reconStats.engraftment}%，Shannon 多样性 {reconStats.shannon.toFixed(2)}
+                  （基线 {reconStats.baseline.shannonDiversity.toFixed(2)}），粪便钙卫蛋白 {reconStats.fecalCalprotectin} μg/g
+                  （基线 {reconStats.baseline.fecalCalprotectin} μg/g），SCFA 合成 {reconStats.scfa}/100，
+                  症状缓解 {reconStats.relief}%。
+                </p>
+              </div>
+            )}
+
             {/* Patient Specific Clinical Finding */}
             <div className={`p-2.5 rounded border ${
               patientNote.isLesionZone 
@@ -1433,7 +1823,7 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
                 patientNote.isLesionZone ? 'text-[#ff536c]' : 'text-[#20cfff]'
               }`}>
                 {patientNote.isLesionZone ? <AlertTriangle className="w-3 h-3" /> : <Target className="w-3 h-3" />}
-                针对当前受体的病理与浸润评估:
+                {currentMode === 'dysbiosis' ? '针对当前受体的病理与浸润评估:' : '基线病理与浸润评估（重构前对照）:'}
               </span>
               <p className="text-[#eef4ff] leading-relaxed text-[11px]">
                 {patientNote.clinicalNote}
@@ -1470,6 +1860,7 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
       {/* Bottom Segment Switcher Bar: 8 Colon Segments + Panoramic View */}
       <div 
         id="colon-segment-tabs-bar"
+        ref={legendBarRef}
         className="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-[#091127]/95 border border-[#2b4170]/80 backdrop-blur-md shadow-2xl max-w-[calc(100%-240px)]"
       >
         {/* All Panorama Button */}
@@ -1517,6 +1908,11 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
             </button>
           );
         })}
+
+        <div className="h-4 w-[1px] bg-[#1e2f57]"></div>
+        <span className="px-1.5 text-[10px] text-[#8996b8] hidden lg:inline">
+          点击标签为对应部位着色
+        </span>
       </div>
 
       {/* Bottom Right: Collapsible Live Microbiome Digital Twin HUD Stats */}
@@ -1564,35 +1960,51 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
               <div className="flex justify-between items-center text-[#8996b8]">
                 <span>多样性指数 (Shannon):</span>
                 <span className="font-mono font-bold text-[#eef4ff]">
-                  {currentMode === 'dysbiosis' 
-                    ? `${(patient?.microbiomeSummary?.shannonDiversity ?? 2.15).toFixed(2)} ↓` 
-                    : '4.65 ↑'}
+                  {currentMode === 'dysbiosis'
+                    ? `${(patient?.microbiomeSummary?.shannonDiversity ?? 2.15).toFixed(2)} ↓`
+                    : reconStats ? `${reconStats.shannon.toFixed(2)} ↑` : '—'}
                 </span>
               </div>
               <div className="flex justify-between items-center text-[#8996b8]">
                 <span>失衡度评分 (Dysbiosis):</span>
                 <span className={`font-mono font-bold ${currentMode === 'dysbiosis' ? 'text-[#ff536c]' : 'text-[#23e6b1]'}`}>
-                  {currentMode === 'dysbiosis' 
-                    ? `${patient?.adaptability?.dysbiosisScore ?? 72} / 100` 
-                    : '15 / 100'}
+                  {currentMode === 'dysbiosis'
+                    ? `${patient?.adaptability?.dysbiosisScore ?? 72} / 100`
+                    : reconStats ? `${reconStats.dysbiosisScore} / 100` : '—'}
                 </span>
               </div>
               <div className="flex justify-between items-center text-[#8996b8]">
                 <span>供体菌定植率 (Engraftment):</span>
                 <span className="font-mono font-bold text-[#20cfff]">
-                  {currentMode === 'dysbiosis' 
-                    ? (patient?.currentPhase === '随访监测期' ? '78.0%' : '0.0%') 
-                    : '84.2%'}
+                  {currentMode === 'dysbiosis'
+                    ? (patient?.currentPhase === '随访监测期' ? '78.0%' : '0.0%')
+                    : reconStats ? `${reconStats.engraftment}%` : '—'}
                 </span>
               </div>
               <div className="flex justify-between items-center text-[#8996b8]">
                 <span>黏膜炎症负荷 (FC):</span>
                 <span className={`font-mono font-bold ${currentMode === 'dysbiosis' ? 'text-[#ff536c]' : 'text-[#23e6b1]'}`}>
-                  {currentMode === 'dysbiosis' 
-                    ? `${patient?.clinicalMarkers?.fecalCalprotectin?.value ?? 632} μg/g` 
-                    : '36 μg/g (正常)'}
+                  {currentMode === 'dysbiosis'
+                    ? `${patient?.clinicalMarkers?.fecalCalprotectin?.value ?? 632} μg/g`
+                    : reconStats ? `${reconStats.fecalCalprotectin} μg/g` : '—'}
                 </span>
               </div>
+              <div className="flex justify-between items-center text-[#8996b8]">
+                <span>SCFA 合成能力:</span>
+                <span className={`font-mono font-bold ${currentMode === 'dysbiosis' ? 'text-[#ffb84d]' : 'text-[#23e6b1]'}`}>
+                  {currentMode === 'dysbiosis'
+                    ? (reconStats ? `${reconStats.baseline.scfaSynthesisScore} / 100` : '—')
+                    : reconStats ? `${reconStats.scfa} / 100` : '—'}
+                </span>
+              </div>
+              {reconStats && (
+                <div className="pt-1 mt-0.5 border-t border-[#1e2f57]/70 flex justify-between items-center text-[10px] text-[#8996b8]">
+                  <span>{currentMode === 'dysbiosis' ? '基线采集' : '随访节点'}</span>
+                  <span className="font-mono">
+                    {currentMode === 'dysbiosis' ? reconStats.baseline.date : `${reconStats.point.date} · ${reconStats.point.label}`}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Microbe Legend */}

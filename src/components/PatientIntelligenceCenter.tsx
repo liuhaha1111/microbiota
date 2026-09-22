@@ -1,19 +1,13 @@
 import React, { useState } from 'react';
 import { 
-  User, 
   FileText, 
   Activity, 
-  AlertTriangle, 
-  CheckCircle2, 
   TrendingUp, 
-  TrendingDown, 
   Dna, 
   ShieldAlert, 
   Sparkles, 
   Layers, 
   ArrowRight,
-  Info,
-  Calendar,
   AlertCircle
 } from 'lucide-react';
 import { ClinicalPatient, MicrobialTaxon } from '../types';
@@ -248,6 +242,9 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                 patient={patient}
                 taxa={taxa}
                 ecologicalLinks={patientPackage.ecologicalLinks}
+                /* 把当前选中菌种同步给图谱，否则从「丰度表」点某一行切回网络视图时，
+                   图谱不会选中对应节点，跨视图联动是断的 */
+                initialSelectedId={selectedTaxon?.id}
                 onSelectNode={(taxon) => {
                   if (taxon && taxon.abundance !== undefined) {
                     setSelectedTaxon(taxon);

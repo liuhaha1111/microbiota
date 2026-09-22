@@ -6,35 +6,23 @@ import {
   Activity, 
   AlertTriangle, 
   TrendingUp, 
-  TrendingDown, 
   ArrowRight, 
   Clock, 
-  ShieldCheck, 
   PieChart, 
-  Microscope,
-  Calendar,
-  Layers,
-  Sparkles,
   ChevronRight
 } from 'lucide-react';
 import { ThreeGutDigitalTwin } from './ThreeGutDigitalTwin';
 import { ClinicalPatient } from '../types';
-import { getPatientDataPackage } from '../data/mockMicroFmtData';
 
 interface WorkbenchCockpitProps {
   currentPatient: ClinicalPatient;
-  onSelectPatient: (patient: ClinicalPatient) => void;
   onNavigateTab: (tabId: any) => void;
 }
 
 export const WorkbenchCockpit: React.FC<WorkbenchCockpitProps> = ({
   currentPatient,
-  onSelectPatient,
   onNavigateTab
 }) => {
-  const patientData = getPatientDataPackage(currentPatient.id);
-  const isHighRisk = currentPatient.riskLevel === 'high';
-
   return (
     <div id="workbench-cockpit-container" className="space-y-4">
       {/* 1. Top Core Metrics Bar */}
@@ -141,8 +129,9 @@ export const WorkbenchCockpit: React.FC<WorkbenchCockpitProps> = ({
               </div>
             </div>
 
-            {/* 3D WebGL Canvas */}
-            <ThreeGutDigitalTwin className="h-[490px]" patient={currentPatient} />
+            {/* 3D WebGL Canvas —— 高度 490 → 580：右侧信息卡内容较多，
+                加高后卡片与右下角「实时生理参数」药丸不再相互遮挡 */}
+            <ThreeGutDigitalTwin className="h-[580px]" patient={currentPatient} />
           </div>
 
           {/* Treatment Path Pipeline */}

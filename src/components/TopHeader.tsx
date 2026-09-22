@@ -1,15 +1,9 @@
 import React from 'react';
 import { 
   Dna, 
-  Activity, 
-  User, 
   ChevronDown, 
   Bell, 
-  Sparkles, 
-  Database, 
-  ShieldCheck, 
-  Search,
-  ExternalLink
+  Database
 } from 'lucide-react';
 import { ClinicalPatient } from '../types';
 import { mockPatients } from '../data/mockMicroFmtData';

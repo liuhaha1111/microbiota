@@ -36,7 +36,6 @@ export default function App() {
             {activeTab === 'workbench' && (
               <WorkbenchCockpit
                 currentPatient={currentPatient}
-                onSelectPatient={setCurrentPatient}
                 onNavigateTab={setActiveTab}
               />
             )}

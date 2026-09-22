@@ -5,8 +5,7 @@ import {
   MatchEvaluation, 
   FMTTreatmentProtocol, 
   SafetyRuleGate, 
-  LongitudinalTrackPoint,
-  ClinicalPatient
+  LongitudinalTrackPoint
 } from '../types';
 
 export interface PatientDataPackage {

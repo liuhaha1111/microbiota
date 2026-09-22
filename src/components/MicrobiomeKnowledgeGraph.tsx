@@ -2,31 +2,21 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { 
   Network, 
   Search, 
-  Filter, 
   Sparkles, 
-  Share2, 
   ZoomIn, 
   ZoomOut, 
   RotateCcw,
-  CheckCircle2,
-  AlertOctagon,
-  ArrowUpRight,
   TrendingDown,
   TrendingUp,
   X,
-  ExternalLink,
   Info,
   Maximize2,
   Minimize2,
   ChevronRight,
   ChevronLeft,
-  Scan,
-  Layers,
-  Activity,
-  SlidersHorizontal,
-  Dna
+  Scan
 } from 'lucide-react';
-import { MicrobialTaxon, EcologicalLink, KnowledgeNode, KnowledgeLink, ClinicalPatient } from '../types';
+import { MicrobialTaxon, EcologicalLink, ClinicalPatient } from '../types';
 import { 
   mockTaxa, 
   mockEcologicalLinks, 
@@ -60,6 +50,9 @@ interface SimulatedNode {
   y: number;
   vx: number;
   vy: number;
+  /** 播种锚点：松弛时弱回拉，保证“按类别分扇区”的布局骨架不被拉散 */
+  seedX: number;
+  seedY: number;
   raw: any;
 }
 
@@ -69,6 +62,93 @@ interface SimulatedLink {
   relation: string;
   type: 'synergy' | 'antagonism' | 'positive' | 'negative' | 'neutral' | 'commensal';
   weight: number;
+}
+
+/**
+ * 图谱分层顺序：把 FMT 干预层置于顶层，向下依次为疾病表型、菌群靶点、代谢通路与免疫受体，
+ * 使跨层连边尽可能短、走向一致，避免长线横穿整图。
+ */
+const LAYER_ORDER = [
+  'therapy',
+  'disease',
+  'microbe',
+  'metabolite',
+  'immune',
+  'beneficial',
+  'commensal',
+  'opportunistic',
+  'pathogen'
+];
+
+/**
+ * 轻量碰撞清理：以播种位置为强锚点，只负责把极少数重叠节点推开。
+ * 不追求整体力导向收敛，保证分层骨架不被拉散；一次算完即冻结，页面无持续漂移。
+ */
+function relaxLayout(
+  input: SimulatedNode[],
+  links: SimulatedLink[],
+  width: number,
+  height: number,
+  iterations = 30
+): SimulatedNode[] {
+  const nodes = input.map(n => ({ ...n }));
+  const byId = new Map(nodes.map(n => [n.id, n]));
+  const pairs: Array<[SimulatedNode, SimulatedNode]> = [];
+  for (const l of links) {
+    const a = byId.get(l.source);
+    const b = byId.get(l.target);
+    if (a && b) pairs.push([a, b]);
+  }
+
+  const kSeed = 0.040;   // 强锚点回拉：牢牢锁住分层骨架
+  const kSpring = 0.002; // 连边弹簧仅作极弱微调
+  const targetDist = 150;
+
+  for (let iter = 0; iter < iterations; iter++) {
+    for (const n of nodes) {
+      n.vx += (n.seedX - n.x) * kSeed;
+      n.vy += (n.seedY - n.y) * kSeed;
+    }
+
+    // 碰撞消解（库仑斥力）
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i];
+        const b = nodes[j];
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const distSq = dx * dx + dy * dy || 1;
+        const dist = Math.sqrt(distSq);
+        const minDist = (a.val + b.val) * 3.4;
+        const force = Math.min(42, (minDist * minDist * 2.4) / distSq);
+        const fx = (dx / dist) * force;
+        const fy = (dy / dist) * force;
+        a.vx -= fx; a.vy -= fy;
+        b.vx += fx; b.vy += fy;
+      }
+    }
+
+    // 连边弹簧（Hooke）
+    for (const [a, b] of pairs) {
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      const force = (dist - targetDist) * kSpring;
+      const fx = (dx / dist) * force;
+      const fy = (dy / dist) * force;
+      a.vx += fx; a.vy += fy;
+      b.vx -= fx; b.vy -= fy;
+    }
+
+    for (const n of nodes) {
+      n.vx *= 0.68;
+      n.vy *= 0.68;
+      n.x = Math.max(66, Math.min(width - 66, n.x + n.vx));
+      n.y = Math.max(46, Math.min(height - 46, n.y + n.vy));
+    }
+  }
+
+  return nodes;
 }
 
 export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> = ({
@@ -92,7 +172,6 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
   // Anti-occlusion controls: drawer collapse state & fullscreen mode
   // In compact mode, default drawer to collapsed so it does not occlude graph
   const [isDrawerCollapsed, setIsDrawerCollapsed] = useState<boolean>(compact);
-  const [drawerMode, setDrawerMode] = useState<'docked' | 'floating'>('floating');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showHint, setShowHint] = useState(true);
 
@@ -102,6 +181,8 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
   const isPanningRef = useRef(false);
   const startPanPosRef = useRef({ x: 0, y: 0 });
   const draggedNodeRef = useRef<SimulatedNode | null>(null);
+  // 始终指向最新的 autoFitView，供布局收敛后的定时器调用
+  const autoFitViewRef = useRef<(() => void) | null>(null);
 
   // Dynamic canvas dimensions via ResizeObserver
   const [dimensions, setDimensions] = useState({ width: 800, height: 520 });
@@ -142,7 +223,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
     return () => {
       resizeObserver.disconnect();
     };
-  }, [isDrawerCollapsed, drawerMode, isFullscreen, compact]);
+  }, [isDrawerCollapsed, isFullscreen, compact]);
 
   // Build initial nodes & links scaled to current canvas dimensions
   const { initialNodes, initialLinks } = useMemo(() => {
@@ -151,11 +232,55 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
     const centerX = w / 2;
     const centerY = h / 2;
 
-    if (graphMode === 'ecological') {
-      // Ecological species network with patient's personalized taxa
-      const effectiveRadius = Math.min(w * 0.32, h * 0.36, 175);
+    // 横向分层播种：每个实体类别占一条横向层带。
+    // 相比环形/椭圆布局，分层能充分利用宽屏画布，节点与标签不会互相压盖。
+    const seedLayout = (items: Array<{ id: string; category: string }>) => {
+      const positions: Record<string, { x: number; y: number }> = {};
 
-      const nodes: SimulatedNode[] = effectiveTaxa.map((t, idx) => {
+      // 分层顺序（未列出的类别按原有顺序追加）
+      const cats = Array.from(new Set(items.map(i => i.category))).sort((a, b) => {
+        const ia = LAYER_ORDER.indexOf(a);
+        const ib = LAYER_ORDER.indexOf(b);
+        return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+      });
+
+      const padX = 74;
+      const padY = 56;
+      const usableW = Math.max(160, w - padX * 2);
+      const usableH = Math.max(160, h - padY * 2);
+
+      // 单行最多容纳的节点数：保证水平间距不低于 ~96px，避免标签互相压盖
+      const perRow = Math.max(3, Math.min(9, Math.floor(usableW / 96)));
+
+      const groups = cats.map(cat => items.filter(i => i.category === cat));
+      const rowsPerGroup = groups.map(g => Math.max(1, Math.ceil(g.length / perRow)));
+      const totalRows = rowsPerGroup.reduce((a, b) => a + b, 0) || 1;
+      const rowPitch = usableH / totalRows;
+
+      let rowCursor = 0;
+      groups.forEach((group, gi) => {
+        const rows = rowsPerGroup[gi];
+        const perRowBalanced = Math.ceil(group.length / rows);
+        for (let r = 0; r < rows; r++) {
+          const rowNodes = group.slice(r * perRowBalanced, (r + 1) * perRowBalanced);
+          const rowCenterY = padY + (rowCursor + r + 0.5) * rowPitch;
+          const step = usableW / Math.max(1, rowNodes.length);
+          rowNodes.forEach((item, k) => {
+            positions[item.id] = {
+              x: padX + (k + 0.5) * step,
+              y: rowCenterY,
+            };
+          });
+        }
+        rowCursor += rows;
+      });
+
+      return positions;
+    };
+
+    if (graphMode === 'ecological') {
+      // 菌群生态网络：患者个性化菌种按功能类别分扇区
+      const draft = effectiveTaxa.map(t => {
         let color = '#20cfff'; // beneficial
         let stroke = '#23e6b1';
         if (t.category === 'pathogen') {
@@ -169,23 +294,24 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
           stroke = '#397cff';
         }
 
-        const angle = (idx / effectiveTaxa.length) * Math.PI * 2;
-        const nodeRadius = effectiveRadius + (idx % 2 === 0 ? 25 : -25);
         return {
           id: t.id,
           name: t.chineseName.split(' ')[0],
           subName: t.name,
           category: t.category,
           type: 'microbe',
-          val: Math.max(16, Math.min(30, 14 + t.abundance * 1.5)),
+          val: Math.max(14, Math.min(22, 11 + t.abundance * 1.1)),
           color,
           strokeColor: stroke,
-          x: centerX + Math.cos(angle) * nodeRadius,
-          y: centerY + Math.sin(angle) * nodeRadius,
-          vx: 0,
-          vy: 0,
           raw: t
         };
+      });
+
+      const seed = seedLayout(draft);
+      const seeded: SimulatedNode[] = draft.map(n => {
+        const sx = seed[n.id]?.x ?? centerX;
+        const sy = seed[n.id]?.y ?? centerY;
+        return { ...n, x: sx, y: sy, seedX: sx, seedY: sy, vx: 0, vy: 0 };
       });
 
       const links: SimulatedLink[] = effectiveEcoLinks.map(l => ({
@@ -196,57 +322,56 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
         weight: l.weight
       }));
 
-      return { initialNodes: nodes, initialLinks: links };
-    } else {
-      // Multi-domain Knowledge Graph
-      const effectiveRadius = Math.min(w * 0.34, h * 0.38, 200);
-
-      const nodes: SimulatedNode[] = mockKnowledgeNodes.map((n, idx) => {
-        let color = '#20cfff';
-        let stroke = '#397cff';
-        if (n.type === 'disease') {
-          color = '#ff536c';
-          stroke = '#ffb84d';
-        } else if (n.type === 'metabolite') {
-          color = '#23e6b1';
-          stroke = '#20cfff';
-        } else if (n.type === 'immune') {
-          color = '#815cff';
-          stroke = '#b592ff';
-        } else if (n.type === 'therapy') {
-          color = '#397cff';
-          stroke = '#20cfff';
-        }
-
-        const angle = (idx / mockKnowledgeNodes.length) * Math.PI * 2;
-        const nodeRadius = effectiveRadius + (idx % 3) * 20 - 15;
-        return {
-          id: n.id,
-          name: n.name,
-          subName: n.categoryLabel,
-          category: n.type,
-          type: n.type,
-          val: n.val || 20,
-          color,
-          strokeColor: stroke,
-          x: centerX + Math.cos(angle) * nodeRadius,
-          y: centerY + Math.sin(angle) * nodeRadius,
-          vx: 0,
-          vy: 0,
-          raw: n
-        };
-      });
-
-      const links: SimulatedLink[] = mockKnowledgeLinks.map(l => ({
-        source: typeof l.source === 'string' ? l.source : l.source.id,
-        target: typeof l.target === 'string' ? l.target : l.target.id,
-        relation: l.relation,
-        type: l.effect,
-        weight: 0.8
-      }));
-
-      return { initialNodes: nodes, initialLinks: links };
+      return { initialNodes: relaxLayout(seeded, links, w, h), initialLinks: links };
     }
+
+    // Multi-domain Knowledge Graph
+    const draft = mockKnowledgeNodes.map(n => {
+      let color = '#20cfff';
+      let stroke = '#397cff';
+      if (n.type === 'disease') {
+        color = '#ff536c';
+        stroke = '#ffb84d';
+      } else if (n.type === 'metabolite') {
+        color = '#23e6b1';
+        stroke = '#20cfff';
+      } else if (n.type === 'immune') {
+        color = '#815cff';
+        stroke = '#b592ff';
+      } else if (n.type === 'therapy') {
+        color = '#397cff';
+        stroke = '#20cfff';
+      }
+
+      return {
+        id: n.id,
+        name: n.name,
+        subName: n.categoryLabel,
+        category: n.type,
+        type: n.type,
+        val: Math.max(14, Math.min(22, Math.round((n.val || 20) * 0.8))),
+        color,
+        strokeColor: stroke,
+        raw: n
+      };
+    });
+
+    const seed = seedLayout(draft);
+    const seeded: SimulatedNode[] = draft.map(n => {
+      const sx = seed[n.id]?.x ?? centerX;
+      const sy = seed[n.id]?.y ?? centerY;
+      return { ...n, x: sx, y: sy, seedX: sx, seedY: sy, vx: 0, vy: 0 };
+    });
+
+    const links: SimulatedLink[] = mockKnowledgeLinks.map(l => ({
+      source: typeof l.source === 'string' ? l.source : l.source.id,
+      target: typeof l.target === 'string' ? l.target : l.target.id,
+      relation: l.relation,
+      type: l.effect,
+      weight: 0.8
+    }));
+
+    return { initialNodes: relaxLayout(seeded, links, w, h), initialLinks: links };
   }, [graphMode, dimensions, effectiveTaxa, effectiveEcoLinks]);
 
   // Nodes state with dynamic force simulation
@@ -264,104 +389,13 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
     }
   }, [initialNodes, initialLinks, initialSelectedId, patient?.id, graphMode]);
 
-  // Spring & Repulsion physics simulation with boundary bounce
+  // 布局已在 useMemo 中同步求解完毕，这里只需在数据/尺寸切换后自动适配视野
   useEffect(() => {
-    let animId: number;
-    let iteration = 0;
-    const maxIterations = 160;
-
-    const runSimulationStep = () => {
-      if (iteration > maxIterations && !draggedNodeRef.current) return;
-      iteration++;
-
-      setNodes(prevNodes => {
-        const next = prevNodes.map(n => ({ ...n }));
-        const kCenter = 0.0022;
-        const centerX = dimensions.width / 2;
-        const centerY = dimensions.height / 2;
-
-        // 1. Center attraction
-        for (const n of next) {
-          if (n === draggedNodeRef.current) continue;
-          n.vx += (centerX - n.x) * kCenter;
-          n.vy += (centerY - n.y) * kCenter;
-        }
-
-        // 2. Node Repulsion (Coulomb)
-        for (let i = 0; i < next.length; i++) {
-          for (let j = i + 1; j < next.length; j++) {
-            const n1 = next[i];
-            const n2 = next[j];
-            const dx = n2.x - n1.x;
-            const dy = n2.y - n1.y;
-            const distSq = dx * dx + dy * dy || 1;
-            const dist = Math.sqrt(distSq);
-            const minDist = (n1.val + n2.val) * 3.2;
-
-            const repulseForce = Math.min(24, (minDist * minDist * 2.5) / distSq);
-            const fx = (dx / dist) * repulseForce;
-            const fy = (dy / dist) * repulseForce;
-
-            if (n1 !== draggedNodeRef.current) {
-              n1.vx -= fx;
-              n1.vy -= fy;
-            }
-            if (n2 !== draggedNodeRef.current) {
-              n2.vx += fx;
-              n2.vy += fy;
-            }
-          }
-        }
-
-        // 3. Link Spring Attraction (Hooke)
-        for (const link of links) {
-          const sourceNode = next.find(n => n.id === link.source);
-          const targetNode = next.find(n => n.id === link.target);
-          if (sourceNode && targetNode) {
-            const dx = targetNode.x - sourceNode.x;
-            const dy = targetNode.y - sourceNode.y;
-            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            const targetDist = 110;
-            const springForce = (dist - targetDist) * 0.026;
-
-            const fx = (dx / dist) * springForce;
-            const fy = (dy / dist) * springForce;
-
-            if (sourceNode !== draggedNodeRef.current) {
-              sourceNode.vx += fx;
-              sourceNode.vy += fy;
-            }
-            if (targetNode !== draggedNodeRef.current) {
-              targetNode.vx -= fx;
-              targetNode.vy -= fy;
-            }
-          }
-        }
-
-        // 4. Update coordinates with friction damping and safe padding
-        for (const n of next) {
-          if (n === draggedNodeRef.current) continue;
-          n.vx *= 0.74;
-          n.vy *= 0.74;
-          n.x += n.vx;
-          n.y += n.vy;
-
-          // Boundary clamp with safe margin (never hit edges)
-          const marginX = 55;
-          const marginY = 50;
-          n.x = Math.max(marginX, Math.min(dimensions.width - marginX, n.x));
-          n.y = Math.max(marginY, Math.min(dimensions.height - marginY, n.y));
-        }
-
-        return next;
-      });
-
-      animId = requestAnimationFrame(runSimulationStep);
-    };
-
-    animId = requestAnimationFrame(runSimulationStep);
-    return () => cancelAnimationFrame(animId);
-  }, [dimensions, links]);
+    const timer = window.setTimeout(() => {
+      autoFitViewRef.current?.();
+    }, 120);
+    return () => window.clearTimeout(timer);
+  }, [graphMode, patient?.id, dimensions.width, dimensions.height]);
 
   // Filtering
   const filteredNodes = useMemo(() => {
@@ -380,6 +414,15 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
 
   const filteredNodeIds = useMemo(() => new Set(filteredNodes.map(n => n.id)), [filteredNodes]);
 
+  // 各类别节点计数，供筛选按钮兼作图例
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const n of nodes) {
+      counts[n.category] = (counts[n.category] || 0) + 1;
+    }
+    return counts;
+  }, [nodes]);
+
   // Links to render
   const visibleLinks = useMemo(() => {
     return links.filter(l => filteredNodeIds.has(l.source) && filteredNodeIds.has(l.target));
@@ -390,18 +433,18 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
     if (nodes.length === 0) return;
     let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     for (const n of nodes) {
-      minX = Math.min(minX, n.x - n.val - 35);
-      maxX = Math.max(maxX, n.x + n.val + 35);
-      minY = Math.min(minY, n.y - n.val - 45);
-      maxY = Math.max(maxY, n.y + n.val + 45);
+      minX = Math.min(minX, n.x - n.val - 40);
+      maxX = Math.max(maxX, n.x + n.val + 40);
+      minY = Math.min(minY, n.y - n.val - 30);
+      maxY = Math.max(maxY, n.y + n.val + 34);
     }
 
     const graphWidth = maxX - minX || 1;
     const graphHeight = maxY - minY || 1;
-    const padding = 70;
+    const padding = 66;
     const scaleX = (dimensions.width - padding) / graphWidth;
     const scaleY = (dimensions.height - padding) / graphHeight;
-    const optimalScale = Math.min(1.35, Math.max(0.65, Math.min(scaleX, scaleY)));
+    const optimalScale = Math.min(1.15, Math.max(0.7, Math.min(scaleX, scaleY)));
 
     const graphCenterX = (minX + maxX) / 2;
     const graphCenterY = (minY + maxY) / 2;
@@ -411,6 +454,8 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
     setZoomLevel(optimalScale);
     setPanOffset({ x: targetPanX, y: targetPanY });
   }, [nodes, dimensions]);
+
+  autoFitViewRef.current = autoFitView;
 
   // Dragging interaction
   const handleNodeMouseDown = (e: React.MouseEvent, node: SimulatedNode) => {
@@ -457,12 +502,6 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
     setZoomLevel(1);
     setPanOffset({ x: 0, y: 0 });
   };
-
-  // Active node (selected or hovered) for top-layer rendering (eliminates occlusion!)
-  const activeNode = useMemo(() => {
-    if (!selectedNode) return null;
-    return nodes.find(n => n.id === selectedNode.id) || selectedNode;
-  }, [nodes, selectedNode]);
 
   // Connected node IDs for highlighting
   const connectedNodeIds = useMemo(() => {
@@ -672,47 +711,52 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                   selectedFilter === 'all' ? 'bg-[#20cfff]/20 text-[#20cfff] border border-[#20cfff]/40' : 'text-[#8996b8] hover:text-[#eef4ff]'
                 }`}
               >
-                全节点
+                全节点 {nodes.length}
               </button>
               <button
                 onClick={() => setSelectedFilter('disease')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium text-[#ff536c] hover:bg-[#ff536c]/10 ${
+                className={`px-2 py-0.5 rounded text-[11px] font-medium text-[#ff536c] hover:bg-[#ff536c]/10 flex items-center gap-1 ${
                   selectedFilter === 'disease' ? 'bg-[#ff536c]/20 border border-[#ff536c]/40' : ''
                 }`}
               >
-                疾病表型
+                <span className="w-1.5 h-1.5 rounded-full bg-[#ff536c]"></span>
+                疾病表型 {categoryCounts['disease'] || 0}
               </button>
               <button
                 onClick={() => setSelectedFilter('microbe')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium text-[#20cfff] hover:bg-[#20cfff]/10 ${
+                className={`px-2 py-0.5 rounded text-[11px] font-medium text-[#20cfff] hover:bg-[#20cfff]/10 flex items-center gap-1 ${
                   selectedFilter === 'microbe' ? 'bg-[#20cfff]/20 border border-[#20cfff]/40' : ''
                 }`}
               >
-                菌群靶点
+                <span className="w-1.5 h-1.5 rounded-full bg-[#20cfff]"></span>
+                菌群靶点 {categoryCounts['microbe'] || 0}
               </button>
               <button
                 onClick={() => setSelectedFilter('metabolite')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium text-[#23e6b1] hover:bg-[#23e6b1]/10 ${
+                className={`px-2 py-0.5 rounded text-[11px] font-medium text-[#23e6b1] hover:bg-[#23e6b1]/10 flex items-center gap-1 ${
                   selectedFilter === 'metabolite' ? 'bg-[#23e6b1]/20 border border-[#23e6b1]/40' : ''
                 }`}
               >
-                代谢通路
+                <span className="w-1.5 h-1.5 rounded-full bg-[#23e6b1]"></span>
+                代谢通路 {categoryCounts['metabolite'] || 0}
               </button>
               <button
                 onClick={() => setSelectedFilter('immune')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium text-[#815cff] hover:bg-[#815cff]/10 ${
+                className={`px-2 py-0.5 rounded text-[11px] font-medium text-[#815cff] hover:bg-[#815cff]/10 flex items-center gap-1 ${
                   selectedFilter === 'immune' ? 'bg-[#815cff]/20 border border-[#815cff]/40' : ''
                 }`}
               >
-                免疫受体
+                <span className="w-1.5 h-1.5 rounded-full bg-[#815cff]"></span>
+                免疫受体 {categoryCounts['immune'] || 0}
               </button>
               <button
                 onClick={() => setSelectedFilter('therapy')}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium text-[#397cff] hover:bg-[#397cff]/10 ${
+                className={`px-2 py-0.5 rounded text-[11px] font-medium text-[#397cff] hover:bg-[#397cff]/10 flex items-center gap-1 ${
                   selectedFilter === 'therapy' ? 'bg-[#397cff]/20 border border-[#397cff]/40' : ''
                 }`}
               >
-                FMT方案
+                <span className="w-1.5 h-1.5 rounded-full bg-[#397cff]"></span>
+                FMT方案 {categoryCounts['therapy'] || 0}
               </button>
             </>
           )}
@@ -860,7 +904,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                 })}
               </g>
 
-              {/* 3. Base Nodes Layer */}
+              {/* 3. 节点层：单次绘制。选中节点不再额外叠一层，避免出现“双层光圈” */}
               <g className="nodes-group">
                 {filteredNodes.map(node => {
                   const isSelected = selectedNode?.id === node.id;
@@ -871,7 +915,10 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                      (node.subName && node.subName.toLowerCase().includes(searchQuery.toLowerCase())));
 
                   // Dim non-connected nodes when a node is selected
-                  const nodeOpacity = (selectedNode && !isConnected && !isMatchSearch) ? 0.35 : 1.0;
+                  const nodeOpacity = (selectedNode && !isConnected && !isMatchSearch) ? 0.3 : 1.0;
+                  // 标签降噪：仅选中/悬停/邻接/命中搜索时展示副标签，避免全图文字互相压盖
+                  const showSubLabel = isSelected || isHovered || isConnected || isMatchSearch;
+                  const isHighlighted = isSelected || isMatchSearch;
 
                   return (
                     <g
@@ -884,14 +931,14 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                       onMouseEnter={() => setHoveredNodeId(node.id)}
                       onMouseLeave={() => setHoveredNodeId(null)}
                     >
-                      {/* Pulse halo for selected or search matched - stable glowing ring, no dizzy spinning */}
-                      {(isSelected || isMatchSearch) && (
+                      {/* 选中/命中搜索：单层静态高亮环（不自转、不重复叠加） */}
+                      {isHighlighted && (
                         <circle
-                          r={node.val + 13}
+                          r={node.val + 12}
                           fill="none"
                           stroke={node.color}
                           strokeWidth="2.5"
-                          opacity="0.9"
+                          opacity="0.92"
                           style={{
                             filter: `drop-shadow(0 0 8px ${node.color})`
                           }}
@@ -902,7 +949,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                       <circle
                         r={node.val + 6}
                         fill={node.color}
-                        opacity={isSelected ? 0.4 : isHovered ? 0.25 : 0.12}
+                        opacity={isSelected ? 0.42 : isHovered ? 0.26 : 0.12}
                       />
 
                       {/* Main Node Body */}
@@ -910,21 +957,21 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                         r={node.val}
                         fill="#0c1836"
                         stroke={node.color}
-                        strokeWidth={isSelected ? 3 : isHovered ? 2.5 : 1.8}
+                        strokeWidth={isSelected ? 3.4 : isHovered ? 2.6 : 1.8}
                       />
 
                       {/* Inner Core */}
                       <circle
                         r={Math.max(4, node.val * 0.42)}
                         fill={node.color}
-                        opacity={isSelected ? 1.0 : 0.75}
+                        opacity={isSelected ? 1.0 : 0.78}
                       />
 
                       {/* Node Primary Label with Anti-Occlusion Text Halo */}
                       <text
-                        y={node.val + 14}
+                        y={node.val + 15}
                         fill="#eef4ff"
-                        fontSize="11"
+                        fontSize={isSelected ? '11.5' : '10.5'}
                         fontWeight={isSelected ? 'bold' : '500'}
                         textAnchor="middle"
                         className="pointer-events-none select-none font-sans"
@@ -939,11 +986,12 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                       </text>
 
                       {/* Node Secondary Latin / Subtype Tag with Text Halo */}
-                      {node.subName && (
+                      {node.subName && showSubLabel && (
                         <text
-                          y={node.val + 26}
-                          fill="#8fa0c7"
+                          y={node.val + 27}
+                          fill={isSelected ? '#20cfff' : '#8fa0c7'}
                           fontSize="9.5"
+                          fontWeight={isSelected ? 'bold' : 'normal'}
                           textAnchor="middle"
                           className="pointer-events-none select-none font-mono"
                           style={{
@@ -960,72 +1008,6 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                   );
                 })}
               </g>
-
-              {/* 4. Top Active Overlay Layer: Re-render the active node on the absolute topmost layer so it is NEVER occluded! */}
-              {activeNode && (
-                <g 
-                  className="active-node-top-layer pointer-events-none"
-                  transform={`translate(${activeNode.x}, ${activeNode.y})`}
-                >
-                  <circle
-                    r={activeNode.val + 15}
-                    fill="none"
-                    stroke={activeNode.color}
-                    strokeWidth="2.5"
-                    opacity="0.95"
-                    style={{
-                      filter: `drop-shadow(0 0 10px ${activeNode.color})`
-                    }}
-                  />
-                  <circle
-                    r={activeNode.val + 7}
-                    fill={activeNode.color}
-                    opacity="0.38"
-                  />
-                  <circle
-                    r={activeNode.val}
-                    fill="#0d1b3e"
-                    stroke={activeNode.color}
-                    strokeWidth="3.2"
-                  />
-                  <circle
-                    r={Math.max(5, activeNode.val * 0.45)}
-                    fill={activeNode.color}
-                  />
-                  <text
-                    y={activeNode.val + 14}
-                    fill="#ffffff"
-                    fontSize="11.5"
-                    fontWeight="bold"
-                    textAnchor="middle"
-                    style={{
-                      paintOrder: 'stroke fill',
-                      stroke: '#081024',
-                      strokeWidth: '4.5px',
-                      strokeLinejoin: 'round'
-                    }}
-                  >
-                    {activeNode.name}
-                  </text>
-                  {activeNode.subName && (
-                    <text
-                      y={activeNode.val + 27}
-                      fill="#20cfff"
-                      fontSize="9.5"
-                      fontWeight="bold"
-                      textAnchor="middle"
-                      style={{
-                        paintOrder: 'stroke fill',
-                        stroke: '#081024',
-                        strokeWidth: '3.5px',
-                        strokeLinejoin: 'round'
-                      }}
-                    >
-                      {activeNode.subName.length > 22 ? activeNode.subName.slice(0, 20) + '..' : activeNode.subName}
-                    </text>
-                  )}
-                </g>
-              )}
             </g>
           </svg>
         </div>
@@ -1034,7 +1016,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
           {showHint && (
             <div className="absolute bottom-3 left-3 pointer-events-auto text-[11px] text-[#8996b8] flex items-center gap-1.5 bg-[#091127]/90 px-2.5 py-1.5 rounded-lg border border-[#2b4170]/60 backdrop-blur-md shadow-lg z-10">
               <Info className="w-3.5 h-3.5 text-[#20cfff] shrink-0" /> 
-              <span>点击节点查看生物学机制，拖拽节点可改变拓扑，滚轮缩放</span>
+              <span>点击节点查看生物学机制并高亮邻接网络，拖拽节点可改变拓扑，滚轮缩放</span>
               <button 
                 onClick={() => setShowHint(false)} 
                 className="ml-1 text-[#8996b8] hover:text-[#eef4ff] p-0.5 rounded"

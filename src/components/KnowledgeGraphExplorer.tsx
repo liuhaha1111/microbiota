@@ -3,13 +3,9 @@ import {
   Network, 
   Sparkles, 
   Dna, 
-  Layers, 
   Info, 
-  Search, 
-  ExternalLink, 
   BookOpen, 
-  Activity,
-  Maximize2
+  Activity
 } from 'lucide-react';
 import { ClinicalPatient } from '../types';
 import { MicrobiomeKnowledgeGraph } from './MicrobiomeKnowledgeGraph';
@@ -69,7 +65,7 @@ export const KnowledgeGraphExplorer: React.FC<KnowledgeGraphExplorerProps> = ({ 
           <MicrobiomeKnowledgeGraph 
             mode="multidomain" 
             patient={patient}
-            className="h-[620px] min-h-[560px]"
+            className="h-[720px] min-h-[640px]"
           />
 
           {/* Clinical Scientific Reference Cards */}
@@ -115,10 +111,10 @@ export const KnowledgeGraphExplorer: React.FC<KnowledgeGraphExplorerProps> = ({ 
           <div className="p-4 rounded-xl bg-[#101a33] border border-[#2b4170]/60 text-xs">
             <h4 className="font-semibold text-[#eef4ff] mb-2 flex items-center gap-1.5">
               <Info className="w-4 h-4 text-[#20cfff]" />
-              Gut Microbiome Digital Twin 大肠解剖多段高精发光孪生架构
+              Gut Microbiome Digital Twin 大肠解剖多段高精度孪生架构
             </h4>
             <p className="text-[#8996b8] leading-relaxed">
-              三维大肠解剖模型严格还原 8 大解剖分区（盲肠、阑尾、升结肠、横结肠、降结肠、乙状结肠、直肠与肛管），各段具备真实的结肠袋（Haustra）肌层纹理与特征色彩。支持 3D 直接点击与交互式巡检，被选中的解剖部位将触发高亮度霓虹发光晕轮（Luminous Glow），非选中部位智能柔光弱化，并实时联动微生态代谢与受体病灶浸润信息。
+              三维大肠解剖模型严格还原 8 大解剖分区（盲肠、阑尾、升结肠、横结肠、降结肠、乙状结肠、直肠与肛管），各段具备真实的结肠袋（Haustra）肌层纹理与特征色彩。默认以半透明「解剖透视」呈现整体轮廓，点击底部解剖标签或直接在模型上点击，对应部位即被实体着色，其余部位保持透明，便于聚焦观察；右上角可随时切换回彩色实体全貌。着色为静态实体填充，不含脉冲光晕，避免高亮层遮挡解剖结构。
             </p>
           </div>
         </div>

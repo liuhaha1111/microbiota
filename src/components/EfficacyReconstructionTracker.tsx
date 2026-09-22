@@ -1,20 +1,13 @@
 import React, { useState } from 'react';
 import { 
   LineChart, 
-  Clock, 
   Sparkles, 
   TrendingDown, 
   TrendingUp, 
-  Activity, 
   CheckCircle2, 
-  AlertTriangle, 
-  ShieldCheck, 
   BarChart3, 
   Layers, 
-  ArrowRight,
-  Info,
-  Calendar,
-  RotateCcw
+  ArrowRight
 } from 'lucide-react';
 import { ClinicalPatient, LongitudinalTrackPoint } from '../types';
 import { getPatientDataPackage } from '../data/mockMicroFmtData';
@@ -34,6 +27,7 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
   // Set default stage according to patient currentPhase
   const getDefaultStage = () => {
     if (patient.currentPhase === '评估期待') return 0;
+    if (patient.currentPhase === '菌群检测完成') return 1;
     if (patient.currentPhase === '供体已匹配') return 1;
     if (patient.currentPhase === '移植执行期') return 2;
     return Math.min(3, points.length - 1);
@@ -47,6 +41,38 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
 
   const activePoint: LongitudinalTrackPoint = points[selectedStageIndex] || points[0];
   const baselinePoint: LongitudinalTrackPoint = points[0];
+
+  // 临床应答状态由当前所选时序点推导，避免徽章写死后与 Mayo 评分自相矛盾
+  const clinicalResponse = (() => {
+    const mayo = activePoint.mayoScore;
+    if (mayo <= 1) return { label: '深度临床缓解', tone: 'ok' as const };
+    if (mayo <= 2) return { label: '临床缓解', tone: 'ok' as const };
+    if (mayo <= 5) return { label: '部分应答改善', tone: 'warn' as const };
+    return { label: '活动期 / 未缓解', tone: 'bad' as const };
+  })();
+
+  const isSteadyState = clinicalResponse.tone === 'ok' && activePoint.donorEngraftmentRate >= 60;
+
+  // 对比条四段全部取自实测字段，并按当期四项之和归一化。
+  // 只表达"当期四项应答信号之间的相对构成"，不是门/属真实丰度——
+  // 原实现用 `40 - idx * 3` 这类按下标编造的数值，与数据无关。
+  const stageRows = points.map((pt) => {
+    const beneficial = Math.max(0, pt.dominantBeneficialRatio);
+    const engraftment = Math.max(0, pt.donorEngraftmentRate);
+    const relief = Math.max(0, pt.symptomReliefPercentage);
+    const inflammation = Math.min(100, (pt.fecalCalprotectin / 700) * 100);
+    const sum = beneficial + engraftment + relief + inflammation || 1;
+    return {
+      pt,
+      raw: { beneficial, engraftment, relief, inflammation },
+      share: {
+        beneficial: (beneficial / sum) * 100,
+        engraftment: (engraftment / sum) * 100,
+        relief: (relief / sum) * 100,
+        inflammation: (inflammation / sum) * 100,
+      }
+    };
+  });
 
   return (
     <div id="efficacy-reconstruction-tracker" className="space-y-4">
@@ -64,9 +90,25 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
           </div>
 
           <div className="flex items-center gap-2 text-xs">
-            <span className="px-2.5 py-1 rounded-md bg-[#23e6b1]/15 text-[#23e6b1] border border-[#23e6b1]/30 font-semibold flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> 临床深度缓解态
+            {/* 徽章随所选时序点变化：选中「治疗前基线」时不应再显示"深度缓解" */}
+            <span className={`px-2.5 py-1 rounded-md border font-semibold flex items-center gap-1 ${
+              clinicalResponse.tone === 'ok'
+                ? 'bg-[#23e6b1]/15 text-[#23e6b1] border-[#23e6b1]/30'
+                : clinicalResponse.tone === 'warn'
+                ? 'bg-[#ffb84d]/15 text-[#ffb84d] border-[#ffb84d]/30'
+                : 'bg-[#ff536c]/15 text-[#ff536c] border-[#ff536c]/30'
+            }`}>
+              <CheckCircle2 className="w-3.5 h-3.5" /> {clinicalResponse.label}
             </span>
+            <span className="text-[10px] text-[#8996b8] font-mono">
+              Mayo {activePoint.mayoScore} 分 · {activePoint.label}
+            </span>
+            <button
+              onClick={() => onNavigateTab('patient_center')}
+              className="px-2.5 py-1 rounded-md bg-[#101a33] border border-[#2b4170]/60 text-[#20cfff] hover:bg-[#152347] transition-all flex items-center gap-1 font-semibold"
+            >
+              返回患者画像 <ArrowRight className="w-3 h-3" />
+            </button>
           </div>
         </div>
 
@@ -206,49 +248,49 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
             <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#1e2f57]">
               <h3 className="font-semibold text-[#eef4ff] flex items-center gap-1.5">
                 <BarChart3 className="w-3.5 h-3.5 text-[#20cfff]" />
-                门/属水平菌群重构演替与对比
+                菌群重构演替与临床应答指标对比
               </h3>
-              <span className="text-[10px] text-[#8996b8]">全阶段宏基因组相对丰度变化</span>
+              <span className="text-[10px] text-[#8996b8]">四段为实测值相对构成（按当期归一化）</span>
             </div>
 
-            {/* Visual comparative bar representing phylum shifts */}
+            {/* Visual comparative bar: 四段全部取自实测字段，不再按下标编造 */}
             <div className="space-y-3">
-              {points.map((pt, idx) => (
+              {stageRows.map(({ pt, raw, share }, idx) => (
                 <div key={idx} className="space-y-1">
                   <div className="flex justify-between items-center text-[11px] text-[#8996b8]">
                     <span className={`font-medium ${idx === selectedStageIndex ? 'text-[#20cfff] font-bold' : 'text-[#eef4ff]'}`}>
                       {pt.label}
                     </span>
                     <span className="font-mono text-[10px]">
-                      有益菌: {pt.dominantBeneficialRatio}% | 钙卫蛋白: {pt.fecalCalprotectin} μg/g
+                      有益菌 {raw.beneficial}% · 定植 {raw.engraftment}% · 缓解 {raw.relief}% · FC {pt.fecalCalprotectin} μg/g
                     </span>
                   </div>
 
                   {/* Multi-segment stacked bar */}
                   <div className="w-full h-3 rounded bg-[#0c1429] flex overflow-hidden border border-[#1e2f57]/50">
-                    {/* Firmicutes / Beneficial (Cyan) */}
+                    {/* 有益菌占比 */}
                     <div 
                       className="h-full bg-[#20cfff] transition-all"
-                      style={{ width: `${pt.dominantBeneficialRatio * 0.7}%` }}
-                      title={`厚壁菌门 (产丁酸): ${(pt.dominantBeneficialRatio * 0.7).toFixed(1)}%`}
+                      style={{ width: `${share.beneficial}%` }}
+                      title={`有益菌占比: ${raw.beneficial}%`}
                     />
-                    {/* Bacteroidetes (Purple) */}
+                    {/* 供体菌定植率 */}
                     <div 
-                      className="h-full bg-[#815cff] transition-all"
-                      style={{ width: `${Math.max(15, 40 - idx * 3)}%` }}
-                      title="拟杆菌门"
+                      className="h-full bg-[#397cff] transition-all"
+                      style={{ width: `${share.engraftment}%` }}
+                      title={`供体菌定植率: ${raw.engraftment}%`}
                     />
-                    {/* Actinobacteria / Bifido (Green) */}
+                    {/* 症状缓解率 */}
                     <div 
                       className="h-full bg-[#23e6b1] transition-all"
-                      style={{ width: `${10 + idx * 3}%` }}
-                      title="双歧杆菌等"
+                      style={{ width: `${share.relief}%` }}
+                      title={`症状缓解率: ${raw.relief}%`}
                     />
-                    {/* Proteobacteria / Pathogen (Red) */}
+                    {/* 炎症负荷 (FC 归一化) */}
                     <div 
                       className="h-full bg-[#ff536c] transition-all"
-                      style={{ width: `${Math.max(3, 42 - idx * 7)}%` }}
-                      title={`变形菌门 (致病/炎症): ${Math.max(3, 42 - idx * 7)}%`}
+                      style={{ width: `${share.inflammation}%` }}
+                      title={`炎症负荷: FC ${pt.fecalCalprotectin} μg/g（按 700 μg/g 归一化 = ${raw.inflammation.toFixed(1)}%）`}
                     />
                   </div>
                 </div>
@@ -258,16 +300,16 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
             {/* Legend */}
             <div className="mt-4 pt-2.5 border-t border-[#1e2f57] flex flex-wrap items-center justify-between gap-2 text-[10px] text-[#8996b8]">
               <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-[#20cfff]"></span> 厚壁菌门 (普氏菌/AKK)
+                <span className="w-2.5 h-2.5 rounded bg-[#20cfff]"></span> 有益菌占比
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-[#815cff]"></span> 拟杆菌门
+                <span className="w-2.5 h-2.5 rounded bg-[#397cff]"></span> 供体菌定植率
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-[#23e6b1]"></span> 放线菌门 (双歧杆菌)
+                <span className="w-2.5 h-2.5 rounded bg-[#23e6b1]"></span> 症状缓解率
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-[#ff536c]"></span> 变形菌门 (大肠埃希菌等)
+                <span className="w-2.5 h-2.5 rounded bg-[#ff536c]"></span> 炎症负荷 (FC 归一化)
               </span>
             </div>
           </div>
@@ -316,8 +358,10 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
                 <Sparkles className="w-4 h-4 text-[#20cfff]" />
                 <h3 className="font-bold text-[#eef4ff] text-sm">临床再决策引擎 (Re-Decision)</h3>
               </div>
-              <span className="px-2 py-0.5 rounded bg-[#23e6b1]/20 text-[#23e6b1] font-bold text-[10px]">
-                稳态达标
+              <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${
+                isSteadyState ? 'bg-[#23e6b1]/20 text-[#23e6b1]' : 'bg-[#ffb84d]/20 text-[#ffb84d]'
+              }`}>
+                {isSteadyState ? '稳态达标' : '仍在疗程内'}
               </span>
             </div>
 
@@ -327,17 +371,29 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
 
             {/* Decision Pathways */}
             <div className="space-y-2">
-              {/* Option 1: Continue Maintenance Follow-up (Selected) */}
-              <div className="p-3 rounded-lg bg-[#0c1e38] border border-[#20cfff] shadow-[0_0_12px_rgba(32,207,255,0.2)]">
-                <div className="flex items-center justify-between font-bold text-xs text-[#20cfff] mb-1">
+              {/* Option 1: Continue Maintenance Follow-up — 仅在达到稳态时才作为推荐项高亮 */}
+              <div className={`p-3 rounded-lg border ${
+                isSteadyState
+                  ? 'bg-[#0c1e38] border-[#20cfff] shadow-[0_0_12px_rgba(32,207,255,0.2)]'
+                  : 'bg-[#0c1429] border-[#2b4170]/40'
+              }`}>
+                <div className={`flex items-center justify-between font-bold text-xs mb-1 ${
+                  isSteadyState ? 'text-[#20cfff]' : 'text-[#8996b8]'
+                }`}>
                   <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-[#23e6b1]" />
+                    <CheckCircle2 className={`w-4 h-4 ${isSteadyState ? 'text-[#23e6b1]' : 'text-[#8996b8]'}`} />
                     决策建议 A：维持定期随访与益生元巩固
                   </span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#20cfff]/20 text-[#20cfff]">推荐</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded ${
+                    isSteadyState ? 'bg-[#20cfff]/20 text-[#20cfff]' : 'bg-[#152347] text-[#8996b8]'
+                  }`}>
+                    {isSteadyState ? '推荐' : '待达标后启用'}
+                  </span>
                 </div>
-                <p className="text-[#eef4ff] text-[11px] leading-relaxed">
-                  患者 {patient.name} 当前所选时段 ({activePoint.label})，定植率达到 {activePoint.donorEngraftmentRate}%，FC 为 {activePoint.fecalCalprotectin} μg/g (基线 {baselinePoint.fecalCalprotectin} μg/g)，多样性指数提升至 {activePoint.shannonDiversity.toFixed(2)}。建议结合供体菌群特征维持口服高纤维营养定植方案与定期随访。
+                <p className={`text-[11px] leading-relaxed ${isSteadyState ? 'text-[#eef4ff]' : 'text-[#8996b8]'}`}>
+                  患者 {patient.name} 当前所选时段 ({activePoint.label})，定植率达到 {activePoint.donorEngraftmentRate}%，FC 为 {activePoint.fecalCalprotectin} μg/g (基线 {baselinePoint.fecalCalprotectin} μg/g)，多样性指数 {activePoint.shannonDiversity.toFixed(2)}，Mayo {activePoint.mayoScore} 分。{isSteadyState
+                    ? '建议结合供体菌群特征维持口服高纤维营养定植方案与定期随访。'
+                    : '尚未达到稳态标准（需 Mayo ≤ 2 且定植率 ≥ 60%），建议继续当前疗程并按计划复评。'}
                 </p>
               </div>
 

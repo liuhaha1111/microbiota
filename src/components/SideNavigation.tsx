@@ -5,10 +5,7 @@ import {
   GitMerge, 
   LineChart, 
   Network, 
-  ShieldCheck, 
-  Database, 
-  Sparkles,
-  Info
+  Database
 } from 'lucide-react';
 import { ModuleTab } from '../types';
 

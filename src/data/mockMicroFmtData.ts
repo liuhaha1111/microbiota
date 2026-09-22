@@ -442,6 +442,60 @@ export const mockDonors: DonorProfile[] = [
     totalDonations: 9,
     clinicalSuccessRate: 76.5,
     idealIndications: ['代谢综合征队列', '单纯性抗生素腹泻']
+  },
+  {
+    id: 'don-0117',
+    code: 'D-0117',
+    age: 29,
+    gender: '男',
+    bmi: 23.1,
+    rating: 'A+',
+    donorType: '超级供体(Super Donor)',
+    screeningStatus: '合格(有效期待定)',
+    lastScreenedDate: '2026-09-01 (有效期至 2026-12-01)',
+    shannonDiversity: 5.02,
+    dominantTaxa: ['Faecalibacterium prausnitzii (11.2%)', 'Akkermansia muciniphila (5.8%)', 'Roseburia intestinalis (6.4%)', 'Eubacterium hallii (3.9%)'],
+    pathogenTest: '全部阴性 (0/38项)',
+    amrGeneRisk: '极低(无高危耐药基因)',
+    totalDonations: 31,
+    clinicalSuccessRate: 89.4,
+    idealIndications: ['复发性艰难梭菌感染', '贮袋炎', '肠脑轴相关队列']
+  },
+  {
+    id: 'don-0241',
+    code: 'D-0241',
+    age: 22,
+    gender: '女',
+    bmi: 19.6,
+    rating: 'A',
+    donorType: '健康志愿者',
+    screeningStatus: '合格(有效期待定)',
+    lastScreenedDate: '2026-08-26 (有效期至 2026-11-26)',
+    shannonDiversity: 4.92,
+    dominantTaxa: ['Bifidobacterium longum (9.4%)', 'Faecalibacterium (8.7%)', 'Lactobacillus rhamnosus (3.6%)'],
+    pathogenTest: '全部阴性 (0/38项)',
+    amrGeneRisk: '极低(无高危耐药基因)',
+    totalDonations: 12,
+    clinicalSuccessRate: 86.7,
+    idealIndications: ['肠易激综合征 (IBS-D)', '轻中度溃疡性结肠炎', '抗生素相关性腹泻']
+  },
+  {
+    id: 'don-0156',
+    code: 'D-0156',
+    age: 35,
+    gender: '男',
+    bmi: 24.2,
+    rating: 'B',
+    donorType: '亲属供体',
+    screeningStatus: '临近过期',
+    lastScreenedDate: '2026-06-18 (需在 2026-10-18 前复筛)',
+    shannonDiversity: 4.28,
+    dominantTaxa: ['Bacteroides vulgatus (12.1%)', 'Parabacteroides distasonis (7.3%)'],
+    pathogenTest: '全部阴性 (0/38项)',
+    amrGeneRisk: '低',
+    totalDonations: 6,
+    clinicalSuccessRate: 74.2,
+    idealIndications: ['代谢综合征队列', '单纯性功能性便秘']
   }
 ];
 
@@ -482,6 +536,67 @@ export const mockBatches: MicrobiotaBatch[] = [
     qualityGrade: '优级',
     status: '已释放(可使用)',
     viableCellCount: '1.8 × 10¹¹ CFU/g (活菌率 84.1%)'
+  },
+  {
+    batchNumber: 'FMT-2026-0902-B1',
+    donorCode: 'D-0117',
+    sampleDate: '2026-09-02',
+    prepDate: '2026-09-02 09:40',
+    storageTemp: '-80°C (智能液氮梯度冷冻)',
+    location: '上海精准菌库 A区-03架-05层',
+    expiryDate: '2027-03-02',
+    qualityGrade: '特级 (临床级)',
+    status: '已释放(可使用)',
+    viableCellCount: '2.6 × 10¹¹ CFU/g (活菌率 90.1%)'
+  },
+  {
+    batchNumber: 'FMT-2026-0906-A2',
+    donorCode: 'D-0117',
+    sampleDate: '2026-09-06',
+    prepDate: '2026-09-06 15:20',
+    storageTemp: '-80°C (智能液氮梯度冷冻)',
+    location: '上海精准菌库 A区-03架-09层',
+    expiryDate: '2027-03-06',
+    qualityGrade: '特级 (临床级)',
+    status: '检测中',
+    viableCellCount: '2.2 × 10¹¹ CFU/g (活菌率 88.9%)'
+  },
+  {
+    batchNumber: 'FMT-2026-0822-D1',
+    donorCode: 'D-0241',
+    sampleDate: '2026-08-22',
+    prepDate: '2026-08-22 10:05',
+    storageTemp: '-80°C',
+    location: '上海精准菌库 B区-02架-03层',
+    expiryDate: '2027-02-22',
+    qualityGrade: '优级',
+    status: '已释放(可使用)',
+    viableCellCount: '1.9 × 10¹¹ CFU/g (活菌率 85.6%)'
+  },
+  {
+    batchNumber: 'FMT-2026-0805-A3',
+    donorCode: 'D-0102',
+    sampleDate: '2026-08-05',
+    prepDate: '2026-08-05 13:10',
+    storageTemp: '-80°C (智能液氮梯度冷冻)',
+    location: '上海精准菌库 A区-02架-04层',
+    expiryDate: '2027-02-05',
+    qualityGrade: '特级 (临床级)',
+    status: '已使用',
+    usedInPatient: 'P-2026-0719',
+    viableCellCount: '2.3 × 10¹¹ CFU/g (活菌率 88.0%)'
+  },
+  {
+    batchNumber: 'FMT-2026-0711-E4',
+    donorCode: 'D-0156',
+    sampleDate: '2026-07-11',
+    prepDate: '2026-07-11 17:45',
+    storageTemp: '-80°C',
+    location: '上海精准菌库 C区-01架-11层',
+    expiryDate: '2027-01-11',
+    qualityGrade: '优级',
+    status: '已临期',
+    viableCellCount: '1.4 × 10¹¹ CFU/g (活菌率 79.3%)'
   }
 ];
 
@@ -660,7 +775,39 @@ export const mockKnowledgeNodes: KnowledgeNode[] = [
   { id: 'the-fmt', name: '精准菌群移植 (MicroFMT)', type: 'therapy', categoryLabel: '微生态干预手段', description: '将健康供体功能性菌群整体移植入患者肠道，实现生态位重构与免疫重置。', val: 28 },
   { id: 'the-superdonor', name: '超级供体 D-0102 配型', type: 'therapy', categoryLabel: '临床级菌源制剂', description: '具备超高Shannon多样性(5.12)、富含AKK与普氏菌的高活菌级微囊化制剂。', val: 24 },
   { id: 'the-colonoscopy', name: '肠镜直视下全结肠喷洒', type: 'therapy', categoryLabel: '内镜靶向给药', description: '经肠镜通道在回盲部及深部病灶溃疡面分段微滴布点喷洒，确保高密度原位接种。', val: 20 },
-  { id: 'the-diet', name: '益生元与抗性淀粉辅助', type: 'therapy', categoryLabel: '靶向营养干预', description: '为移植菌株定植提供特异性碳源营养基底，加速丁酸与多糖合成。', val: 18 }
+  { id: 'the-diet', name: '益生元与抗性淀粉辅助', type: 'therapy', categoryLabel: '靶向营养干预', description: '为移植菌株定植提供特异性碳源营养基底，加速丁酸与多糖合成。', val: 18 },
+
+  // === 扩展节点：适应症外延 ===
+  { id: 'dis-aad', name: '抗生素相关性腹泻 (AAD)', type: 'disease', categoryLabel: '抗生素扰动综合征', description: '广谱抗生素压制共生菌后定植抗力骤降，条件致病菌乘虚扩增导致的腹泻综合征。', val: 20 },
+  { id: 'dis-asd', name: '孤独症谱系障碍 (ASD)', type: 'disease', categoryLabel: '肠-脑轴神经发育', description: '菌群代谢产物经迷走神经与循环系统影响中枢神经递质合成，与社交行为表型相关。', val: 20 },
+  { id: 'dis-metabolic', name: '代谢综合征与肥胖', type: 'disease', categoryLabel: '宿主代谢紊乱', description: '菌群发酵效率与胆汁酸池改变共同影响能量 harvest 与胰岛素敏感性。', val: 20 },
+  { id: 'dis-gvhd', name: '肠道急性 GVHD', type: 'disease', categoryLabel: '移植后免疫并发症', description: '异基因造血干细胞移植后供者T细胞攻击肠上皮，菌群紊乱是重要放大因素。', val: 19 },
+
+  // === 扩展节点：菌群成员 ===
+  { id: 'mic-lacto', name: '鼠李糖乳杆菌 GG', type: 'microbe', categoryLabel: '循证益生菌', description: '临床证据最充分的益生菌株，定植于黏液层并促进sIgA分泌，抑制病原黏附。', val: 18 },
+  { id: 'mic-butyricum', name: '丁酸梭菌 (C. butyricum)', type: 'microbe', categoryLabel: '产丁酸芽孢益生菌', description: '芽孢形式耐酸耐胆盐，可口服直达结肠定植，高效合成丁酸盐修复上皮。', val: 18 },
+  { id: 'mic-prevotella', name: '普雷沃氏菌属 (P. copri)', type: 'microbe', categoryLabel: '促炎型优势菌', description: '高纤维膳食人群中常见优势菌，可诱导Th17应答并加重胰岛素抵抗。', val: 18 },
+  { id: 'mic-candida', name: '白色念珠菌 (真菌组)', type: 'microbe', categoryLabel: '真菌组过度增殖', description: '酵母相向菌丝相转换后侵袭上皮，β-葡聚糖经Dectin-1驱动Th17炎症。', val: 18 },
+  { id: 'mic-phage', name: 'crAssphage 噬菌体组', type: 'microbe', categoryLabel: '病毒组调控因子', description: '人类肠道最丰富的噬菌体群，通过裂解与溶原转换动态调控细菌种群结构。', val: 16 },
+
+  // === 扩展节点：代谢产物 ===
+  { id: 'met-5ht', name: '5-羟色胺 (5-HT)', type: 'metabolite', categoryLabel: '肠脑轴神经递质', description: '人体约90%的5-HT由肠嗜铬细胞合成，受菌群代谢调控，参与内脏敏感性与情绪调节。', val: 18 },
+  { id: 'met-tmao', name: '氧化三甲胺 (TMAO)', type: 'metabolite', categoryLabel: '心血管风险代谢物', description: '菌群将胆碱/TMA转化为TMA，经肝脏FMO3氧化为TMAO，促进动脉粥样硬化。', val: 17 },
+  { id: 'met-h2s', name: '硫化氢 (H₂S)', type: 'metabolite', categoryLabel: '气体信号分子', description: '硫酸盐还原菌产物，低浓度促上皮修复，高浓度抑制丁酸氧化并损伤DNA。', val: 17 },
+  { id: 'met-succinate', name: '琥珀酸 (Succinate)', type: 'metabolite', categoryLabel: '促炎三羧酸中间体', description: '菌群发酵产物经SUCNR1受体激活巨噬细胞，是IBD黏膜炎症的驱动代谢物。', val: 17 },
+
+  // === 扩展节点：免疫与屏障靶点 ===
+  { id: 'imm-treg', name: 'Foxp3⁺ 调节性T细胞', type: 'immune', categoryLabel: '免疫耐受核心', description: '丁酸经HDAC抑制促进Foxp3基因位点乙酰化，驱动外周Treg分化维持免疫耐受。', val: 20 },
+  { id: 'imm-th17', name: 'Th17 / IL-17 轴', type: 'immune', categoryLabel: '促炎效应T细胞', description: '由分段丝状菌与真菌组驱动分化，IL-17招募中性粒细胞并破坏上皮紧密连接。', val: 19 },
+  { id: 'imm-siga', name: '分泌型 IgA (sIgA)', type: 'immune', categoryLabel: '黏膜体液免疫', description: '浆细胞分泌后经pIgR转运至黏液层，包裹病原与毒素形成免疫排斥屏障。', val: 18 },
+  { id: 'imm-mucin', name: '黏蛋白 MUC2 / 杯状细胞', type: 'immune', categoryLabel: '黏液层物理屏障', description: '杯状细胞分泌的MUC2形成内外双层黏液，是宿主与菌群间最重要的空间隔离带。', val: 19 },
+
+  // === 扩展节点：FMT 干预路径与质控 ===
+  { id: 'the-capsule', name: '口服肠溶微囊胶囊', type: 'therapy', categoryLabel: '无创口服给药', description: '双层肠溶包衣抵御胃酸，实现回肠末端释放，患者依从性高且可居家完成疗程。', val: 18 },
+  { id: 'the-enema', name: '下消化道保留灌肠', type: 'therapy', categoryLabel: '远端局部给药', description: '经肛注入菌液并保留45分钟以上，直达乙状结肠与直肠病灶，适合远端受累患者。', val: 17 },
+  { id: 'the-donorscreen', name: '供体严格筛查体系', type: 'therapy', categoryLabel: '菌源安全质控', description: '病史、血清学、粪便病原与耐药基因组四重筛查，排除感染与代谢病风险。', val: 19 },
+  { id: 'the-cryo', name: '菌液冷冻保护与质控', type: 'therapy', categoryLabel: '活菌剂量保障', description: '甘油冷冻保护剂配合-80℃程控降温，复苏后活菌回收率需≥70%方可放行。', val: 17 },
+  { id: 'the-gate', name: 'MDT 安全门控与知情同意', type: 'therapy', categoryLabel: '临床合规审查', description: '消化科、感染科与药学多学科会诊，逐项核对禁忌与知情同意后签署放行。', val: 18 }
 ];
 
 // Knowledge Graph Links
@@ -709,7 +856,70 @@ export const mockKnowledgeLinks: KnowledgeLink[] = [
   { source: 'the-fmt', target: 'mic-faecal', relation: '生态重建供体定植', effect: 'positive' },
   { source: 'the-fmt', target: 'mic-roseburia', relation: '恢复丁酸代谢生态位', effect: 'positive' },
   { source: 'the-fmt', target: 'mic-ecoli', relation: '菌群生态竞争挤出', effect: 'negative' },
-  { source: 'the-diet', target: 'the-fmt', relation: '代谢基底协同增效', effect: 'positive' }
+  { source: 'the-diet', target: 'the-fmt', relation: '代谢基底协同增效', effect: 'positive' },
+
+  // === 扩展关系：适应症外延 ===
+  { source: 'dis-aad', target: 'mic-bifido', relation: '广谱抗生素致锐减', effect: 'negative' },
+  { source: 'dis-aad', target: 'mic-candida', relation: '真菌组乘虚增殖', effect: 'positive' },
+  { source: 'dis-asd', target: 'met-5ht', relation: '5-HT合成节律紊乱', effect: 'negative' },
+  { source: 'dis-asd', target: 'mic-prevotella', relation: '促炎菌属比例升高', effect: 'positive' },
+  { source: 'dis-metabolic', target: 'met-tmao', relation: 'TMAO升高促动脉硬化', effect: 'positive' },
+  { source: 'dis-metabolic', target: 'mic-akk', relation: '丰度与胰岛素敏感性正相关', effect: 'negative' },
+  { source: 'dis-gvhd', target: 'imm-th17', relation: '供者T细胞Th17极化攻击上皮', effect: 'positive' },
+  { source: 'dis-gvhd', target: 'mic-enterococcus', relation: '肠球菌扩张加重病情', effect: 'positive' },
+  { source: 'dis-pouchitis', target: 'mic-candida', relation: '真菌组失衡参与发病', effect: 'positive' },
+
+  // === 扩展关系：菌群成员互作 ===
+  { source: 'mic-lacto', target: 'met-scfa', relation: '发酵产乳酸与乙酸', effect: 'positive' },
+  { source: 'mic-lacto', target: 'imm-siga', relation: '促进黏膜sIgA分泌', effect: 'positive' },
+  { source: 'mic-butyricum', target: 'met-butyrate', relation: '芽孢型高效产丁酸', effect: 'positive' },
+  { source: 'mic-prevotella', target: 'imm-th17', relation: '诱导Th17免疫应答', effect: 'positive' },
+  { source: 'mic-prevotella', target: 'met-succinate', relation: '发酵产琥珀酸', effect: 'positive' },
+  { source: 'mic-candida', target: 'imm-th17', relation: 'β-葡聚糖驱动Th17分化', effect: 'positive' },
+  { source: 'mic-candida', target: 'imm-barrier', relation: '菌丝侵袭破坏紧密连接', effect: 'negative' },
+  { source: 'mic-phage', target: 'mic-cdiff', relation: '噬菌体裂解产毒株', effect: 'negative' },
+  { source: 'mic-phage', target: 'mic-ecoli', relation: '噬菌体-细菌共进化', effect: 'positive' },
+  { source: 'mic-akk', target: 'imm-mucin', relation: '降解黏蛋白刺激杯状细胞回补', effect: 'positive' },
+  { source: 'mic-bifido', target: 'imm-siga', relation: '强化黏膜体液免疫', effect: 'positive' },
+
+  // === 扩展关系：代谢-免疫-神经 ===
+  { source: 'met-butyrate', target: 'imm-treg', relation: 'HDAC抑制驱动Foxp3⁺Treg', effect: 'positive' },
+  { source: 'met-5ht', target: 'dis-ibsd', relation: '升高致内脏高敏感', effect: 'positive' },
+  { source: 'met-h2s', target: 'met-butyrate', relation: '硫代谢竞争抑制丁酸氧化', effect: 'negative' },
+  { source: 'met-h2s', target: 'imm-barrier', relation: '低浓度促上皮修复', effect: 'positive' },
+  { source: 'met-succinate', target: 'imm-tnfa', relation: 'SUCNR1激活巨噬细胞促炎', effect: 'positive' },
+  { source: 'met-succinate', target: 'met-calprotectin', relation: '中性粒细胞浸润加剧', effect: 'positive' },
+  { source: 'imm-treg', target: 'imm-tnfa', relation: '抑制促炎因子转录', effect: 'negative' },
+  { source: 'imm-th17', target: 'imm-tnfa', relation: 'IL-17协同放大炎症级联', effect: 'positive' },
+  { source: 'imm-th17', target: 'imm-barrier', relation: '破坏上皮紧密连接', effect: 'negative' },
+  { source: 'imm-siga', target: 'mic-cdiff', relation: '中和毒素A/B阻断黏附', effect: 'negative' },
+  { source: 'imm-siga', target: 'imm-mucin', relation: '黏液层免疫排斥屏障', effect: 'positive' },
+  { source: 'imm-mucin', target: 'imm-barrier', relation: '黏液层构成物理隔离带', effect: 'positive' },
+  { source: 'imm-tlr4', target: 'imm-th17', relation: '固有免疫驱动Th17分化', effect: 'positive' },
+  { source: 'imm-il10', target: 'imm-treg', relation: '维持Treg免疫稳态', effect: 'positive' },
+
+  // === 扩展关系：FMT 干预路径与质控 ===
+  { source: 'the-capsule', target: 'the-fmt', relation: '无创口服递送路径', effect: 'positive' },
+  { source: 'the-enema', target: 'the-fmt', relation: '远端局部定植路径', effect: 'positive' },
+  { source: 'the-donorscreen', target: 'the-fmt', relation: '病原与耐药基因筛查保障', effect: 'positive' },
+  { source: 'the-donorscreen', target: 'mic-candida', relation: '真菌组筛查排除风险源', effect: 'negative' },
+  { source: 'the-cryo', target: 'the-fmt', relation: '保障活菌剂量与定植活力', effect: 'positive' },
+  { source: 'the-gate', target: 'the-fmt', relation: 'MDT逐项合规审查放行', effect: 'positive' },
+  { source: 'the-capsule', target: 'mic-butyricum', relation: '芽孢型菌株耐酸递送', effect: 'positive' },
+  { source: 'the-fmt', target: 'dis-aad', relation: '恢复定植抗力屏障', effect: 'positive' },
+  { source: 'the-fmt', target: 'dis-asd', relation: '改善肠脑轴行为表型', effect: 'positive' },
+  { source: 'the-fmt', target: 'dis-pouchitis', relation: '缓解贮袋黏膜炎症', effect: 'positive' },
+  { source: 'the-fmt', target: 'dis-gvhd', relation: '重建肠道免疫耐受', effect: 'positive' },
+  { source: 'the-fmt', target: 'dis-ibsd', relation: '调节脑-肠-菌群轴', effect: 'positive' },
+  { source: 'the-fmt', target: 'mic-butyricum', relation: '补足芽孢产丁酸菌', effect: 'positive' },
+  { source: 'the-fmt', target: 'mic-lacto', relation: '定植补充循证益生菌', effect: 'positive' },
+  { source: 'the-fmt', target: 'mic-prevotella', relation: '生态竞争挤出促炎菌', effect: 'negative' },
+  { source: 'the-fmt', target: 'mic-candida', relation: '重建真菌组平衡', effect: 'negative' },
+  { source: 'the-fmt', target: 'met-5ht', relation: '恢复5-HT代谢节律', effect: 'positive' },
+  { source: 'the-fmt', target: 'met-tmao', relation: '下调TMA生成通路', effect: 'negative' },
+  { source: 'the-fmt', target: 'imm-treg', relation: '诱导免疫耐受重建', effect: 'positive' },
+  { source: 'the-fmt', target: 'imm-siga', relation: '重建黏膜sIgA屏障', effect: 'positive' },
+  { source: 'the-diet', target: 'met-butyrate', relation: '抗性淀粉底物促合成', effect: 'positive' }
 ];
 
 // Re-export patient specific dynamic data getters
