@@ -314,7 +314,128 @@ export const mockTaxa: MicrobialTaxon[] = [
     clinicalRelevance: '产生A/B双毒素，催化Rho GTP酶葡萄糖基化导致细胞骨架解聚，引致假膜性结肠炎和剧烈腹泻。',
     primaryMetabolites: ['肠毒素A (TcdA)', '细胞毒素B (TcdB)'],
     therapeuticTarget: '通过供体次级胆汁酸生成菌恢复微生态定植抗力'
+  },
+  {
+    id: 'tax-9',
+    name: 'Eubacterium rectale',
+    chineseName: '直肠真杆菌',
+    phylum: '厚壁菌门(Firmicutes)',
+    category: 'beneficial',
+    abundance: 0.38,
+    normalRange: [2.0, 5.5],
+    relativeChange: -81,
+    isDonorDerived: true,
+    engraftmentStatus: '未定植',
+    clinicalRelevance: '产丁酸梭菌群核心成员，经丁酰辅酶A途径生成丁酸，是结肠上皮细胞最主要的外源能量来源。',
+    primaryMetabolites: ['丁酸 (Butyrate)', '乙酸'],
+    therapeuticTarget: '重建产丁酸菌群，修补上皮细胞的能量代谢缺口'
+  },
+  {
+    id: 'tax-10',
+    name: 'Anaerostipes hadrus',
+    chineseName: '哈氏厌氧丁酸菌',
+    phylum: '厚壁菌门(Firmicutes)',
+    category: 'beneficial',
+    abundance: 0.22,
+    normalRange: [1.2, 3.8],
+    relativeChange: -76,
+    isDonorDerived: true,
+    engraftmentStatus: '未定植',
+    clinicalRelevance: '交叉喂养型丁酸菌，自身不产乳酸，依赖双歧杆菌与罗斯氏菌提供的乳酸、乙酸完成丁酸合成。',
+    primaryMetabolites: ['丁酸 (Butyrate)', '乳酸转化产物'],
+    therapeuticTarget: '打通乳酸—丁酸转化链，防止乳酸在肠腔堆积刺激内脏感觉神经'
+  },
+  {
+    id: 'tax-11',
+    name: 'Bifidobacterium bifidum',
+    chineseName: '双叉双歧杆菌',
+    phylum: '放线菌门(Actinobacteria)',
+    category: 'beneficial',
+    abundance: 0.85,
+    normalRange: [2.0, 6.0],
+    relativeChange: -58,
+    isDonorDerived: true,
+    engraftmentStatus: '部分定植',
+    clinicalRelevance: '表达黏蛋白降解酶与菌毛样黏附蛋白，可早期定植并稳定黏膜免疫耐受，是放线菌门的定植先导菌。',
+    primaryMetabolites: ['乙酸', '叶酸', '胞外多糖'],
+    therapeuticTarget: '恢复放线菌门丰度，重建黏膜免疫耐受'
+  },
+  {
+    id: 'tax-12',
+    name: 'Blautia producta',
+    chineseName: '产气布劳特氏菌',
+    phylum: '厚壁菌门(Firmicutes)',
+    category: 'commensal',
+    abundance: 2.4,
+    normalRange: [3.0, 8.5],
+    relativeChange: -34,
+    isDonorDerived: false,
+    engraftmentStatus: '不适用',
+    clinicalRelevance: '常见共生菌，可将乳酸与乙酸转化为丁酸；其丰度下降与肠道炎症活动度升高显著相关。',
+    primaryMetabolites: ['丁酸', '乙酸'],
+    therapeuticTarget: '监测共生菌群的缓冲能力，作为炎症活动度的参考指标'
+  },
+  {
+    id: 'tax-13',
+    name: 'Parabacteroides distasonis',
+    chineseName: '迪氏副拟杆菌',
+    phylum: '拟杆菌门(Bacteroidetes)',
+    category: 'commensal',
+    abundance: 1.6,
+    normalRange: [2.5, 7.0],
+    relativeChange: -42,
+    isDonorDerived: false,
+    engraftmentStatus: '不适用',
+    clinicalRelevance: '分泌琥珀酸并参与次级胆汁酸代谢，可诱导宿主糖原异生改善代谢，与低炎症表型正相关。',
+    primaryMetabolites: ['琥珀酸', '次级胆汁酸'],
+    therapeuticTarget: '恢复次级胆汁酸代谢通路，抑制致病芽孢萌发'
+  },
+  {
+    id: 'tax-14',
+    name: 'Bacteroides thetaiotaomicron',
+    chineseName: '多形拟杆菌',
+    phylum: '拟杆菌门(Bacteroidetes)',
+    category: 'commensal',
+    abundance: 3.8,
+    normalRange: [4.0, 11.0],
+    relativeChange: -21,
+    isDonorDerived: false,
+    engraftmentStatus: '不适用',
+    clinicalRelevance: '多糖利用位点最丰富的拟杆菌，降解膳食纤维维持肠腔碳源供给，是菌群互养网络的代谢枢纽。',
+    primaryMetabolites: ['丙酸', '乙酸', '多糖降解酶'],
+    therapeuticTarget: '维持碳源供给枢纽，防止菌群营养链断裂'
+  },
+  {
+    id: 'tax-15',
+    name: 'Klebsiella pneumoniae',
+    chineseName: '肺炎克雷伯菌',
+    phylum: '变形菌门(Proteobacteria)',
+    category: 'opportunistic',
+    abundance: 5.2,
+    normalRange: [0.1, 1.0],
+    relativeChange: 264,
+    isDonorDerived: false,
+    engraftmentStatus: '不适用',
+    clinicalRelevance: '炎症肠段硝酸盐富集使其异常扩增；荚膜与生物膜增强黏附力，部分菌株携带碳青霉烯酶。',
+    primaryMetabolites: ['脂多糖 (LPS)', '荚膜多糖'],
+    therapeuticTarget: '挤压变形菌门生态位，防范耐药株形成肠道储库'
+  },
+  {
+    id: 'tax-16',
+    name: 'Proteus mirabilis',
+    chineseName: '奇异变形杆菌',
+    phylum: '变形菌门(Proteobacteria)',
+    category: 'opportunistic',
+    abundance: 2.1,
+    normalRange: [0.05, 0.8],
+    relativeChange: 180,
+    isDonorDerived: false,
+    engraftmentStatus: '不适用',
+    clinicalRelevance: '具脲酶活性的兼性厌氧菌，产氨抬高肠腔 pH 并削弱屏障，是黏膜破损时的易位风险源。',
+    primaryMetabolites: ['尿素酶', '氨', '脂多糖 (LPS)'],
+    therapeuticTarget: '抑制脲酶活性，阻断氨致黏膜碱化损伤'
   }
+
 ];
 
 // Ecological Links between species (for Network Graph)
@@ -326,7 +447,20 @@ export const mockEcologicalLinks: EcologicalLink[] = [
   { source: 'tax-2', target: 'tax-6', type: 'antagonism', weight: 0.82, description: '丁酸降低管腔氧张力并激活PPAR-γ通路，抑制兼性厌氧大肠杆菌增殖' },
   { source: 'tax-2', target: 'tax-8', type: 'antagonism', weight: 0.95, description: '恢复健康菌群胆汁酸代谢（产生脱氧胆酸/石胆酸），直接抑制艰难梭菌芽孢萌发' },
   { source: 'tax-3', target: 'tax-7', type: 'antagonism', weight: 0.75, description: '低pH微环境与双歧杆菌素显著抑制肠球菌生物膜形成' },
-  { source: 'tax-6', target: 'tax-7', type: 'synergy', weight: 0.65, description: '炎症微环境下变形菌门与球菌协同消耗氧气并诱导氧化应激' }
+  { source: 'tax-6', target: 'tax-7', type: 'synergy', weight: 0.65, description: '炎症微环境下变形菌门与球菌协同消耗氧气并诱导氧化应激' },
+{ source: 'tax-1', target: 'tax-9', type: 'synergy', weight: 0.70, description: 'AKK 降解释放的乙酸与单糖为直肠真杆菌补充碳源，共同抬高肠腔丁酸产量' },
+{ source: 'tax-3', target: 'tax-10', type: 'synergy', weight: 0.68, description: '双歧杆菌水解聚果糖的产物经交叉喂养供哈氏厌氧丁酸菌转化为丁酸' },
+{ source: 'tax-4', target: 'tax-11', type: 'synergy', weight: 0.66, description: '罗斯氏菌与双叉双歧杆菌协同降解宿主黏蛋白聚糖，形成互养代谢对' },
+{ source: 'tax-2', target: 'tax-12', type: 'synergy', weight: 0.60, description: '丁酸下调管腔 pH，为产气布劳特氏菌创造适宜定植的酸性生态位' },
+{ source: 'tax-5', target: 'tax-13', type: 'commensal', weight: 0.55, description: '拟杆菌属间共享多糖利用位点，迪氏副拟杆菌与脆弱拟杆菌协同降解膳食纤维' },
+{ source: 'tax-5', target: 'tax-14', type: 'commensal', weight: 0.58, description: '多形拟杆菌与脆弱拟杆菌共用荚膜多糖合成通路，维持拟杆菌门内部稳态' },
+{ source: 'tax-1', target: 'tax-15', type: 'antagonism', weight: 0.84, description: 'AKK 维持的黏液层完整性限制克雷伯菌穿透上皮，并竞争同一黏附受体' },
+{ source: 'tax-2', target: 'tax-15', type: 'antagonism', weight: 0.80, description: '丁酸抑制克雷伯菌荚膜表达与生物膜形成，削弱其肠道定植能力' },
+{ source: 'tax-15', target: 'tax-6', type: 'synergy', weight: 0.70, description: '两种变形菌门成员在硝酸盐富集环境中协同进行厌氧硝酸盐呼吸，共同扩增' },
+{ source: 'tax-16', target: 'tax-7', type: 'synergy', weight: 0.62, description: '奇异变形杆菌脲酶抬高局部 pH，为粪肠球菌提供更有利的生存微环境' },
+{ source: 'tax-9', target: 'tax-6', type: 'antagonism', weight: 0.78, description: '直肠真杆菌产丁酸降低管腔氧张力，抑制兼性厌氧大肠杆菌的呼吸优势' },
+{ source: 'tax-13', target: 'tax-6', type: 'antagonism', weight: 0.64, description: '迪氏副拟杆菌分泌琥珀酸竞争碳源，抑制大肠杆菌在炎症肠段的过度增殖' }
+
 ];
 
 // Functional Pathways
@@ -740,74 +874,74 @@ export const mockLongitudinalPoints: LongitudinalTrackPoint[] = [
 // Knowledge Graph Nodes (for deep clinical & microbiome knowledge exploration)
 export const mockKnowledgeNodes: KnowledgeNode[] = [
   // Diseases
-  { id: 'dis-uc', name: '溃疡性结肠炎 (UC)', type: 'disease', categoryLabel: '消化系统自身免疫病', description: '肠黏膜慢性非特异性炎症，以浅表糜烂溃疡为特征，与微生态多样性崩溃强相关。', val: 28 },
-  { id: 'dis-cd', name: '克罗恩病 (Crohn\'s)', type: 'disease', categoryLabel: '透壁性肉芽肿炎', description: '全消化道各段均可累及的慢性透壁性肉芽肿性炎，以跳跃性鹅卵石样溃疡和回盲部病变为主。', val: 26 },
-  { id: 'dis-cdi', name: '艰难梭菌感染 (CDI)', type: 'disease', categoryLabel: '感染性肠炎', description: '抗生素过度使用破坏定植抗力后，产毒艰难梭菌爆发繁殖引起的结肠炎。', val: 25 },
-  { id: 'dis-ibsd', name: '肠易激综合征 (IBS-D)', type: 'disease', categoryLabel: '功能性胃肠病', description: '脑-肠-菌群轴失衡所致的腹部隐痛与大便性状异常，黏膜屏障低度通透。', val: 22 },
-  { id: 'dis-pouchitis', name: '贮袋炎 (Pouchitis)', type: 'disease', categoryLabel: 'FMT拓展适应症', description: '全结直肠切除回肠贮袋肛管吻合术(IPAA)后常见的非特异性炎症，微生态菌群紊乱严重。', val: 20 },
+  { id: 'dis-uc', name: '溃疡性结肠炎 (UC)', shortName: '溃疡性结肠炎', type: 'disease', categoryLabel: '消化系统自身免疫病', description: '肠黏膜慢性非特异性炎症，以浅表糜烂溃疡为特征，与微生态多样性崩溃强相关。', val: 28 },
+  { id: 'dis-cd', name: '克罗恩病 (Crohn\'s)', shortName: '克罗恩病', type: 'disease', categoryLabel: '透壁性肉芽肿炎', description: '全消化道各段均可累及的慢性透壁性肉芽肿性炎，以跳跃性鹅卵石样溃疡和回盲部病变为主。', val: 26 },
+  { id: 'dis-cdi', name: '艰难梭菌感染 (CDI)', shortName: '艰难梭菌感染', type: 'disease', categoryLabel: '感染性肠炎', description: '抗生素过度使用破坏定植抗力后，产毒艰难梭菌爆发繁殖引起的结肠炎。', val: 25 },
+  { id: 'dis-ibsd', name: '肠易激综合征 (IBS-D)', shortName: '肠易激综合征', type: 'disease', categoryLabel: '功能性胃肠病', description: '脑-肠-菌群轴失衡所致的腹部隐痛与大便性状异常，黏膜屏障低度通透。', val: 22 },
+  { id: 'dis-pouchitis', name: '贮袋炎 (Pouchitis)', shortName: '贮袋炎', type: 'disease', categoryLabel: 'FMT拓展适应症', description: '全结直肠切除回肠贮袋肛管吻合术(IPAA)后常见的非特异性炎症，微生态菌群紊乱严重。', val: 20 },
 
   // Microbes
-  { id: 'mic-akk', name: '嗜黏蛋白阿克曼氏菌', type: 'microbe', categoryLabel: '有益关键菌', description: '特异降解利用黏蛋白，刺激杯状细胞与紧密连接修复，改善宿主糖脂代谢与黏膜屏障。', val: 24 },
-  { id: 'mic-faecal', name: '普氏栖粪杆菌', type: 'microbe', categoryLabel: '有益丁酸生成菌', description: '抗炎核心菌，分泌MAM蛋白阻断NF-κB信号，患者溃疡活动期显著亏空。', val: 25 },
-  { id: 'mic-bifido', name: '长双歧杆菌', type: 'microbe', categoryLabel: '益生菌群', description: '酸化肠腔微环境，诱导抑炎细胞因子IL-10产生，对病原菌形成空间占位阻隔。', val: 20 },
-  { id: 'mic-roseburia', name: '肠道罗斯氏菌 (Roseburia)', type: 'microbe', categoryLabel: '短链脂肪酸核心菌', description: '高产丁酸盐与共轭亚油酸，与黏膜免疫耐受维持密切相关，克罗恩及UC患者中丰度显著下降。', val: 21 },
-  { id: 'mic-bacteroides', name: '脆弱拟杆菌 (B. fragilis)', type: 'microbe', categoryLabel: '共生多糖A产生菌', description: '产生荚膜多糖A(PSA)，经树突状细胞刺激IL-10增生，但在肠黏膜严重破坏时具侵袭性。', val: 19 },
-  { id: 'mic-ecoli', name: '大肠埃希氏菌 (AIEC/STEC)', type: 'microbe', categoryLabel: '条件致病菌', description: '含致病岛及毒力因子，在氧化应激状态下优势扩增，释放LPS驱动炎性因子级联。', val: 20 },
-  { id: 'mic-cdiff', name: '艰难梭菌 (产毒株)', type: 'microbe', categoryLabel: '绝对致病菌', description: '分泌TcdA/TcdB毒素破坏细胞骨架，造成伪膜形成与严重上皮坏死。', val: 22 },
-  { id: 'mic-enterococcus', name: '粪肠球菌 (E. faecalis)', type: 'microbe', categoryLabel: '耐药条件致病菌', description: '分泌明胶酶破坏紧密连接蛋白，易形成顽固生物膜，加剧黏膜溃疡面氧化应激。', val: 19 },
+  { id: 'mic-akk', name: '嗜黏蛋白阿克曼氏菌', shortName: '阿克曼氏菌', type: 'microbe', categoryLabel: '有益关键菌', description: '特异降解利用黏蛋白，刺激杯状细胞与紧密连接修复，改善宿主糖脂代谢与黏膜屏障。', val: 24 },
+  { id: 'mic-faecal', name: '普氏栖粪杆菌', shortName: '普氏栖粪杆菌', type: 'microbe', categoryLabel: '有益丁酸生成菌', description: '抗炎核心菌，分泌MAM蛋白阻断NF-κB信号，患者溃疡活动期显著亏空。', val: 25 },
+  { id: 'mic-bifido', name: '长双歧杆菌', shortName: '长双歧杆菌', type: 'microbe', categoryLabel: '益生菌群', description: '酸化肠腔微环境，诱导抑炎细胞因子IL-10产生，对病原菌形成空间占位阻隔。', val: 20 },
+  { id: 'mic-roseburia', name: '肠道罗斯氏菌 (Roseburia)', shortName: '肠道罗斯氏菌', type: 'microbe', categoryLabel: '短链脂肪酸核心菌', description: '高产丁酸盐与共轭亚油酸，与黏膜免疫耐受维持密切相关，克罗恩及UC患者中丰度显著下降。', val: 21 },
+  { id: 'mic-bacteroides', name: '脆弱拟杆菌 (B. fragilis)', shortName: '脆弱拟杆菌', type: 'microbe', categoryLabel: '共生多糖A产生菌', description: '产生荚膜多糖A(PSA)，经树突状细胞刺激IL-10增生，但在肠黏膜严重破坏时具侵袭性。', val: 19 },
+  { id: 'mic-ecoli', name: '大肠埃希氏菌 (AIEC/STEC)', shortName: '大肠埃希氏菌', type: 'microbe', categoryLabel: '条件致病菌', description: '含致病岛及毒力因子，在氧化应激状态下优势扩增，释放LPS驱动炎性因子级联。', val: 20 },
+  { id: 'mic-cdiff', name: '艰难梭菌 (产毒株)', shortName: '艰难梭菌', type: 'microbe', categoryLabel: '绝对致病菌', description: '分泌TcdA/TcdB毒素破坏细胞骨架，造成伪膜形成与严重上皮坏死。', val: 22 },
+  { id: 'mic-enterococcus', name: '粪肠球菌 (E. faecalis)', shortName: '粪肠球菌', type: 'microbe', categoryLabel: '耐药条件致病菌', description: '分泌明胶酶破坏紧密连接蛋白，易形成顽固生物膜，加剧黏膜溃疡面氧化应激。', val: 19 },
 
   // Metabolites
-  { id: 'met-butyrate', name: '丁酸 (Butyrate)', type: 'metabolite', categoryLabel: '短链脂肪酸', description: '结肠上皮细胞主要供能物质(提供70%能量)，组蛋白去乙酰化酶(HDAC)抑制剂，促Treg分化。', val: 24 },
-  { id: 'met-scfa', name: '乙酸 / 丙酸 (SCFA)', type: 'metabolite', categoryLabel: '短链脂肪酸', description: '激活GPR41/43/109A受体，降低肠腔渗透压，促肠嗜铬细胞释放5-HT。', val: 20 },
-  { id: 'met-lps', name: '脂多糖内毒素 (LPS)', type: 'metabolite', categoryLabel: '促炎毒素', description: '革兰氏阴性菌外膜成分，与LBP结合激活TLR4/MD2复合物，诱发剧烈细胞因子风暴。', val: 22 },
-  { id: 'met-secba', name: '次级胆汁酸 (DCA/LCA)', type: 'metabolite', categoryLabel: '微生态代谢物', description: '由初级胆汁酸经7α-脱羟基作用转化，高浓度可直接抑制C. diff芽孢萌发。', val: 18 },
-  { id: 'met-indole', name: '吲哚-3-丙酸 (IPA)', type: 'metabolite', categoryLabel: '色氨酸代谢产物', description: '芳香烃受体(AhR)强效激动剂，维持潘氏细胞抗菌肽分泌与上皮完整性。', val: 17 },
-  { id: 'met-calprotectin', name: '粪便钙卫蛋白 (FC)', type: 'metabolite', categoryLabel: '黏膜炎性生物标志物', description: '嗜中性粒细胞活化释放的含钙结合蛋白，直接反映肠壁溃疡浸润与中性粒细胞迁徙活动度。', val: 21 },
+  { id: 'met-butyrate', name: '丁酸 (Butyrate)', shortName: '丁酸', type: 'metabolite', categoryLabel: '短链脂肪酸', description: '结肠上皮细胞主要供能物质(提供70%能量)，组蛋白去乙酰化酶(HDAC)抑制剂，促Treg分化。', val: 24 },
+  { id: 'met-scfa', name: '乙酸 / 丙酸 (SCFA)', shortName: '乙酸/丙酸', type: 'metabolite', categoryLabel: '短链脂肪酸', description: '激活GPR41/43/109A受体，降低肠腔渗透压，促肠嗜铬细胞释放5-HT。', val: 20 },
+  { id: 'met-lps', name: '脂多糖内毒素 (LPS)', shortName: '脂多糖内毒素', type: 'metabolite', categoryLabel: '促炎毒素', description: '革兰氏阴性菌外膜成分，与LBP结合激活TLR4/MD2复合物，诱发剧烈细胞因子风暴。', val: 22 },
+  { id: 'met-secba', name: '次级胆汁酸 (DCA/LCA)', shortName: '次级胆汁酸', type: 'metabolite', categoryLabel: '微生态代谢物', description: '由初级胆汁酸经7α-脱羟基作用转化，高浓度可直接抑制C. diff芽孢萌发。', val: 18 },
+  { id: 'met-indole', name: '吲哚-3-丙酸 (IPA)', shortName: '吲哚-3-丙酸', type: 'metabolite', categoryLabel: '色氨酸代谢产物', description: '芳香烃受体(AhR)强效激动剂，维持潘氏细胞抗菌肽分泌与上皮完整性。', val: 17 },
+  { id: 'met-calprotectin', name: '粪便钙卫蛋白 (FC)', shortName: '粪便钙卫蛋白', type: 'metabolite', categoryLabel: '黏膜炎性生物标志物', description: '嗜中性粒细胞活化释放的含钙结合蛋白，直接反映肠壁溃疡浸润与中性粒细胞迁徙活动度。', val: 21 },
 
   // Immune & Mucosal Targets
-  { id: 'imm-il10', name: '白介素-10 (IL-10)', type: 'immune', categoryLabel: '抗炎细胞因子', description: '由Treg及调节性B细胞分泌，负调控促炎因子转录，维持黏膜免疫耐受。', val: 18 },
-  { id: 'imm-il22', name: '白介素-22 (IL-22)', type: 'immune', categoryLabel: '黏膜修复因子', description: '由ILC3天然淋巴细胞分泌，强效刺激肠上皮干细胞增殖及紧密连接蛋白再生。', val: 18 },
-  { id: 'imm-tnfa', name: '肿瘤坏死因子-α (TNF-α)', type: 'immune', categoryLabel: '促炎细胞因子', description: '炎症级联核心介质，增加黏膜微血管通透性，导致上皮坏死脱落。', val: 20 },
-  { id: 'imm-tlr4', name: 'TLR4 / NF-κB 信号轴', type: 'immune', categoryLabel: '固有免疫受体通路', description: '识别菌源性内毒素LPS，激活IKK激酶复合物促进NF-κB入核，转录大量促炎因子。', val: 20 },
-  { id: 'imm-barrier', name: '紧密连接蛋白 (Claudin/ZO-1)', type: 'immune', categoryLabel: '黏膜屏障结构', description: '维持上皮细胞极性与选择性通透性的物理基础，抗击抗原渗透的核心防线。', val: 22 },
+  { id: 'imm-il10', name: '白介素-10 (IL-10)', shortName: '白介素-10', type: 'immune', categoryLabel: '抗炎细胞因子', description: '由Treg及调节性B细胞分泌，负调控促炎因子转录，维持黏膜免疫耐受。', val: 18 },
+  { id: 'imm-il22', name: '白介素-22 (IL-22)', shortName: '白介素-22', type: 'immune', categoryLabel: '黏膜修复因子', description: '由ILC3天然淋巴细胞分泌，强效刺激肠上皮干细胞增殖及紧密连接蛋白再生。', val: 18 },
+  { id: 'imm-tnfa', name: '肿瘤坏死因子-α (TNF-α)', shortName: 'TNF-α', type: 'immune', categoryLabel: '促炎细胞因子', description: '炎症级联核心介质，增加黏膜微血管通透性，导致上皮坏死脱落。', val: 20 },
+  { id: 'imm-tlr4', name: 'TLR4 / NF-κB 信号轴', shortName: 'TLR4/NF-κB', type: 'immune', categoryLabel: '固有免疫受体通路', description: '识别菌源性内毒素LPS，激活IKK激酶复合物促进NF-κB入核，转录大量促炎因子。', val: 20 },
+  { id: 'imm-barrier', name: '紧密连接蛋白 (Claudin/ZO-1)', shortName: '紧密连接蛋白', type: 'immune', categoryLabel: '黏膜屏障结构', description: '维持上皮细胞极性与选择性通透性的物理基础，抗击抗原渗透的核心防线。', val: 22 },
 
   // Therapies & FMT Regimens
-  { id: 'the-fmt', name: '精准菌群移植 (MicroFMT)', type: 'therapy', categoryLabel: '微生态干预手段', description: '将健康供体功能性菌群整体移植入患者肠道，实现生态位重构与免疫重置。', val: 28 },
-  { id: 'the-superdonor', name: '超级供体 D-0102 配型', type: 'therapy', categoryLabel: '临床级菌源制剂', description: '具备超高Shannon多样性(5.12)、富含AKK与普氏菌的高活菌级微囊化制剂。', val: 24 },
-  { id: 'the-colonoscopy', name: '肠镜直视下全结肠喷洒', type: 'therapy', categoryLabel: '内镜靶向给药', description: '经肠镜通道在回盲部及深部病灶溃疡面分段微滴布点喷洒，确保高密度原位接种。', val: 20 },
-  { id: 'the-diet', name: '益生元与抗性淀粉辅助', type: 'therapy', categoryLabel: '靶向营养干预', description: '为移植菌株定植提供特异性碳源营养基底，加速丁酸与多糖合成。', val: 18 },
+  { id: 'the-fmt', name: '精准菌群移植 (MicroFMT)', shortName: '精准菌群移植', type: 'therapy', categoryLabel: '微生态干预手段', description: '将健康供体功能性菌群整体移植入患者肠道，实现生态位重构与免疫重置。', val: 28 },
+  { id: 'the-superdonor', name: '超级供体 D-0102 配型', shortName: '超级供体D-0102', type: 'therapy', categoryLabel: '临床级菌源制剂', description: '具备超高Shannon多样性(5.12)、富含AKK与普氏菌的高活菌级微囊化制剂。', val: 24 },
+  { id: 'the-colonoscopy', name: '肠镜直视下全结肠喷洒', shortName: '肠镜全结肠喷洒', type: 'therapy', categoryLabel: '内镜靶向给药', description: '经肠镜通道在回盲部及深部病灶溃疡面分段微滴布点喷洒，确保高密度原位接种。', val: 20 },
+  { id: 'the-diet', name: '益生元与抗性淀粉辅助', shortName: '益生元辅助', type: 'therapy', categoryLabel: '靶向营养干预', description: '为移植菌株定植提供特异性碳源营养基底，加速丁酸与多糖合成。', val: 18 },
 
   // === 扩展节点：适应症外延 ===
-  { id: 'dis-aad', name: '抗生素相关性腹泻 (AAD)', type: 'disease', categoryLabel: '抗生素扰动综合征', description: '广谱抗生素压制共生菌后定植抗力骤降，条件致病菌乘虚扩增导致的腹泻综合征。', val: 20 },
-  { id: 'dis-asd', name: '孤独症谱系障碍 (ASD)', type: 'disease', categoryLabel: '肠-脑轴神经发育', description: '菌群代谢产物经迷走神经与循环系统影响中枢神经递质合成，与社交行为表型相关。', val: 20 },
-  { id: 'dis-metabolic', name: '代谢综合征与肥胖', type: 'disease', categoryLabel: '宿主代谢紊乱', description: '菌群发酵效率与胆汁酸池改变共同影响能量 harvest 与胰岛素敏感性。', val: 20 },
-  { id: 'dis-gvhd', name: '肠道急性 GVHD', type: 'disease', categoryLabel: '移植后免疫并发症', description: '异基因造血干细胞移植后供者T细胞攻击肠上皮，菌群紊乱是重要放大因素。', val: 19 },
+  { id: 'dis-aad', name: '抗生素相关性腹泻 (AAD)', shortName: '抗生素腹泻', tier: 'extended', type: 'disease', categoryLabel: '抗生素扰动综合征', description: '广谱抗生素压制共生菌后定植抗力骤降，条件致病菌乘虚扩增导致的腹泻综合征。', val: 20 },
+  { id: 'dis-asd', name: '孤独症谱系障碍 (ASD)', shortName: '孤独症(ASD)', tier: 'extended', type: 'disease', categoryLabel: '肠-脑轴神经发育', description: '菌群代谢产物经迷走神经与循环系统影响中枢神经递质合成，与社交行为表型相关。', val: 20 },
+  { id: 'dis-metabolic', name: '代谢综合征与肥胖', shortName: '代谢综合征', tier: 'extended', type: 'disease', categoryLabel: '宿主代谢紊乱', description: '菌群发酵效率与胆汁酸池改变共同影响能量 harvest 与胰岛素敏感性。', val: 20 },
+  { id: 'dis-gvhd', name: '肠道急性 GVHD', shortName: '急性 GVHD', tier: 'extended', type: 'disease', categoryLabel: '移植后免疫并发症', description: '异基因造血干细胞移植后供者T细胞攻击肠上皮，菌群紊乱是重要放大因素。', val: 19 },
 
   // === 扩展节点：菌群成员 ===
-  { id: 'mic-lacto', name: '鼠李糖乳杆菌 GG', type: 'microbe', categoryLabel: '循证益生菌', description: '临床证据最充分的益生菌株，定植于黏液层并促进sIgA分泌，抑制病原黏附。', val: 18 },
-  { id: 'mic-butyricum', name: '丁酸梭菌 (C. butyricum)', type: 'microbe', categoryLabel: '产丁酸芽孢益生菌', description: '芽孢形式耐酸耐胆盐，可口服直达结肠定植，高效合成丁酸盐修复上皮。', val: 18 },
-  { id: 'mic-prevotella', name: '普雷沃氏菌属 (P. copri)', type: 'microbe', categoryLabel: '促炎型优势菌', description: '高纤维膳食人群中常见优势菌，可诱导Th17应答并加重胰岛素抵抗。', val: 18 },
-  { id: 'mic-candida', name: '白色念珠菌 (真菌组)', type: 'microbe', categoryLabel: '真菌组过度增殖', description: '酵母相向菌丝相转换后侵袭上皮，β-葡聚糖经Dectin-1驱动Th17炎症。', val: 18 },
-  { id: 'mic-phage', name: 'crAssphage 噬菌体组', type: 'microbe', categoryLabel: '病毒组调控因子', description: '人类肠道最丰富的噬菌体群，通过裂解与溶原转换动态调控细菌种群结构。', val: 16 },
+  { id: 'mic-lacto', name: '鼠李糖乳杆菌 GG', shortName: '鼠李糖乳杆菌', tier: 'extended', type: 'microbe', categoryLabel: '循证益生菌', description: '临床证据最充分的益生菌株，定植于黏液层并促进sIgA分泌，抑制病原黏附。', val: 18 },
+  { id: 'mic-butyricum', name: '丁酸梭菌 (C. butyricum)', shortName: '丁酸梭菌', tier: 'extended', type: 'microbe', categoryLabel: '产丁酸芽孢益生菌', description: '芽孢形式耐酸耐胆盐，可口服直达结肠定植，高效合成丁酸盐修复上皮。', val: 18 },
+  { id: 'mic-prevotella', name: '普雷沃氏菌属 (P. copri)', shortName: '普雷沃氏菌', tier: 'extended', type: 'microbe', categoryLabel: '促炎型优势菌', description: '高纤维膳食人群中常见优势菌，可诱导Th17应答并加重胰岛素抵抗。', val: 18 },
+  { id: 'mic-candida', name: '白色念珠菌 (真菌组)', shortName: '白色念珠菌', tier: 'extended', type: 'microbe', categoryLabel: '真菌组过度增殖', description: '酵母相向菌丝相转换后侵袭上皮，β-葡聚糖经Dectin-1驱动Th17炎症。', val: 18 },
+  { id: 'mic-phage', name: 'crAssphage 噬菌体组', shortName: 'crAssphage', tier: 'extended', type: 'microbe', categoryLabel: '病毒组调控因子', description: '人类肠道最丰富的噬菌体群，通过裂解与溶原转换动态调控细菌种群结构。', val: 16 },
 
   // === 扩展节点：代谢产物 ===
-  { id: 'met-5ht', name: '5-羟色胺 (5-HT)', type: 'metabolite', categoryLabel: '肠脑轴神经递质', description: '人体约90%的5-HT由肠嗜铬细胞合成，受菌群代谢调控，参与内脏敏感性与情绪调节。', val: 18 },
-  { id: 'met-tmao', name: '氧化三甲胺 (TMAO)', type: 'metabolite', categoryLabel: '心血管风险代谢物', description: '菌群将胆碱/TMA转化为TMA，经肝脏FMO3氧化为TMAO，促进动脉粥样硬化。', val: 17 },
-  { id: 'met-h2s', name: '硫化氢 (H₂S)', type: 'metabolite', categoryLabel: '气体信号分子', description: '硫酸盐还原菌产物，低浓度促上皮修复，高浓度抑制丁酸氧化并损伤DNA。', val: 17 },
-  { id: 'met-succinate', name: '琥珀酸 (Succinate)', type: 'metabolite', categoryLabel: '促炎三羧酸中间体', description: '菌群发酵产物经SUCNR1受体激活巨噬细胞，是IBD黏膜炎症的驱动代谢物。', val: 17 },
+  { id: 'met-5ht', name: '5-羟色胺 (5-HT)', shortName: '5-羟色胺', tier: 'extended', type: 'metabolite', categoryLabel: '肠脑轴神经递质', description: '人体约90%的5-HT由肠嗜铬细胞合成，受菌群代谢调控，参与内脏敏感性与情绪调节。', val: 18 },
+  { id: 'met-tmao', name: '氧化三甲胺 (TMAO)', shortName: '氧化三甲胺', tier: 'extended', type: 'metabolite', categoryLabel: '心血管风险代谢物', description: '菌群将胆碱/TMA转化为TMA，经肝脏FMO3氧化为TMAO，促进动脉粥样硬化。', val: 17 },
+  { id: 'met-h2s', name: '硫化氢 (H₂S)', shortName: '硫化氢', tier: 'extended', type: 'metabolite', categoryLabel: '气体信号分子', description: '硫酸盐还原菌产物，低浓度促上皮修复，高浓度抑制丁酸氧化并损伤DNA。', val: 17 },
+  { id: 'met-succinate', name: '琥珀酸 (Succinate)', shortName: '琥珀酸', tier: 'extended', type: 'metabolite', categoryLabel: '促炎三羧酸中间体', description: '菌群发酵产物经SUCNR1受体激活巨噬细胞，是IBD黏膜炎症的驱动代谢物。', val: 17 },
 
   // === 扩展节点：免疫与屏障靶点 ===
-  { id: 'imm-treg', name: 'Foxp3⁺ 调节性T细胞', type: 'immune', categoryLabel: '免疫耐受核心', description: '丁酸经HDAC抑制促进Foxp3基因位点乙酰化，驱动外周Treg分化维持免疫耐受。', val: 20 },
-  { id: 'imm-th17', name: 'Th17 / IL-17 轴', type: 'immune', categoryLabel: '促炎效应T细胞', description: '由分段丝状菌与真菌组驱动分化，IL-17招募中性粒细胞并破坏上皮紧密连接。', val: 19 },
-  { id: 'imm-siga', name: '分泌型 IgA (sIgA)', type: 'immune', categoryLabel: '黏膜体液免疫', description: '浆细胞分泌后经pIgR转运至黏液层，包裹病原与毒素形成免疫排斥屏障。', val: 18 },
-  { id: 'imm-mucin', name: '黏蛋白 MUC2 / 杯状细胞', type: 'immune', categoryLabel: '黏液层物理屏障', description: '杯状细胞分泌的MUC2形成内外双层黏液，是宿主与菌群间最重要的空间隔离带。', val: 19 },
+  { id: 'imm-treg', name: 'Foxp3⁺ 调节性T细胞', shortName: 'Foxp3⁺ Treg', tier: 'extended', type: 'immune', categoryLabel: '免疫耐受核心', description: '丁酸经HDAC抑制促进Foxp3基因位点乙酰化，驱动外周Treg分化维持免疫耐受。', val: 20 },
+  { id: 'imm-th17', name: 'Th17 / IL-17 轴', shortName: 'Th17/IL-17', tier: 'extended', type: 'immune', categoryLabel: '促炎效应T细胞', description: '由分段丝状菌与真菌组驱动分化，IL-17招募中性粒细胞并破坏上皮紧密连接。', val: 19 },
+  { id: 'imm-siga', name: '分泌型 IgA (sIgA)', shortName: '分泌型 IgA', tier: 'extended', type: 'immune', categoryLabel: '黏膜体液免疫', description: '浆细胞分泌后经pIgR转运至黏液层，包裹病原与毒素形成免疫排斥屏障。', val: 18 },
+  { id: 'imm-mucin', name: '黏蛋白 MUC2 / 杯状细胞', shortName: 'MUC2/杯状细胞', tier: 'extended', type: 'immune', categoryLabel: '黏液层物理屏障', description: '杯状细胞分泌的MUC2形成内外双层黏液，是宿主与菌群间最重要的空间隔离带。', val: 19 },
 
   // === 扩展节点：FMT 干预路径与质控 ===
-  { id: 'the-capsule', name: '口服肠溶微囊胶囊', type: 'therapy', categoryLabel: '无创口服给药', description: '双层肠溶包衣抵御胃酸，实现回肠末端释放，患者依从性高且可居家完成疗程。', val: 18 },
-  { id: 'the-enema', name: '下消化道保留灌肠', type: 'therapy', categoryLabel: '远端局部给药', description: '经肛注入菌液并保留45分钟以上，直达乙状结肠与直肠病灶，适合远端受累患者。', val: 17 },
-  { id: 'the-donorscreen', name: '供体严格筛查体系', type: 'therapy', categoryLabel: '菌源安全质控', description: '病史、血清学、粪便病原与耐药基因组四重筛查，排除感染与代谢病风险。', val: 19 },
-  { id: 'the-cryo', name: '菌液冷冻保护与质控', type: 'therapy', categoryLabel: '活菌剂量保障', description: '甘油冷冻保护剂配合-80℃程控降温，复苏后活菌回收率需≥70%方可放行。', val: 17 },
-  { id: 'the-gate', name: 'MDT 安全门控与知情同意', type: 'therapy', categoryLabel: '临床合规审查', description: '消化科、感染科与药学多学科会诊，逐项核对禁忌与知情同意后签署放行。', val: 18 }
+  { id: 'the-capsule', name: '口服肠溶微囊胶囊', shortName: '肠溶微囊胶囊', tier: 'extended', type: 'therapy', categoryLabel: '无创口服给药', description: '双层肠溶包衣抵御胃酸，实现回肠末端释放，患者依从性高且可居家完成疗程。', val: 18 },
+  { id: 'the-enema', name: '下消化道保留灌肠', shortName: '保留灌肠', tier: 'extended', type: 'therapy', categoryLabel: '远端局部给药', description: '经肛注入菌液并保留45分钟以上，直达乙状结肠与直肠病灶，适合远端受累患者。', val: 17 },
+  { id: 'the-donorscreen', name: '供体严格筛查体系', shortName: '供体筛查体系', tier: 'extended', type: 'therapy', categoryLabel: '菌源安全质控', description: '病史、血清学、粪便病原与耐药基因组四重筛查，排除感染与代谢病风险。', val: 19 },
+  { id: 'the-cryo', name: '菌液冷冻保护与质控', shortName: '菌液冷冻质控', tier: 'extended', type: 'therapy', categoryLabel: '活菌剂量保障', description: '甘油冷冻保护剂配合-80℃程控降温，复苏后活菌回收率需≥70%方可放行。', val: 17 },
+  { id: 'the-gate', name: 'MDT 安全门控与知情同意', shortName: 'MDT安全门控', type: 'therapy', categoryLabel: '临床合规审查', description: '消化科、感染科与药学多学科会诊，逐项核对禁忌与知情同意后签署放行。', val: 18 }
 ];
 
 // Knowledge Graph Links

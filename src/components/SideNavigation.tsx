@@ -1,107 +1,109 @@
 import React from 'react';
-import { 
-  LayoutDashboard, 
-  UserCheck, 
-  GitMerge, 
-  LineChart, 
-  Network, 
-  Database
-} from 'lucide-react';
-import { ModuleTab } from '../types';
+import { Database, Monitor } from 'lucide-react';
+import { AppView, ModuleTab } from '../types';
+import { SCREEN_SLOTS, SCREEN_SLOT_COUNT } from '../data/screenSlots';
 
 interface SideNavigationProps {
-  activeTab: ModuleTab;
-  onTabChange: (tab: ModuleTab) => void;
+  activeView: AppView;
+  onNavigate: (view: AppView) => void;
+  /** 已投送并加载完成的屏位 */
+  dispatched: ReadonlyArray<ModuleTab>;
 }
 
 export const SideNavigation: React.FC<SideNavigationProps> = ({
-  activeTab,
-  onTabChange
+  activeView,
+  onNavigate,
+  dispatched
 }) => {
-  const navItems = [
-    {
-      id: 'workbench' as ModuleTab,
-      name: '工作台驾驶舱',
-      sub: '3D微生态数字孪生',
-      icon: LayoutDashboard,
-      badge: '3D'
-    },
-    {
-      id: 'patient_center' as ModuleTab,
-      name: '患者精准诊疗',
-      sub: '菌群画像与微生态网络',
-      icon: UserCheck,
-      badge: '核心'
-    },
-    {
-      id: 'donor_matching' as ModuleTab,
-      name: '供受体智能匹配',
-      sub: '六维雷达与精准处方',
-      icon: GitMerge,
-      badge: 'AI'
-    },
-    {
-      id: 'efficacy_tracker' as ModuleTab,
-      name: '疗效与重构监测',
-      sub: '四轨时序与再决策',
-      icon: LineChart,
-      badge: '随访'
-    },
-    {
-      id: 'knowledge_graph' as ModuleTab,
-      name: '微生态知识图谱',
-      sub: '全景拓扑与生物科研',
-      icon: Network,
-      badge: '图谱'
-    },
-  ];
+  const isHome = activeView === 'home';
+  const idleCount = SCREEN_SLOT_COUNT - dispatched.length;
 
   return (
     <aside id="app-side-navigation" className="w-56 bg-[#091127] border-r border-[#1e2f57] flex flex-col justify-between select-none shrink-0 min-h-[calc(100vh-4rem)]">
-      {/* Navigation items list */}
       <div className="p-3 space-y-1.5">
-        <div className="px-3 py-1.5 text-[10px] font-semibold text-[#8996b8] tracking-wider uppercase">
-          精准医疗核心闭环
+        {/* 启动台入口：它是 5 块屏的初始态，不是第 6 块屏，
+            因此用独立卡片样式与下方 5 个屏位项区分开。 */}
+        <button
+          id="nav-item-home"
+          onClick={() => onNavigate('home')}
+          className={`w-full p-2.5 rounded-xl text-left transition-all border ${
+            isHome
+              ? 'bg-gradient-to-r from-[#20cfff]/20 to-[#397cff]/10 border-[#20cfff]/60 text-[#eef4ff] shadow-[0_0_15px_rgba(32,207,255,0.18)]'
+              : 'bg-[#0c1429] border-[#2b4170]/60 text-[#8996b8] hover:text-[#eef4ff] hover:border-[#20cfff]/40'
+          }`}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <span className="flex items-center gap-2 text-xs font-bold">
+              <Monitor className={`w-4 h-4 ${isHome ? 'text-[#20cfff]' : ''}`} />
+              启动台 · 总控
+            </span>
+            <span
+              className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold ${
+                isHome ? 'bg-[#20cfff] text-[#090d18]' : 'bg-[#152347] text-[#8996b8]'
+              }`}
+            >
+              主屏
+            </span>
+          </div>
+          <div className="mt-1.5 flex items-center gap-2 text-[10px] text-[#8996b8] font-mono">
+            <span>5 块屏调度</span>
+            <span className="text-[#2b4170]">|</span>
+            <span className={idleCount === 0 ? 'text-[#23e6b1]' : 'text-[#ffb84d]'}>
+              {idleCount === 0 ? '全部已加载' : `待命 ${idleCount}`}
+            </span>
+          </div>
+        </button>
+
+        {/* 屏位分组标题 */}
+        <div className="px-3 pt-2 pb-1.5 text-[10px] font-semibold text-[#8996b8] tracking-wider uppercase flex items-center justify-between">
+          <span>精准医疗核心闭环</span>
+          <span className="font-mono normal-case">{SCREEN_SLOT_COUNT} 屏</span>
         </div>
 
-        {navItems.map(item => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
+        {SCREEN_SLOTS.map(slot => {
+          const Icon = slot.icon;
+          const isActive = activeView === slot.tab;
+          const isDispatched = dispatched.includes(slot.tab);
 
           return (
             <button
-              key={item.id}
-              id={`nav-item-${item.id}`}
-              onClick={() => onTabChange(item.id)}
+              key={slot.tab}
+              id={`nav-item-${slot.tab}`}
+              onClick={() => onNavigate(slot.tab)}
               className={`w-full p-2.5 rounded-xl text-left transition-all flex items-center justify-between group ${
                 isActive
                   ? 'bg-gradient-to-r from-[#101a33] to-[#16274d] text-[#eef4ff] border border-[#20cfff]/50 shadow-[0_0_15px_rgba(32,207,255,0.15)]'
                   : 'text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#101a33]/60'
               }`}
             >
-              <div className="flex items-center gap-2.5">
-                <div className={`p-1.5 rounded-lg transition-colors ${
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className={`relative p-1.5 rounded-lg transition-colors shrink-0 ${
                   isActive ? 'bg-[#20cfff]/20 text-[#20cfff]' : 'bg-[#0c1429] text-[#8996b8] group-hover:text-[#20cfff]'
                 }`}>
                   <Icon className="w-4 h-4" />
+                  {/* 未投送的屏位在图标上带一个待命点，一眼看出哪块屏还没调起来 */}
+                  {!isDispatched && (
+                    <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-[#ffb84d]" />
+                  )}
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className={`text-xs font-semibold leading-tight ${isActive ? 'text-[#eef4ff]' : ''}`}>
-                    {item.name}
+                    {slot.name}
                   </div>
-                  <div className="text-[10px] text-[#8996b8] leading-tight mt-0.5">
-                    {item.sub}
+                  <div className="text-[10px] text-[#8996b8] leading-tight mt-0.5 truncate">
+                    {slot.sub}
                   </div>
                 </div>
               </div>
 
-              {item.badge && (
-                <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold ${
+              <span
+                id={`nav-slot-${slot.slot}`}
+                className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold shrink-0 ${
                   isActive ? 'bg-[#20cfff] text-[#090d18]' : 'bg-[#152347] text-[#8996b8]'
-                }`}>
-                  {item.badge}
-                </span>
-              )}
+                }`}
+              >
+                屏 {slot.slot}
+              </span>
             </button>
           );
         })}

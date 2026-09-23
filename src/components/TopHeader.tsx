@@ -11,13 +11,11 @@ import { mockPatients } from '../data/mockMicroFmtData';
 interface TopHeaderProps {
   currentPatient: ClinicalPatient;
   onSelectPatient: (patient: ClinicalPatient) => void;
-  onNavigateTab: (tabId: any) => void;
 }
 
 export const TopHeader: React.FC<TopHeaderProps> = ({
   currentPatient,
-  onSelectPatient,
-  onNavigateTab
+  onSelectPatient
 }) => {
   return (
     <header id="app-top-header" className="h-16 px-4 border-b border-[#1e2f57] bg-[#091127] flex items-center justify-between gap-4 select-none z-30 sticky top-0">
@@ -82,16 +80,16 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           </span>
         </div>
 
-        {/* Notifications */}
-        <div className="relative">
-          <button 
-            onClick={() => onNavigateTab('workbench')}
-            className="p-2 rounded-lg bg-[#101a33] border border-[#2b4170]/60 text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347] transition-all relative"
-            title="查看系统预警"
-          >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#ff536c]"></span>
-          </button>
+        {/* Global Alert Indicator
+            分屏约束下模块之间不再互相跳转，此处只作为全局预警指示灯；
+            红线预警的详情与处置入口由启动台主屏的常驻 ContextBar 承载。 */}
+        <div
+          role="status"
+          title="全局红线预警指示灯 · 详情见启动台主屏常驻预警栏"
+          className="p-2 rounded-lg bg-[#101a33] border border-[#ff536c]/40 text-[#ff536c] relative"
+        >
+          <Bell className="w-4 h-4" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#ff536c] animate-pulse"></span>
         </div>
 
         {/* Physician Profile */}

@@ -17,8 +17,6 @@ import {
   ArrowRight,
   Info,
   Pill,
-  Send,
-  Activity,
   TrendingUp,
   Microscope,
   Target,
@@ -36,11 +34,23 @@ import {
   mockBatches,
   getPatientDataPackage
 } from '../data/mockMicroFmtData';
+import { ContextBar, SecondaryNav, SecondaryNavItem, ScreenSlotBadge } from './ui';
 
 interface DonorMatchingProtocolProps {
   patient: ClinicalPatient;
-  onNavigateTab: (tabId: any) => void;
 }
+
+type DonorTab = 'matching' | 'batches' | 'protocol';
+
+/**
+ * 二级导航按「任务」切分：配型决策 → 菌源溯源 → 处方与门控。
+ * 三者对应临床开方的三个连续动作，互相不需要对照，适合互斥切面。
+ */
+const DONOR_TABS: ReadonlyArray<SecondaryNavItem<DonorTab>> = [
+  { id: 'matching', label: 'AI智能配型与解释', icon: Sparkles, hint: '六维生物组学配型与候选供体对比' },
+  { id: 'batches', label: '供体库与活菌批次', icon: Database, hint: '供体筛查状态与菌液批次溯源' },
+  { id: 'protocol', label: '精准移植处方与安全门控', icon: ShieldCheck, hint: '处方参数、安全门控与签署下发' }
+];
 
 // 六维配型维度（雷达图与维度条共用同一套定义）
 const RADAR_DIMENSIONS = [
@@ -92,10 +102,7 @@ function deriveDonorDimensions(donor: DonorProfile, patient: ClinicalPatient): {
   return { dims, overall };
 }
 
-export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({
-  patient,
-  onNavigateTab
-}) => {
+export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ patient }) => {
   const patientPackage = getPatientDataPackage(patient.id);
 
   // 推荐供体置顶，其余按供体编号排列
@@ -190,45 +197,52 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({
     return `${110 + Math.cos(angle) * r},${110 + Math.sin(angle) * r}`;
   }).join(' ');
 
-  const tabButton = (
-    id: 'matching' | 'batches' | 'protocol',
-    label: string,
-    icon: React.ReactNode
-  ) => (
-    <button
-      key={id}
-      id={`donor-tab-${id}`}
-      onClick={() => setActiveTab(id)}
-      className={`px-3 py-1.5 rounded-md font-medium transition-all flex items-center gap-1.5 ${
-        activeTab === id ? 'bg-[#20cfff] text-[#090d18] font-bold shadow' : 'text-[#8996b8] hover:text-[#eef4ff]'
-      }`}
-    >
-      {icon}
-      {label}
-    </button>
-  );
-
   return (
     <div id="donor-matching-protocol-container" className="space-y-4">
-      {/* 1. Header Navigation & Mode Toggles */}
-      <div className="p-4 rounded-xl bg-[#101a33] border border-[#2b4170]/60 shadow-xl flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 className="text-base font-bold text-[#eef4ff] flex items-center gap-2">
-            <GitMerge className="w-5 h-5 text-[#20cfff]" />
-            供受体智能匹配与精准移植处方系统
-          </h2>
-          <p className="text-xs text-[#8996b8] mt-0.5">
-            当前匹配受体: <span className="text-[#eef4ff] font-semibold">{patient.name}</span> ({patient.primaryDiagnosis.split(' ')[0]}) · 供受体六维生物组学AI配型
-          </p>
-        </div>
+      {/* 常驻上下文栏：受体身份 + 安全门控状态。
+          门控是开方的前置条件，任何切面下都必须可见；分屏后本屏不向外跳转，
+          因此受体基线、门控进度、菌源批次信息全部就地承载。 */}
+      <ContextBar
+        icon={GitMerge}
+        title="供受体智能匹配与精准移植处方系统"
+        subtitle={`当前匹配受体 ${patient.name}（${patient.primaryDiagnosis.split(' ')[0]}） · 六维生物组学 AI 配型 · 当前阶段 ${patient.currentPhase}`}
+        badges={
+          <>
+            <ScreenSlotBadge slot={3} />
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#20cfff]/20 text-[#20cfff] border border-[#20cfff]/40 font-mono">
+              推荐供体 {evaluation.donorCode}
+            </span>
+          </>
+        }
+        metrics={[
+          { label: '六维综合匹配度', value: `${evaluation.overallScore}%`, tone: 'info' },
+          {
+            label: '安全门控通过',
+            value: `${passedGates} / ${ruleGates.length}`,
+            tone: passedGates === ruleGates.length ? 'ok' : 'warn'
+          },
+          {
+            label: '在库合格供体',
+            value: `${libraryStats.donors} / ${libraryStats.totalDonors}`,
+            tone: 'default'
+          },
+          { label: '可用活菌批次', value: libraryStats.availableBatches, tone: 'ok' }
+        ]}
+        status={
+          <>
+            处方版本 {protocol.protocolVersion}
+            <br />
+            审批 {protocol.approvalStatus}
+          </>
+        }
+      />
 
-        {/* Tab Switcher */}
-        <div className="flex items-center p-1 rounded-lg bg-[#091127] border border-[#2b4170]/60 text-xs">
-          {tabButton('matching', 'AI智能配型与解释', <Sparkles className="w-3.5 h-3.5" />)}
-          {tabButton('batches', '供体库与活菌批次', <Database className="w-3.5 h-3.5" />)}
-          {tabButton('protocol', '精准移植处方与安全门控', <ShieldCheck className="w-3.5 h-3.5" />)}
-        </div>
-      </div>
+      <SecondaryNav
+        items={DONOR_TABS}
+        active={activeTab}
+        onChange={setActiveTab}
+        trailing={`菌源批次 ${selectedBatch.batchNumber} · 效期 ${selectedBatch.expiryDate}`}
+      />
 
       {/* ============ 视图一：AI 智能配型与解释 ============ */}
       {activeTab === 'matching' && (
@@ -935,21 +949,25 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({
                 <span>下发后系统将自动开启定植率与炎症指标的纵向随访轨道，并按里程碑推送复查提醒。</span>
               </div>
 
-              <button
-                onClick={() => onNavigateTab('efficacy_tracker')}
-                className="w-full py-2 rounded-lg bg-[#23e6b1] text-[#090d18] text-xs font-bold hover:brightness-110 transition-all flex items-center justify-center gap-1.5 shadow-[0_0_12px_rgba(35,230,177,0.3)]"
-              >
-                <Send className="w-3.5 h-3.5" />
-                下发执行并启动疗效监测
-              </button>
-
-              <button
-                onClick={() => onNavigateTab('patient_center')}
-                className="w-full py-1.5 rounded-lg bg-[#152347] text-[#8996b8] hover:text-[#eef4ff] text-xs transition-all flex items-center justify-center gap-1.5"
-              >
-                <Activity className="w-3.5 h-3.5" />
-                查看受体微生态画像
-              </button>
+              {/* 分屏约束：本屏不向其他模块跳转。签署后的流转说明就地呈现，
+                  执行状态由本屏门控进度与医师签署动作驱动。 */}
+              <div className="p-3 rounded-lg bg-[#0c1429] border border-[#2b4170]/50 space-y-1.5 text-[11px]">
+                <div className="flex items-center justify-between">
+                  <span className="text-[#8996b8]">门控进度</span>
+                  <span
+                    className={`font-mono font-bold ${
+                      passedGates === ruleGates.length ? 'text-[#23e6b1]' : 'text-[#ffb84d]'
+                    }`}
+                  >
+                    {passedGates} / {ruleGates.length} 项通过
+                    {passedGates === ruleGates.length ? '，可提交审核' : '，未通过项须先处置'}
+                  </span>
+                </div>
+                <p className="text-[10px] text-[#8996b8] leading-relaxed pt-1.5 border-t border-[#1e2f57]/60">
+                  签署后系统自动开启定植率与炎症指标的纵向随访轨道，并按里程碑推送复查提醒；
+                  随访数据在「疗效与重构监测」屏独立呈现，本屏不承担跨屏跳转。
+                </p>
+              </div>
             </div>
           </div>
         </div>

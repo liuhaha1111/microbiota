@@ -1,1 +1,81 @@
 @import "tailwindcss";
+
+/* ============================================================================
+ * 历史治疗样本参考库 · 动效（克制、低频，医疗系统不使用高频闪烁与全屏粒子）
+ * ========================================================================== */
+
+/* 差异项弱边框：低频呼吸，避免视觉疲劳 */
+@keyframes historyDiffPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 184, 77, 0);
+  }
+  50% {
+    box-shadow: 0 0 8px 1px rgba(255, 184, 77, 0.28);
+  }
+}
+
+.compare-flag {
+  animation: historyDiffPulse 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .compare-flag {
+    animation: none;
+  }
+}
+
+/* 检索中：菌群粒子缓慢流动 */
+@keyframes historyParticleDrift {
+  0% {
+    transform: translateX(0);
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(28px);
+    opacity: 0.15;
+  }
+}
+
+.history-particle {
+  animation: historyParticleDrift 1.8s ease-in-out infinite;
+}
+
+/* 视图切换淡入 300ms */
+@keyframes historyFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.history-fade-in {
+  animation: historyFadeIn 300ms ease-out;
+}
+
+/* 结果列表滚动条（深色医疗 UI） */
+.history-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.history-scroll::-webkit-scrollbar-track {
+  background: #091127;
+  border-radius: 3px;
+}
+
+.history-scroll::-webkit-scrollbar-thumb {
+  background: #2b4170;
+  border-radius: 3px;
+}
+
+.history-scroll::-webkit-scrollbar-thumb:hover {
+  background: #397cff;
+}

@@ -5,7 +5,16 @@ export type ModuleTab =
   | 'patient_center'      // 患者精准诊疗中心 (菌群画像与生态网络)
   | 'donor_matching'      // 供受体智能匹配与精准方案
   | 'efficacy_tracker'    // 疗效与菌群重构监测
-  | 'knowledge_graph';    // 菌群生态与疾病知识图谱
+  | 'history_library';    // 历史治疗样本参考库 (相似病例 & 方案样本参考)
+
+/**
+ * 应用视图。
+ *
+ * 本项目按「5 块物理屏 ↔ 5 个模块」的 1:1 关系部署，**没有第 6 块屏**。
+ * `'home'` 是这 5 块屏的**初始态**（都显示同一个启动台主屏），
+ * 而不是一个额外的屏位；从主屏点击入口卡后，对应屏位才加载它的模块。
+ */
+export type AppView = 'home' | ModuleTab;
 
 export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
 
@@ -195,10 +204,21 @@ export interface LongitudinalTrackPoint {
 export interface KnowledgeNode {
   id: string;
   name: string;
+  /**
+   * 图谱内展示用的短名。节点标签在画布上横向空间有限，
+   * 全称（含拉丁学名/英文缩写）会互相压盖，故单独给出精简名。
+   */
+  shortName?: string;
   type: 'disease' | 'microbe' | 'metabolite' | 'immune' | 'therapy';
   categoryLabel: string;
   description: string;
   val: number; // size
+  /**
+   * 图谱密度分级。缺省视为 'core'。
+   * core：构成知识图谱主干的实体，任何画布尺寸下都渲染；
+   * extended：适应症外延与补充知识，仅在「全量知识库」密度下渲染。
+   */
+  tier?: 'core' | 'extended';
   x?: number;
   y?: number;
   vx?: number;
@@ -210,4 +230,198 @@ export interface KnowledgeLink {
   target: string | KnowledgeNode;
   relation: string;
   effect: 'positive' | 'negative' | 'neutral';
+}
+
+/* ============================================================================
+ * 历史治疗样本参考库（第五模块）
+ * 面向临床医生单病例研判：以当前接诊患者为查询输入 → 多维度相似度召回
+ * 历史已闭环 FMT 病例 → 展开完整诊疗档案 + 历史方案样本 → 参考复制草稿。
+ * ========================================================================== */
+
+/** 适应症大类（相似度匹配的第一层硬约束） */
+export type DiseaseCategory = 'UC' | 'CD' | 'rCDI' | 'IBS-D' | 'IBD-U';
+
+/** 最终临床结局标签 */
+export type SampleOutcome = 'remission' | 'partial' | 'no_response' | 'relapse';
+
+/** 历史案例标签（知识规则中心可维护） */
+export type SampleCaseTag =
+  | 'MDT疑难病例'
+  | '胶囊FMT典型'
+  | '重症IBD'
+  | '难治复发病例'
+  | '老年低营养'
+  | '免疫抑制宿主'
+  | '超高龄SAE警示'
+  | '生物制剂初治';
+
+/** 样本库管理状态 */
+export type SampleLibraryStatus = 'in_library' | 'blocked';
+
+/** 三维度相似度权重（界面可调，归一化前为百分比） */
+export interface SimilarityWeights {
+  clinical: number;
+  physical: number;
+  microbiome: number;
+}
+
+/**
+ * 相似度特征向量。
+ * 不落库、不冗余存储：两侧都由各自权威字段实时派生
+ * （当前患者 ← 病历 + 菌群多组学；历史样本 ← 入库档案 + 通路实测值），
+ * 保证「详情页展示的数值」与「参与打分的数值」永远一致。
+ */
+export interface SimilarityFeatureVector {
+  // ① 临床病情 & 疾病史
+  diagnosisCategory: DiseaseCategory;
+  diseaseActivity: number;        // 0-100 归一化活动度
+  biologicExposure: number;       // 既往生物制剂/免疫抑制剂暴露项数
+  // ② 身体状态
+  age: number;
+  bmi: number;
+  crp: number;                    // mg/L
+  fecalCalprotectin: number;      // μg/g
+  albumin: number;                // g/L
+  nutritionalRisk: 0 | 1 | 2;     // 低 / 中等 / 高
+  immunosuppressed: boolean;
+  // ③ 菌群微生态
+  shannonDiversity: number;
+  dysbiosisScore: number;         // 0-100
+  beneficialRatio: number;        // %
+  scfaScore: number;              // 0-100
+  butyrateScore: number;
+  bileAcidScore: number;
+  barrierScore: number;
+  inflammationPathwayScore: number;
+  fmtAdaptability: number;        // 0-100
+}
+
+export type SimilarityDimensionKey = 'clinical' | 'physical' | 'microbiome';
+
+/** 单条相似 / 差异说明 */
+export interface SimilarityExplanationPoint {
+  dimension: SimilarityDimensionKey;
+  label: string;
+  /** 两侧取值的人话描述，例如「当前 632 μg/g ／ 历史 210 μg/g」 */
+  detail: string;
+  /** 0-1，越高越像 */
+  score: number;
+}
+
+export interface SimilarityResult {
+  overall: number;                // 0-100
+  dimensions: Record<SimilarityDimensionKey, number>;
+  matchedPoints: SimilarityExplanationPoint[];
+  diffPoints: SimilarityExplanationPoint[];
+}
+
+/** 肠道微生态数字孪生快照指标 */
+export interface TwinSnapshot {
+  ecologicalStability: number;
+  dysbiosisDegree: number;
+  donorEngraftment: number;
+  inflammationLevel: number;
+  functionalRecovery: number;
+}
+
+export interface HistoryAdverseEvent {
+  id: string;
+  timing: string;
+  type: string;
+  severity: '轻度' | '中度' | '严重(SAE)';
+  handling: string;
+  isSAE: boolean;
+}
+
+export interface HistoryExecutionRecord {
+  seq: string;
+  date: string;
+  route: string;
+  actualDose: string;
+  tolerance: string;
+  immediateAE: string;
+  operator: string;
+}
+
+export interface HistoryProtocolVersion {
+  version: string;
+  date: string;
+  author: string;
+  summary: string;
+  /** 相对上一版的修改项 */
+  changes: string[];
+  protocol: FMTTreatmentProtocol;
+}
+
+export interface HistoricalDonorMatch {
+  donorCode: string;
+  donorRating: 'A+' | 'A' | 'B' | 'C';
+  donorType: string;
+  overallScore: number;
+  dimensions: MatchEvaluation['dimensions'];
+  advantages: string[];
+  potentialRisks: string[];
+  matchDate: string;
+}
+
+export interface HistoricalMicrobiome {
+  shannonDiversity: number;
+  dysbiosisScore: number;
+  beneficialRatio: number;
+  pathogenLoad: number;
+  fmtAdaptabilityScore: number;
+  dominantFeature: string;
+  taxa: MicrobialTaxon[];
+  ecologicalLinks: EcologicalLink[];
+  pathways: FunctionalPathway[];
+  twin: { pre: TwinSnapshot; post: TwinSnapshot };
+}
+
+/** 一条完整闭环的历史治疗样本 */
+export interface HistoricalSample {
+  id: string;                     // H-001
+  anonymizedMrn: string;          // 脱敏病历编号
+  gender: '男' | '女';
+  age: number;
+  bmi: number;
+  diagnosisCategory: DiseaseCategory;
+  diagnosisLabel: string;
+  diseaseStage: string;
+  diseaseActivityLabel: string;
+  nutritionRisk: '低' | '中等' | '高';
+  immuneStatus: string;
+  immunosuppressed: boolean;
+  contraindicationNote: string;
+  allergyNote: string;
+  comorbidities: string[];
+  surgicalHistory: string[];
+  priorMedications: string[];
+  infectionScreening: string;
+  clinicalMarkers: {
+    crp: number;
+    esr: number;
+    fecalCalprotectin: number;
+    albumin: number;
+    prealbumin: number;
+  };
+  microbiome: HistoricalMicrobiome;
+  donorMatch: HistoricalDonorMatch;
+  protocolVersions: HistoryProtocolVersion[];
+  safetyGates: SafetyRuleGate[];
+  executionRecords: HistoryExecutionRecord[];
+  longitudinalPoints: LongitudinalTrackPoint[];
+  adverseEvents: HistoryAdverseEvent[];
+  outcome: SampleOutcome;
+  outcomeLabel: string;
+  followUpWeeks: number;
+  finalEngraftmentRate: number;
+  mdtDiscussed: boolean;
+  mdtNotes: string[];
+  physicianNotes: string[];
+  caseTags: SampleCaseTag[];
+  libraryStatus: SampleLibraryStatus;
+  typicalCase: boolean;
+  allowClinicalReference: boolean;
+  /** 数据完整度，< 100 的病例按规则禁止入库 */
+  dataCompleteness: number;
 }

@@ -1018,17 +1018,24 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
     modelGroup.add(particles);
 
     // 9. Animation & Render Loop
-    const clock = new THREE.Clock();
+    // THREE.Clock 在 three 0.186 已弃用（控制台会持续报警告），改用 Timer。
+    // Timer.connect(document) 启用 Page Visibility 处理：多屏部署时非当前活动屏的
+    // requestAnimationFrame 会被浏览器降频甚至暂停，不处理会累积出巨大的 delta。
+    const timer = new THREE.Timer();
+    timer.connect(document);
     // 投影复用的临时向量：每帧 8 次投影，避免在循环里反复 new Vector3
     const pinProjectVec = new THREE.Vector3();
     // 量取「1 个模型单位 = 多少屏幕像素」用的两个探针点
     const probeA = new THREE.Vector3();
     const probeB = new THREE.Vector3();
 
-    const animate = () => {
+    const animate = (timestamp?: number) => {
       animationFrameIdRef.current = requestAnimationFrame(animate);
-      const delta = clock.getDelta();
-      const time = clock.getElapsedTime();
+      // Timer 与 Clock 的 API 设计不同：必须先 update 再取值，
+      // 两次 update 之间多次调用 getDelta() / getElapsed() 会返回同一值。
+      timer.update(timestamp);
+      const delta = timer.getDelta();
+      const time = timer.getElapsed();
 
       // Slow auto rotate if explicitly toggled by user
       if (autoRotateRef.current && !isDraggingRef.current && modelGroupRef.current) {
@@ -1480,6 +1487,8 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
       if (animationFrameIdRef.current) {
         cancelAnimationFrame(animationFrameIdRef.current);
       }
+      // 解除与 document 的 Page Visibility 监听，否则重建场景时会累积监听器
+      timer.dispose();
       domElement.removeEventListener('mousedown', handlePointerDown);
       window.removeEventListener('mousemove', handlePointerMove);
       window.removeEventListener('mouseup', handlePointerUp);
