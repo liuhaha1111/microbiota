@@ -258,3 +258,73 @@ Remove-Item .\profiles -Recurse -Force
 
 1. **广播前必须比对内容。** 远端状态会改变 effect 依赖，无条件广播会在两屏之间来回弹射形成无限循环。
 2. **`main.tsx` 开着 StrictMode**，effect 会被双调用，cleanup 必须真正 close 掉 channel，重复应用同一份快照要幂等。
+
+---
+
+## 十二、在另一台电脑上使用
+
+### 前置条件
+
+| 要求 | 说明 |
+|---|---|
+| **Node.js 22 或更高** | 必需。低于 22 时 `launch.mjs` 拿不到全局 `WebSocket`，窗口自动定位会失效（脚本会降级并明确提示，**联动仍然可用**） |
+| **Chrome 或 Edge** | 任选其一，脚本自动探测 |
+| **Windows** | 脚本是 PowerShell + `.bat`，目前只在 Windows 上可用 |
+
+### 步骤
+
+```bash
+git clone https://github.com/liuhaha1111/microbiota.git
+cd microbiota
+```
+
+然后**双击**：
+
+```
+tools\multiscreen\Start-MultiScreen.bat
+```
+
+**不需要手动 `npm install`，也不需要手动 `npm run dev`** —— 脚本会自己处理。
+
+### 第一次运行会发生什么
+
+1. 发现没有 `node_modules` → 自动执行 `npm install`（装了 bun 就用 `bun install`），可能几分钟
+2. 发现 dev server 没起 → 自动开一个控制台窗口跑 `npm run dev`
+3. 探测到几块显示器 → 开几个全屏窗口，每个停在一个屏上
+4. 每个窗口都停在启动台，各自点一张入口卡
+
+### 首次可能遇到的三个问题
+
+**「无法加载文件，因为在此系统上禁止运行脚本」**
+
+PowerShell 执行策略拦截。`.bat` 里已带 `-ExecutionPolicy Bypass`，正常不会出现；若被组策略拦下，右键 `.bat` →「以管理员身份运行」。
+
+**窗口开了但位置不对，全叠在一起**
+
+先看启动日志有没有这一行：
+
+```
+Node N detected -- automatic window placement needs Node 22 or newer
+```
+
+有就升级 Node。没有的话看 `Window placement over CDP failed` —— 多半是调试端口 9222 被占用，换一个：
+
+```powershell
+.\Start-MultiScreen.bat -CdpPort 9333
+```
+
+**病例切换了但其他屏不动**
+
+在启动日志里找这一行：
+
+```
+Session : xxxxxxxx  (cross-screen sync ON)
+```
+
+没有它说明窗口不是脚本起的（URL 缺 `?wall=`），同步层根本没激活。
+
+### 关于依赖管理器
+
+仓库跟踪的是 `bun.lock`。脚本优先用 bun，没有 bun 才用 npm（会生成 `package-lock.json`，已在 `.gitignore` 里）。
+
+**两者都能跑，但别在同一份 `node_modules` 上混用** —— 混用会让依赖树处于不一致状态。

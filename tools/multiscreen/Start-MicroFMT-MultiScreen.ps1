@@ -425,6 +425,36 @@ $wallUrl = "${target}?wall=$session"
 Write-Ok "Target   : $target"
 Write-Ok "Session  : $session  (cross-screen sync ON)"
 
+# ---- dependencies -----------------------------------------------------------
+# A fresh clone has no node_modules, and `npm run dev` would fail immediately.
+# Installing here is what makes "clone, double-click, it works" actually hold.
+$nodeModules = Join-Path $ProjectDir 'node_modules'
+$viteMarker  = Join-Path $nodeModules 'vite\package.json'
+
+if (-not (Test-Path $viteMarker)) {
+    $pkgMgr = if (Get-Command bun -ErrorAction SilentlyContinue) { 'bun' } else { 'npm' }
+    Write-Warn "Dependencies are not installed in $ProjectDir"
+    Write-Step "Running '$pkgMgr install' (first run only, may take a few minutes) ..."
+
+    Start-Process -FilePath 'cmd.exe' -ArgumentList "/k $pkgMgr install" -WorkingDirectory $ProjectDir | Out-Null
+
+    $installDeadline = (Get-Date).AddMinutes(15)
+    Write-Host '    installing ' -NoNewline -ForegroundColor DarkGray
+    while ((Get-Date) -lt $installDeadline) {
+        Start-Sleep -Seconds 3
+        Write-Host '.' -NoNewline -ForegroundColor DarkGray
+        if (Test-Path $viteMarker) { break }
+    }
+    Write-Host ''
+
+    if (-not (Test-Path $viteMarker)) {
+        Write-Fail 'Dependency installation did not finish in time.'
+        Write-Dim "Run '$pkgMgr install' manually in $ProjectDir, then try again."
+        return
+    }
+    Write-Ok 'Dependencies installed.'
+}
+
 if (Test-DevServer -Target $target) {
     Write-Ok 'Dev server is already running.'
 }
@@ -488,6 +518,15 @@ Start-Process -FilePath $browser -ArgumentList ($browserArgs -join ' ') | Out-Nu
 
 # ---- place the windows over CDP ---------------------------------------------
 $node = Get-Command node -ErrorAction SilentlyContinue
+$nodeMajor = 0
+if ($node) {
+    try {
+        $nodeMajor = [int]((((& node --version) 2>$null) -replace '^v', '') -split '\.')[0]
+    } catch {
+        $nodeMajor = 0
+    }
+}
+
 $configPath = Join-Path ([System.IO.Path]::GetTempPath()) "microfmt-launch-$session.json"
 $placedOk = $false
 
@@ -495,6 +534,15 @@ if (-not $node) {
     Write-Warn 'Node.js not found on PATH -- falling back to command-line placement.'
     Write-Dim 'Only the first window will be positioned; drag the rest by hand.'
     Write-Dim 'Cross-screen sync still works: all windows share one profile.'
+    $placedOk = $true
+}
+elseif ($nodeMajor -lt 22) {
+    # launch.mjs drives the DevTools Protocol over a WebSocket. Node only ships a
+    # global WebSocket from v22 onwards; older releases die with
+    # "WebSocket is not defined".
+    Write-Warn "Node $nodeMajor detected -- automatic window placement needs Node 22 or newer."
+    Write-Dim 'Falling back: only the first window is positioned, drag the rest by hand.'
+    Write-Dim 'Cross-screen sync still works. Install Node 22+ for automatic placement.'
     $placedOk = $true
 }
 elseif (-not (Test-Path $LaunchScript)) {

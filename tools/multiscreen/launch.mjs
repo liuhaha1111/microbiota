@@ -83,6 +83,15 @@ const setBounds = (windowId, bounds) =>
   send('Browser.setWindowBounds', { windowId, bounds });
 
 async function main() {
+  // Node only exposes a global WebSocket from v22 onwards. Failing loudly here
+  // beats the bare "WebSocket is not defined" the caller would otherwise see.
+  if (typeof WebSocket !== 'function') {
+    throw new Error(
+      `this Node build (${process.version}) has no global WebSocket; ` +
+      'window placement over the DevTools Protocol requires Node 22 or newer'
+    );
+  }
+
   const port = config.cdpPort || 9222;
   const version = await waitForCdp(port, config.cdpTimeoutMs || 45000);
 
