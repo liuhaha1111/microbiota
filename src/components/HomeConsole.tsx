@@ -118,18 +118,24 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
         }
       />
 
-      {/* 屏位调度说明：把「5 块屏初始都是主屏内容」这个部署事实显式说出来 */}
+      {/* 屏位调度说明：把「各屏初始都是主屏内容」这个部署事实显式说出来。
+          注意这里的计数是**全局真值**，不是本窗口自己算的 —— dispatched 经
+          BroadcastChannel 跨屏同步，所以任一屏投送后，所有屏的启动台都会跟着更新。 */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 rounded-xl bg-[#0d1730]/85 border border-[#2b4170]/60">
         <div className="flex items-start gap-2.5 text-[11px] leading-relaxed min-w-0">
           <Monitor className="w-4 h-4 text-[#20cfff] shrink-0 mt-0.5" />
           <p className="text-[#8996b8]">
             <span className="text-[#eef4ff] font-semibold">
-              5 块屏当前均显示本启动台。
+              各屏当前均显示本启动台。
             </span>
             点击下方任一入口卡，对应模块将投送至该屏位并加载；屏位与模块为固定绑定，不占用额外屏位。
+            <span className="text-[#20cfff]">投送状态与受体病例在各屏之间实时联动。</span>
           </p>
         </div>
         <div className="flex items-center gap-2 text-[10px] font-mono shrink-0">
+          <span className="px-2 py-0.5 rounded bg-[#815cff]/20 text-[#815cff] border border-[#815cff]/40">
+            跨屏联动
+          </span>
           <span className="px-2 py-0.5 rounded bg-[#152347] text-[#8996b8]">
             待命 {idleCount} / {SCREEN_SLOT_COUNT}
           </span>

@@ -23,3 +23,6 @@ package-lock.json
 # 编辑/重构过程中留下的文件备份，不属于源码
 *.bak
 *.bak2
+
+# 多屏启动器运行时生成的浏览器 profile（上百 MB，且与具体机器绑定）
+tools/multiscreen/profiles/

@@ -3,7 +3,8 @@ import {
   Dna, 
   ChevronDown, 
   Bell, 
-  Database
+  Database,
+  LayoutGrid
 } from 'lucide-react';
 import { ClinicalPatient } from '../types';
 import { mockPatients } from '../data/mockMicroFmtData';
@@ -11,11 +12,17 @@ import { mockPatients } from '../data/mockMicroFmtData';
 interface TopHeaderProps {
   currentPatient: ClinicalPatient;
   onSelectPatient: (patient: ClinicalPatient) => void;
+  /** 当前是否停在启动台主屏 */
+  isHome: boolean;
+  /** 返回启动台主屏。侧边导航已移除，这是模块屏唯一的回路。 */
+  onGoHome: () => void;
 }
 
 export const TopHeader: React.FC<TopHeaderProps> = ({
   currentPatient,
-  onSelectPatient
+  onSelectPatient,
+  isHome,
+  onGoHome
 }) => {
   return (
     <header id="app-top-header" className="h-16 px-4 border-b border-[#1e2f57] bg-[#091127] flex items-center justify-between gap-4 select-none z-30 sticky top-0">
@@ -37,6 +44,21 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             Precision Microbiota Transplantation & Clinical Intelligence Platform
           </p>
         </div>
+
+        {/* 返回启动台
+            侧边导航已移除，每块屏只承载一个模块，这里是回到主屏的唯一入口。
+            停在主屏时不渲染，避免出现一个点不动的控件。 */}
+        {!isHome && (
+          <button
+            id="back-to-home"
+            onClick={onGoHome}
+            title="返回启动台主屏"
+            className="ml-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#101a33] border border-[#2b4170] text-[11px] text-[#8996b8] hover:text-[#20cfff] hover:border-[#20cfff]/60 hover:bg-[#152347] transition-all"
+          >
+            <LayoutGrid className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">启动台</span>
+          </button>
+        )}
       </div>
 
       {/* Center: Active Patient Switcher & Clinical Status */}

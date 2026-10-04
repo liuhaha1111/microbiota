@@ -1,31 +1,67 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppView, ModuleTab, ClinicalPatient } from './types';
 import { mockPatients } from './data/mockMicroFmtData';
 import { TopHeader } from './components/TopHeader';
-import { SideNavigation } from './components/SideNavigation';
 import { HomeConsole } from './components/HomeConsole';
 import { WorkbenchCockpit } from './components/WorkbenchCockpit';
 import { PatientIntelligenceCenter } from './components/PatientIntelligenceCenter';
 import { DonorMatchingProtocol } from './components/DonorMatchingProtocol';
 import { EfficacyReconstructionTracker } from './components/EfficacyReconstructionTracker';
 import { HistoricalSampleLibrary } from './components/HistoricalSampleLibrary';
+import { useWallSync } from './hooks/useWallSync';
+import { isSameDispatched, type WallSyncState } from './utils/wallSync';
 
 export default function App() {
   /**
-   * 部署形态：5 块物理屏 ↔ 5 个模块（屏位固定绑定，没有第 6 块屏）。
-   * 启动时 5 块屏都显示启动台主屏，因此默认视图是 'home' 而不是某个模块。
+   * 部署形态：N 块物理屏 ↔ N 个模块窗口，屏位固定绑定，没有额外屏位。
+   * 启动时每块屏都显示启动台主屏，因此默认视图是 'home' 而不是某个模块。
+   *
+   * view 是**本窗口私有**的 —— 每块屏显示哪个模块互不干涉；
+   * dispatched 与 currentPatient 则通过跨屏同步共享，所以启动台的
+   * 「待命 N/5」和受体病例在所有屏上都是一致的。
    */
   const [view, setView] = useState<AppView>('home');
-  /** 已投送内容并加载完成的屏位 */
   const [dispatched, setDispatched] = useState<ModuleTab[]>([]);
   const [currentPatient, setCurrentPatient] = useState<ClinicalPatient>(mockPatients[0]);
 
   /**
+   * 接收其它屏广播过来的病例与投送状态。
+   *
+   * 只在内容确实不同时才 setState。远端数组每次都是新引用，直接替换会让下面的
+   * 广播 effect 再次发出消息，两块屏之间来回弹射形成无限循环。
+   */
+  const applyRemote = useCallback((remote: WallSyncState) => {
+    setCurrentPatient(prev => {
+      if (prev.id === remote.patientId) return prev;
+      return mockPatients.find(p => p.id === remote.patientId) ?? prev;
+    });
+    setDispatched(prev => (isSameDispatched(prev, remote.dispatched) ? prev : remote.dispatched));
+  }, []);
+
+  const { active: wallActive, publish } = useWallSync(applyRemote);
+
+  /**
+   * 广播本地状态变化。
+   *
+   * 必须先用指纹比对再发。否则远端应用过来的状态会改变 effect 的依赖，触发又一次
+   * 广播，形成 A→B→A→… 的无限循环。
+   */
+  const lastBroadcastRef = useRef('');
+
+  useEffect(() => {
+    if (!wallActive) return;
+    const state: WallSyncState = { patientId: currentPatient.id, dispatched };
+    const fingerprint = `${state.patientId}|${state.dispatched.join(',')}`;
+    if (fingerprint === lastBroadcastRef.current) return;
+    lastBroadcastRef.current = fingerprint;
+    publish(state);
+  }, [wallActive, publish, currentPatient.id, dispatched]);
+
+  /**
    * 切换视图。
    *
-   * 进入任一模块屏即视为该屏位「已加载」——无论入口是启动台的投送卡还是侧边栏。
-   * 否则会出现自相矛盾的状态：人正看着屏 3，启动台却报「5 块屏待命」。
-   * 'home' 是启动台本身，不占屏位，因此不登记。
+   * 进入任一模块屏即视为该屏位「已加载」——无论入口是启动台的投送卡还是顶栏的
+   * 启动台按钮。'home' 是启动台本身，不占屏位，因此不登记。
    */
   const navigate = (next: AppView) => {
     if (next !== 'home') {
@@ -36,63 +72,53 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#090d18] text-[#eef4ff] font-sans flex flex-col selection:bg-[#20cfff] selection:text-[#090d18]">
-      {/* 1. Universal Top Header */}
+      {/* 1. Universal Top Header
+          侧边导航已移除，顶栏的「启动台」按钮是模块屏回到主屏的唯一回路。 */}
       <TopHeader
         currentPatient={currentPatient}
         onSelectPatient={setCurrentPatient}
+        isHome={view === 'home'}
+        onGoHome={() => navigate('home')}
       />
 
-      {/* 2. Main Platform Layout: Side Navigation + Content Area */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        {/* Left Side Navigation */}
-        <SideNavigation
-          activeView={view}
-          onNavigate={navigate}
-          dispatched={dispatched}
-        />
+      {/* 2. Full-bleed Workspace
+          分屏约束：每块屏只承载一个模块，模块之间不互相跳转，因此不再有左侧目录。
+          每屏所需的全部上下文由各模块的 ContextBar 常驻承载（信息自洽）。
+          id 供页内锚点导航（AnchorNav）定位滚动容器使用。 */}
+      <main
+        id="app-scroll-root"
+        className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 bg-gradient-to-b from-[#090d18] via-[#0b1226] to-[#090d18]"
+      >
+        <div className="max-w-[1600px] mx-auto w-full">
+          {view === 'home' && (
+            <HomeConsole
+              currentPatient={currentPatient}
+              dispatched={dispatched}
+              onEnter={navigate}
+            />
+          )}
 
-        {/* Right Active Workspace Container
-            id 供页内锚点导航（AnchorNav）定位滚动容器使用 */}
-        <main
-          id="app-scroll-root"
-          className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 bg-gradient-to-b from-[#090d18] via-[#0b1226] to-[#090d18]"
-        >
-          <div className="max-w-[1600px] mx-auto w-full">
-            {/* 分屏约束：每个模块自成一屏，模块之间不互相跳转，
-                因此不向模块下发 onNavigateTab。模块内所需上下文由各模块的
-                ContextBar 常驻承载（信息自洽 / self-contained）。
-                唯一的跨屏入口是启动台主屏上的屏位调度卡——它是投送动作，
-                不是模块间的业务跳转。 */}
-            {view === 'home' && (
-              <HomeConsole
-                currentPatient={currentPatient}
-                dispatched={dispatched}
-                onEnter={navigate}
-              />
-            )}
+          {view === 'workbench' && (
+            <WorkbenchCockpit currentPatient={currentPatient} />
+          )}
 
-            {view === 'workbench' && (
-              <WorkbenchCockpit currentPatient={currentPatient} />
-            )}
+          {view === 'patient_center' && (
+            <PatientIntelligenceCenter patient={currentPatient} />
+          )}
 
-            {view === 'patient_center' && (
-              <PatientIntelligenceCenter patient={currentPatient} />
-            )}
+          {view === 'donor_matching' && (
+            <DonorMatchingProtocol patient={currentPatient} />
+          )}
 
-            {view === 'donor_matching' && (
-              <DonorMatchingProtocol patient={currentPatient} />
-            )}
+          {view === 'efficacy_tracker' && (
+            <EfficacyReconstructionTracker patient={currentPatient} />
+          )}
 
-            {view === 'efficacy_tracker' && (
-              <EfficacyReconstructionTracker patient={currentPatient} />
-            )}
-
-            {view === 'history_library' && (
-              <HistoricalSampleLibrary patient={currentPatient} />
-            )}
-          </div>
-        </main>
-      </div>
+          {view === 'history_library' && (
+            <HistoricalSampleLibrary patient={currentPatient} />
+          )}
+        </div>
+      </main>
 
       {/* 3. Deep Tech Medical Footer */}
       <footer className="h-9 px-4 bg-[#070b14] border-t border-[#1e2f57] flex items-center justify-between text-[11px] text-[#8996b8] select-none z-20">
