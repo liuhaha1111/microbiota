@@ -1,14 +1,19 @@
 <#
 .SYNOPSIS
-    MicroFMT multi-screen launcher -- one click, adapts to however many monitors
-    are attached, and links every screen together.
+    MicroFMT multi-screen launcher -- one click, always opens all 5 screen
+    windows, and links them together.
 
 .DESCRIPTION
-    Opens one browser window per attached monitor (up to 5) and fills that monitor
-    with it. All windows share ONE browser profile and ONE session id, so the
-    platform's cross-screen sync works: switching the recipient case on any screen
-    updates every other screen, and the Home Console idle counter is a global
-    truth rather than a per-window guess.
+    Always opens 5 browser windows -- one per platform screen slot -- no matter
+    how many monitors are attached. Only the placement adapts: with 5 or more
+    monitors each window gets its own monitor, fullscreen; with 2-4 the windows
+    are shared out across the monitors by width; on a single monitor they are
+    tiled on it.
+
+    All windows share ONE browser profile and ONE session id, so the platform's
+    cross-screen sync works: switching the recipient case on any screen updates
+    every other screen, and the Home Console idle counter is a global truth
+    rather than a per-window guess.
 
     WHY ONE SHARED PROFILE
     BroadcastChannel and localStorage are scoped to "same origin + same browser
@@ -27,7 +32,8 @@
       1. Finds a Chromium browser (Chrome, then Edge).
       2. Enumerates the attached monitors and their positions.
       3. Checks whether the Vite dev server is reachable; starts it if not.
-      4. Computes one window rectangle per monitor.
+      4. Computes 5 window rectangles, one per screen slot, shared out across
+         the attached monitors.
       5. Launches the browser with remote debugging on a shared profile.
       6. Hands the rectangles to launch.mjs, which creates and places the windows.
 
@@ -50,11 +56,15 @@
 
 .PARAMETER Mode
     auto | perScreen | tile5 | spread
-      auto      : one window per monitor (up to 5). A single monitor falls back
-                  to tile5 so that all 5 modules remain visible at once.
-      perScreen : one window per monitor, filled to that monitor.
+      auto      : always 5 windows. Uses perScreen when there are at least 5
+                  monitors, spread when there are 2-4, and tile5 on a single
+                  monitor. This is the default, and the only mode that keeps all
+                  5 slots on screen whatever the monitor count.
+      perScreen : one window per monitor, filled to that monitor. Cannot exceed
+                  the monitor count -- use spread to share monitors instead.
       tile5     : all 5 windows tiled on one monitor (3 on top, 2 below).
-      spread    : 5 windows distributed across all monitors by monitor width.
+      spread    : 5 windows distributed across all monitors by monitor width,
+                  each monitor taking at least one while windows last.
 
 .PARAMETER BrowserPath
     Full path to chrome.exe / msedge.exe. Auto-detected when omitted.
@@ -67,8 +77,10 @@
     DevTools Protocol port used to place the windows. Default 9222.
 
 .PARAMETER Windowed
-    Do not go fullscreen. Windows are still sized to fill their monitor, but keep
-    the browser title bar and address bar.
+    Do not go fullscreen. Windows are still sized to fill their rectangle, but
+    keep the browser title bar and address bar. Note that tile5 and spread
+    already force a normal window: a fullscreen window covers its entire monitor,
+    so two windows sharing a monitor would overlap exactly.
 
 .PARAMETER NoServe
     Do not start the dev server automatically. Fail instead if it is not up.
@@ -81,7 +93,8 @@
 
 .EXAMPLE
     .\Start-MicroFMT-MultiScreen.ps1
-    One fullscreen window per monitor, all linked.
+    All 5 windows, linked. Fullscreen one-per-monitor on a 5+ monitor rig,
+    shared across the monitors on 2-4, tiled on a single one.
 
 .EXAMPLE
     .\Start-MicroFMT-MultiScreen.ps1 -Mode tile5
@@ -394,16 +407,23 @@ $effectiveMode  = $Mode
 $effectiveCount = [Math]::Min($WindowCount, $MAX_SLOTS)
 
 if ($Mode -eq 'auto') {
-    if ($screens.Count -ge 2) {
-        $effectiveMode  = 'perScreen'
-        # One window per monitor. Never more than the monitor count, otherwise
-        # two windows would land on the same rectangle and overlap exactly.
-        $effectiveCount = [Math]::Min($screens.Count, $MAX_SLOTS)
+    # Always all 5 screen slots. The demo exists to show every module at once, so
+    # the window count must NOT follow the monitor count -- only the placement
+    # adapts. Capping the count to the monitor count was the old behaviour, and
+    # it left 3 of the 5 modules off the desk on a 2-monitor rig.
+    $effectiveCount = [Math]::Min($WindowCount, $MAX_SLOTS)
+
+    if ($screens.Count -ge $effectiveCount) {
+        # Enough monitors to give every window its own, fullscreen.
+        $effectiveMode = 'perScreen'
+    } elseif ($screens.Count -ge 2) {
+        # Fewer monitors than windows. Sharing monitors is still the right
+        # answer -- the windows just cannot be fullscreen (see $wantFullscreen).
+        $effectiveMode = 'spread'
     } else {
-        # A single monitor cannot host a multi-screen demo, so fall back to
-        # tiling all slots on it -- the user still sees every module at once.
-        $effectiveMode  = 'tile5'
-        $effectiveCount = [Math]::Min($WindowCount, $MAX_SLOTS)
+        # A single monitor cannot host a multi-screen demo, so tile all slots on
+        # it -- the user still sees every module at once.
+        $effectiveMode = 'tile5'
     }
     Write-Step "auto -> '$effectiveMode', $effectiveCount window(s) for $($screens.Count) monitor(s)"
 }
@@ -411,6 +431,7 @@ elseif ($effectiveMode -eq 'perScreen') {
     $capped = [Math]::Min($effectiveCount, $screens.Count)
     if ($capped -lt $effectiveCount) {
         Write-Warn "perScreen capped from $effectiveCount to $capped window(s) -- only $($screens.Count) monitor(s) attached"
+        Write-Dim "Use -Mode spread to keep all $effectiveCount windows and share monitors."
     }
     $effectiveCount = $capped
 }
@@ -490,6 +511,14 @@ switch ($effectiveMode) {
     default     { throw "Unsupported mode: $effectiveMode" }
 }
 
+# A fullscreen window covers its entire monitor, so two windows sharing one
+# monitor would overlap exactly -- the later one simply hides the earlier. Only
+# perScreen guarantees exactly one window per monitor and can therefore go
+# fullscreen. tile5 and spread depend on their rectangles surviving, which means
+# a normal window. Without this, `auto` on 2-4 monitors would open all 5 windows
+# and show the user only as many as there are monitors.
+$wantFullscreen = (-not $Windowed) -and ($effectiveMode -eq 'perScreen')
+
 # ---- launch the browser -----------------------------------------------------
 $browserArgs = @(
     "--user-data-dir=`"$WallProfile`""
@@ -553,7 +582,7 @@ else {
     $config = @{
         cdpPort    = $CdpPort
         url        = $wallUrl
-        fullscreen = (-not $Windowed)
+        fullscreen = $wantFullscreen
         rects      = @($layout | ForEach-Object { @{ x = $_.X; y = $_.Y; w = $_.W; h = $_.H } })
     }
     # Write WITHOUT a BOM: Node's JSON.parse chokes on a leading U+FEFF.
@@ -572,8 +601,8 @@ else {
             try {
                 $parsed = $text | ConvertFrom-Json
                 foreach ($w in @($parsed.windows)) {
-                    Write-Ok ("Screen {0}  {1}x{2} at {3},{4}{5}" -f `
-                        $w.screen, $w.w, $w.h, $w.x, $w.y, $(if ($Windowed) { '' } else { '  fullscreen' }))
+                    Write-Ok ("Window {0}  {1}x{2} at {3},{4}{5}" -f `
+                        $w.screen, $w.w, $w.h, $w.x, $w.y, $(if ($wantFullscreen) { '  fullscreen' } else { '' }))
                 }
             } catch {
                 Write-Dim $text
@@ -600,7 +629,8 @@ Write-Host ''
 
 if ($effectiveCount -lt $MAX_SLOTS) {
     Write-Warn "Only $effectiveCount of $MAX_SLOTS screen slots are on screen."
-    Write-Dim 'The remaining modules are reachable from the Home Console entry cards.'
+    Write-Dim 'The remaining modules stay reachable from the Home Console entry cards.'
+    Write-Dim "To see all $MAX_SLOTS at once, re-run with -Mode spread (shares the monitors)."
     Write-Host ''
 }
 
