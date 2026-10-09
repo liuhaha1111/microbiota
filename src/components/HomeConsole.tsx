@@ -100,7 +100,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
         title="红线异常预警"
         subtitle="需即刻干预 · 5 块屏待命期间先于一切调度决策"
         badges={
-          <span className="px-2 py-0.5 rounded text-[length:var(--fs-10)] font-bold bg-[#ff536c]/25 text-danger border border-[#ff536c]/50">
+          <span className="px-2 py-0.5 rounded text-[length:var(--fs-10)] font-bold bg-danger/25 text-danger border border-danger/50">
             3 条待处理
           </span>
         }
@@ -121,7 +121,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
       {/* 屏位调度说明：把「各屏初始都是主屏内容」这个部署事实显式说出来。
           注意这里的计数是**全局真值**，不是本窗口自己算的 —— dispatched 经
           BroadcastChannel 跨屏同步，所以任一屏投送后，所有屏的启动台都会跟着更新。 */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 rounded-xl bg-[#0d1730]/85 border border-line/60">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 rounded-xl bg-surface-2/85 border border-line/60">
         <div className="flex items-start gap-2.5 text-[length:var(--fs-11)] leading-relaxed min-w-0">
           <Monitor className="w-4 h-4 text-accent shrink-0 mt-0.5" />
           <p className="text-ink-muted">
@@ -133,17 +133,17 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
           </p>
         </div>
         <div className="flex items-center gap-2 text-[length:var(--fs-10)] font-mono shrink-0">
-          <span className="px-2 py-0.5 rounded bg-[#815cff]/20 text-violet border border-[#815cff]/40">
+          <span className="px-2 py-0.5 rounded bg-violet/20 text-violet border border-violet/40">
             跨屏联动
           </span>
-          <span className="px-2 py-0.5 rounded bg-[#152347] text-ink-muted">
+          <span className="px-2 py-0.5 rounded bg-track text-ink-muted">
             待命 {idleCount} / {SCREEN_SLOT_COUNT}
           </span>
           <span
             className={`px-2 py-0.5 rounded ${
               dispatched.length > 0
-                ? 'bg-[#23e6b1]/20 text-ok'
-                : 'bg-[#152347] text-ink-muted'
+                ? 'bg-ok/20 text-ok'
+                : 'bg-track text-ink-muted'
             }`}
           >
             已加载 {dispatched.length} / {SCREEN_SLOT_COUNT}
@@ -158,7 +158,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
           return (
             <div
               key={card.label}
-              className="p-3.5 rounded-xl bg-[#101a33] border border-line/60 shadow-lg relative overflow-hidden"
+              className="p-3.5 rounded-xl bg-surface border border-line/60 shadow-lg relative overflow-hidden"
             >
               <div className="flex items-center justify-between text-ink-muted text-xs">
                 <span>{card.label}</span>
@@ -178,7 +178,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
       </div>
 
       {/* 屏位入口卡：主屏的核心动作就是「把哪块屏调起来」 */}
-      <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg">
+      <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg">
         <div className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-3 border-b border-line-2">
           <h4 className="text-xs font-semibold text-ink flex items-center gap-1.5">
             <LayoutDashboard className="w-3.5 h-3.5 text-accent" />
@@ -201,8 +201,8 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
                 onClick={() => onEnter(slot.tab)}
                 className={`group text-left p-3.5 rounded-xl border transition-all flex flex-col ${
                   isDispatched
-                    ? 'bg-gradient-to-b from-[#101a33] to-[#132a4d] border-[#20cfff]/45 hover:border-[#20cfff]/80'
-                    : 'bg-[#0c1429] border-line/60 hover:bg-[#101a33] hover:border-[#20cfff]/50'
+                    ? 'bg-gradient-to-b from-surface to-tint-info border-accent/45 hover:border-accent/80'
+                    : 'bg-surface-2 border-line/60 hover:bg-surface hover:border-accent/50'
                 } shadow-md`}
               >
                 {/* 屏位编号 + 加载状态 */}
@@ -215,7 +215,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
                   >
                     <span
                       className={`w-1.5 h-1.5 rounded-full ${
-                        isDispatched ? 'bg-[#23e6b1]' : 'bg-[#8996b8]/60 animate-pulse'
+                        isDispatched ? 'bg-ok' : 'bg-ink-muted/60 animate-pulse'
                       }`}
                     />
                     {isDispatched ? '已加载' : '待命'}
@@ -227,8 +227,8 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
                   <div
                     className={`w-9 h-9 shrink-0 rounded-lg flex items-center justify-center border transition-colors ${
                       isDispatched
-                        ? 'bg-[#20cfff]/20 border-[#20cfff]/50 text-accent'
-                        : 'bg-[#152347] border-line/60 text-ink-muted group-hover:text-accent'
+                        ? 'bg-accent/20 border-accent/50 text-accent'
+                        : 'bg-track border-line/60 text-ink-muted group-hover:text-accent'
                     }`}
                   >
                     <Icon className="w-4.5 h-4.5" />
@@ -267,26 +267,26 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
       </div>
 
       {/* 临床风险预警与再决策推送 */}
-      <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg">
+      <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg">
         <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
           <h4 className="text-xs font-semibold text-danger flex items-center gap-1.5">
             <AlertTriangle className="w-3.5 h-3.5 text-danger" />
             临床风险预警与再决策推送
           </h4>
-          <span className="px-1.5 py-0.5 rounded text-[length:var(--fs-10)] bg-[#ff536c]/20 text-danger font-bold">
+          <span className="px-1.5 py-0.5 rounded text-[length:var(--fs-10)] bg-danger/20 text-danger font-bold">
             3条待处理
           </span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
           {/* 当前受体重点警报 */}
-          <div className="p-3 rounded-lg bg-[#241121] border border-[#ff536c]/50 text-xs shadow-md">
+          <div className="p-3 rounded-lg bg-tint-danger border border-danger/50 text-xs shadow-md">
             <div className="flex items-center justify-between text-danger font-bold text-[length:var(--fs-11)] mb-1.5">
               <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#ff536c] animate-ping" />
+                <span className="w-1.5 h-1.5 rounded-full bg-danger animate-ping" />
                 当前受体重点警报 ({currentPatient.id})
               </span>
-              <span className="text-[length:var(--fs-10)] px-1.5 py-0.2 rounded bg-[#ff536c]/30 text-danger font-medium">
+              <span className="text-[length:var(--fs-10)] px-1.5 py-0.2 rounded bg-danger/30 text-danger font-medium">
                 高优先级
               </span>
             </div>
@@ -294,7 +294,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
               <strong>{currentPatient.name}</strong>：{currentPatient.chiefComplaint}。
               微生态特征：{currentPatient.microbiomeSummary?.dominantDysbiosis || '菌群失衡明显'}。
             </p>
-            <div className="mt-2.5 pt-2 border-t border-[#ff536c]/25 flex flex-wrap items-center gap-x-4 gap-y-1 text-[length:var(--fs-10)] text-ink-muted">
+            <div className="mt-2.5 pt-2 border-t border-danger/25 flex flex-wrap items-center gap-x-4 gap-y-1 text-[length:var(--fs-10)] text-ink-muted">
               <span>主治医师: <span className="text-warn font-semibold">{currentPatient.attendingPhysician}</span></span>
               <span>风险等级: <span className="text-danger font-semibold">{currentPatient.riskLevel === 'high' ? '高危重症' : '中度活动期'}</span></span>
             </div>
@@ -303,7 +303,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
           {/* 供体配型摘要 —— 点击可直达屏 3 */}
           <button
             onClick={() => onEnter('donor_matching')}
-            className="group text-left p-3 rounded-lg bg-[#1a1c29] border border-[#20cfff]/40 hover:border-[#20cfff]/70 text-xs transition-colors"
+            className="group text-left p-3 rounded-lg bg-tint-neutral border border-accent/40 hover:border-accent/70 text-xs transition-colors"
           >
             <div className="flex items-center justify-between text-accent font-bold text-[length:var(--fs-11)] mb-1.5">
               <span className="flex items-center gap-1.5">
@@ -317,7 +317,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
               六维综合匹配度 <span className="text-accent font-mono font-bold">{evaluation.overallScore}%</span>。
               已针对受体 {currentPatient.name} 的微生态缺损特征定制肠溶胶囊与菌液灌肠联合定植方案。
             </p>
-            <div className="mt-2.5 pt-2 border-t border-[#20cfff]/20 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-[length:var(--fs-10)] text-ink-muted">
+            <div className="mt-2.5 pt-2 border-t border-accent/20 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-[length:var(--fs-10)] text-ink-muted">
               <span>优势: <span className="text-ok">{evaluation.advantages[0] ?? '菌群互补度优异'}</span></span>
               <span className="flex items-center gap-1 text-accent opacity-0 group-hover:opacity-100 transition-opacity">
                 查看屏 3 完整方案 <ArrowRight className="w-3 h-3" />
@@ -328,7 +328,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
           {/* 疗效随访轨道 —— 点击可直达屏 4 */}
           <button
             onClick={() => onEnter('efficacy_tracker')}
-            className="group text-left p-3 rounded-lg bg-[#101a33] border border-line/60 hover:border-[#23e6b1]/50 text-xs transition-colors"
+            className="group text-left p-3 rounded-lg bg-surface border border-line/60 hover:border-ok/50 text-xs transition-colors"
           >
             <div className="flex items-center justify-between text-ok font-bold text-[length:var(--fs-11)] mb-1.5">
               <span className="flex items-center gap-1.5">
@@ -338,21 +338,21 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
               <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">最新: {currentPatient.lastFollowUp}</span>
             </div>
             <div className="grid grid-cols-3 gap-2">
-              <div className="p-2 rounded bg-[#0c1429] border border-line/40">
+              <div className="p-2 rounded bg-surface-2 border border-line/40">
                 <span className="text-[length:var(--fs-10)] text-ink-muted block">粪便钙卫蛋白</span>
                 <span className="font-mono font-bold text-sm text-danger">
                   {markers.fecalCalprotectin.value}
                 </span>
                 <span className="text-[length:var(--fs-9)] text-ink-muted">μg/g</span>
               </div>
-              <div className="p-2 rounded bg-[#0c1429] border border-line/40">
+              <div className="p-2 rounded bg-surface-2 border border-line/40">
                 <span className="text-[length:var(--fs-10)] text-ink-muted block">C-反应蛋白</span>
                 <span className="font-mono font-bold text-sm text-danger">
                   {markers.crp.value}
                 </span>
                 <span className="text-[length:var(--fs-9)] text-ink-muted">mg/L</span>
               </div>
-              <div className="p-2 rounded bg-[#0c1429] border border-line/40">
+              <div className="p-2 rounded bg-surface-2 border border-line/40">
                 <span className="text-[length:var(--fs-10)] text-ink-muted block">血沉</span>
                 <span className="font-mono font-bold text-sm text-warn">
                   {markers.esr.value}
@@ -370,7 +370,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
           {/* 历史样本库存量 —— 点击可直达屏 5 */}
           <button
             onClick={() => onEnter('history_library')}
-            className="group text-left p-3 rounded-lg bg-gradient-to-r from-[#101a33] to-[#17254d] border border-[#397cff]/40 hover:border-[#397cff]/70 text-xs transition-colors"
+            className="group text-left p-3 rounded-lg bg-gradient-to-r from-surface to-tint-info border border-info/40 hover:border-info/70 text-xs transition-colors"
           >
             <div className="flex items-center justify-between text-accent font-bold text-[length:var(--fs-11)] mb-1.5">
               <span className="flex items-center gap-1.5">
@@ -383,7 +383,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
               库内共 <span className="text-ink font-mono font-bold">{historicalSamples.length}</span> 例已闭环 FMT 样本，
               其中 <span className="text-ok font-mono font-bold">{referableSamples}</span> 例允许临床参考。
             </p>
-            <div className="mt-2.5 pt-2 border-t border-[#397cff]/20 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-[length:var(--fs-10)] text-ink-muted">
+            <div className="mt-2.5 pt-2 border-t border-info/20 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-[length:var(--fs-10)] text-ink-muted">
               <span className="flex items-center gap-1.5 text-warn">
                 <AlertTriangle className="w-3 h-3 shrink-0" />
                 相似度不等于预后保证，历史方案不得直接照搬

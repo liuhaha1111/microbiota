@@ -3,6 +3,7 @@ import { Activity, AlertTriangle, CheckCircle2, Dna, GitMerge, Info, Layers, Spa
 import { ClinicalPatient, HistoricalSample, SimilarityFeatureVector, SimilarityResult } from '../../types';
 import { getPatientDataPackage } from '../../data/mockMicroFmtData';
 import { MicrobiomeKnowledgeGraph } from '../MicrobiomeKnowledgeGraph';
+import { withAlpha } from '../../utils/color';
 import {
   OutcomeBadge,
   ScoreGauge,
@@ -69,16 +70,16 @@ const CompareRow: React.FC<CompareRowProps> = ({ row, highlight }) => {
         <span className={`font-mono text-[length:var(--fs-11)] ${flagged && worse ? 'text-danger font-bold' : 'text-accent font-bold'}`}>
           {fmt(row.current)}
         </span>
-        <div className="flex-1 h-1.5 rounded-full bg-[#091127] overflow-hidden">
-          <div className="h-full rounded-full bg-[#20cfff] ml-auto" style={{ width: `${(row.current / max) * 100}%` }} />
+        <div className="flex-1 h-1.5 rounded-full bg-track overflow-hidden">
+          <div className="h-full rounded-full bg-accent ml-auto" style={{ width: `${(row.current / max) * 100}%` }} />
         </div>
       </div>
 
       <div className="col-span-1 text-center text-[length:var(--fs-9)] text-ink-subtle">vs</div>
 
       <div className="col-span-4 flex items-center gap-2">
-        <div className="flex-1 h-1.5 rounded-full bg-[#091127] overflow-hidden">
-          <div className="h-full rounded-full bg-[#815cff]" style={{ width: `${(row.sample / max) * 100}%` }} />
+        <div className="flex-1 h-1.5 rounded-full bg-track overflow-hidden">
+          <div className="h-full rounded-full bg-violet" style={{ width: `${(row.sample / max) * 100}%` }} />
         </div>
         <span className="font-mono text-[length:var(--fs-11)] text-violet font-bold">{fmt(row.sample)}</span>
       </div>
@@ -139,15 +140,15 @@ export const HistoryCompareView: React.FC<HistoryCompareViewProps> = ({
     <div className="space-y-3.5">
       {/* 左右标题对齐 */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 rounded-xl bg-[#101a33] border border-[#20cfff]/45 shadow-lg">
+        <div className="p-3 rounded-xl bg-surface border border-accent/45 shadow-lg">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-9 h-9 rounded-lg bg-[#20cfff]/15 border border-[#20cfff]/50 flex items-center justify-center text-accent font-bold text-sm shrink-0">
+              <div className="w-9 h-9 rounded-lg bg-accent/15 border border-accent/50 flex items-center justify-center text-accent font-bold text-sm shrink-0">
                 {patient.name.slice(0, 1)}
               </div>
               <div className="min-w-0">
                 <div className="text-xs font-bold text-accent flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#20cfff]" />
+                  <span className="w-2 h-2 rounded-full bg-accent" />
                   当前待评估患者
                 </div>
                 <div className="text-[length:var(--fs-10)] text-ink-muted truncate">
@@ -159,15 +160,15 @@ export const HistoryCompareView: React.FC<HistoryCompareViewProps> = ({
           </div>
         </div>
 
-        <div className="p-3 rounded-xl bg-[#101a33] border border-[#815cff]/45 shadow-lg">
+        <div className="p-3 rounded-xl bg-surface border border-violet/45 shadow-lg">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-9 h-9 rounded-lg bg-[#815cff]/15 border border-[#815cff]/50 flex items-center justify-center text-violet font-mono font-bold text-xs shrink-0">
+              <div className="w-9 h-9 rounded-lg bg-violet/15 border border-violet/50 flex items-center justify-center text-violet font-mono font-bold text-xs shrink-0">
                 {sample.id.replace('H-', '')}
               </div>
               <div className="min-w-0">
                 <div className="text-xs font-bold text-violet flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#815cff]" />
+                  <span className="w-2 h-2 rounded-full bg-violet" />
                   历史参考样本 {sample.id}
                 </div>
                 <div className="text-[length:var(--fs-10)] text-ink-muted truncate">
@@ -181,7 +182,7 @@ export const HistoryCompareView: React.FC<HistoryCompareViewProps> = ({
       </div>
 
       {/* 差异高亮说明 */}
-      <div className="px-3 py-2 rounded-lg bg-[#0c1429] border border-line/50 flex items-center gap-2 text-[length:var(--fs-10)] text-ink-muted">
+      <div className="px-3 py-2 rounded-lg bg-surface-2 border border-line/50 flex items-center gap-2 text-[length:var(--fs-10)] text-ink-muted">
         <Info className="w-3.5 h-3.5 text-warn shrink-0" />
         左右两侧图表口径完全一致；相对差异 ≥ 25% 的指标会以黄色弱边框标记，便于逐项对照。
       </div>
@@ -204,8 +205,8 @@ export const HistoryCompareView: React.FC<HistoryCompareViewProps> = ({
       <SectionCard title="② 菌群生态网络并列对比" icon={<Dna className="w-3.5 h-3.5 text-accent" />}
         right={<span className="text-[length:var(--fs-10)] text-ink-muted">节点大小＝丰度，颜色＝有益／条件致病</span>}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          <div className="rounded-xl overflow-hidden border border-[#20cfff]/35">
-            <div className="px-2.5 py-1.5 bg-[#0c1429] text-[length:var(--fs-10)] text-accent font-semibold border-b border-line-2">
+          <div className="rounded-xl overflow-hidden border border-accent/35">
+            <div className="px-2.5 py-1.5 bg-surface-2 text-[length:var(--fs-10)] text-accent font-semibold border-b border-line-2">
               当前患者 {patient.name} · 治疗前菌群网络
             </div>
             <MicrobiomeKnowledgeGraph
@@ -217,8 +218,8 @@ export const HistoryCompareView: React.FC<HistoryCompareViewProps> = ({
               ecologicalLinks={pkg.ecologicalLinks}
             />
           </div>
-          <div className="rounded-xl overflow-hidden border border-[#815cff]/35">
-            <div className="px-2.5 py-1.5 bg-[#0c1429] text-[length:var(--fs-10)] text-violet font-semibold border-b border-line-2">
+          <div className="rounded-xl overflow-hidden border border-violet/35">
+            <div className="px-2.5 py-1.5 bg-surface-2 text-[length:var(--fs-10)] text-violet font-semibold border-b border-line-2">
               历史样本 {sample.id} · 治疗前菌群网络
             </div>
             <MicrobiomeKnowledgeGraph
@@ -262,14 +263,14 @@ export const HistoryCompareView: React.FC<HistoryCompareViewProps> = ({
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className="text-[length:var(--fs-9)] text-accent w-8">当前</span>
-                      <div className="flex-1 h-1.5 rounded-full bg-[#091127] overflow-hidden">
-                        <div className="h-full rounded-full bg-[#20cfff]" style={{ width: `${currentScore}%` }} />
+                      <div className="flex-1 h-1.5 rounded-full bg-track overflow-hidden">
+                        <div className="h-full rounded-full bg-accent" style={{ width: `${currentScore}%` }} />
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-[length:var(--fs-9)] text-violet w-8">历史</span>
-                      <div className="flex-1 h-1.5 rounded-full bg-[#091127] overflow-hidden">
-                        <div className="h-full rounded-full bg-[#815cff]" style={{ width: `${sampleScore}%` }} />
+                      <div className="flex-1 h-1.5 rounded-full bg-track overflow-hidden">
+                        <div className="h-full rounded-full bg-violet" style={{ width: `${sampleScore}%` }} />
                       </div>
                     </div>
                   </div>
@@ -281,16 +282,16 @@ export const HistoryCompareView: React.FC<HistoryCompareViewProps> = ({
 
         <SectionCard title="④ FMT 适应性评分成对" icon={<GitMerge className="w-3.5 h-3.5 text-accent" />}>
           <div className="grid grid-cols-2 gap-2">
-            <div className="p-2 rounded-lg bg-[#0c1429] border border-[#20cfff]/35 flex flex-col items-center">
+            <div className="p-2 rounded-lg bg-surface-2 border border-accent/35 flex flex-col items-center">
               <ScoreGauge value={patientVector.fmtAdaptability} size={82} color={UI.cyan} label="当前患者" sublabel="FMT 适应性" />
               <span className="text-[length:var(--fs-9)] text-ink-muted mt-1">失衡度 {patientVector.dysbiosisScore}</span>
             </div>
-            <div className="p-2 rounded-lg bg-[#0c1429] border border-[#815cff]/35 flex flex-col items-center">
+            <div className="p-2 rounded-lg bg-surface-2 border border-violet/35 flex flex-col items-center">
               <ScoreGauge value={sample.microbiome.fmtAdaptabilityScore} size={82} color={UI.purple} label="历史样本" sublabel="当初入库得分" />
               <span className="text-[length:var(--fs-9)] text-ink-muted mt-1">失衡度 {sample.microbiome.dysbiosisScore}</span>
             </div>
           </div>
-          <div className="mt-2 p-2 rounded-lg bg-[#0c1429] border border-line/40 text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
+          <div className="mt-2 p-2 rounded-lg bg-surface-2 border border-line/40 text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
             适应性评分反映宿主条件与菌群缺口的匹配度，是判断历史方案是否值得参考的前置条件之一。
           </div>
         </SectionCard>
@@ -302,7 +303,7 @@ export const HistoryCompareView: React.FC<HistoryCompareViewProps> = ({
         <div className="space-y-3">
           {TRACKS.map(track => (
             <div key={track.label} className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-center">
-              <div className="p-2 rounded-lg bg-[#0c1429] border border-[#20cfff]/25">
+              <div className="p-2 rounded-lg bg-surface-2 border border-accent/25">
                 <div className="flex items-center justify-between text-[length:var(--fs-10)] mb-1">
                   <span className="text-accent">{track.label}</span>
                   <span className="font-mono text-ink-muted">{patientPoints.length} 个节点</span>
@@ -310,7 +311,7 @@ export const HistoryCompareView: React.FC<HistoryCompareViewProps> = ({
                 <Sparkline values={patientPoints.map(track.get)} color={track.color} invert={track.invert} height={42}
                   labels={patientPoints.map(p => p.label.replace(/第\s*/, '').replace(/\s*周.*$/, 'w'))} />
               </div>
-              <div className="p-2 rounded-lg bg-[#0c1429] border border-[#815cff]/25">
+              <div className="p-2 rounded-lg bg-surface-2 border border-violet/25">
                 <div className="flex items-center justify-between text-[length:var(--fs-10)] mb-1">
                   <span className="text-violet">{track.label}</span>
                   <span className="font-mono text-ink-muted">{samplePoints.length} 个节点</span>
@@ -326,7 +327,7 @@ export const HistoryCompareView: React.FC<HistoryCompareViewProps> = ({
       {/* 5. 自动差异小结 */}
       <SectionCard title="📊 自动差异小结" icon={<Sparkles className="w-3.5 h-3.5 text-violet" />}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="p-3 rounded-lg bg-[#0c1429] border border-[#23e6b1]/35">
+          <div className="p-3 rounded-lg bg-surface-2 border border-ok/35">
             <h4 className="text-[length:var(--fs-11)] font-semibold text-ok flex items-center gap-1.5 mb-2">
               <CheckCircle2 className="w-3.5 h-3.5" /> 主要相似点
             </h4>
@@ -341,7 +342,7 @@ export const HistoryCompareView: React.FC<HistoryCompareViewProps> = ({
             </ul>
           </div>
 
-          <div className="p-3 rounded-lg bg-[#0c1429] border border-[#ffb84d]/40">
+          <div className="p-3 rounded-lg bg-surface-2 border border-warn/40">
             <h4 className="text-[length:var(--fs-11)] font-semibold text-warn flex items-center gap-1.5 mb-2">
               <AlertTriangle className="w-3.5 h-3.5" /> 关键差异提醒
             </h4>
@@ -358,7 +359,7 @@ export const HistoryCompareView: React.FC<HistoryCompareViewProps> = ({
         </div>
 
         <div className="mt-3 p-2.5 rounded-lg border text-[length:var(--fs-10)] leading-relaxed"
-          style={{ background: 'rgba(255,184,77,0.08)', borderColor: 'rgba(255,184,77,0.35)', color: '#ffd9a3' }}>
+          style={{ background: 'var(--color-tint-warn)', borderColor: withAlpha('var(--color-warn)', 35), color: 'var(--color-warn)' }}>
           该小结用于防止仅凭相似度下判断。历史样本当时的结局为
           <strong className="font-bold">「{sample.outcomeLabel}」</strong>，
           其经验与教训需结合上述差异项判断是否可迁移至当前患者。

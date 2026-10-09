@@ -1,52 +1,95 @@
 @import "tailwindcss";
 
 /* ============================================================================
- * 设计令牌（Design Tokens）
+ * 设计令牌（Design Tokens）· 浅色版
  * ----------------------------------------------------------------------------
- * 为什么要有这一层：原先颜色是散落在 37 个文件里的硬编码 hex（text-[#8996b8]
- * 出现 394 次、text-[#eef4ff] 214 次……），想换一档显示模式就必须全量改源码。
- * 收成语义令牌后，「高对比 / 大字号」只需在下面重新赋值 CSS 变量即可运行时切换。
+ * 本版由深色版（D:\vscode_code\microbiota）复制而来。深色版已经把颜色收成
+ * 语义令牌，所以换配色不需要动组件代码 —— 两版的差异几乎全部集中在本文件：
+ * 令牌取值 + 字号基线。
  *
  * 令牌按「用途」命名，不按「颜色」命名 —— text-ink-muted 表达的是「次要文字」，
  * 这样换配色时语义不会漂移。
+ *
+ * 浅色化时一并处理了两件事：
+ *   ① 把「面」也令牌化（原来 bg-[#0c1429] / bg-[#101a33] 这类还是硬编码，
+ *      共 610 处），否则改底色就得全量改源码；
+ *   ② 字号基线整体上浮 15%，最小可读字号 9px → 11px。
+ *
+ * 唯一例外：可视化画布（3D 数字孪生、知识图谱）仍为深色，见 .viewport-dark。
  * ========================================================================== */
 
 @theme {
   /* —— 文字层级 —— */
-  --color-ink: #eef4ff;        /* 主文字 */
-  --color-ink-2: #cad5e8;      /* 次级文字 */
-  --color-ink-muted: #8996b8;  /* 说明/单位/次要标签 */
-  --color-ink-subtle: #7b8ab5; /* 最弱一级注释。注意：原为 #2b4170（描边色），
-                                  当文字用只有 1.8:1，实测不可读，此处已纠正 */
-  --color-on-bright: #090d18;  /* 亮色底片上的深色文字 */
+  --color-ink: #0f1b2e;        /* 主文字 */
+  --color-ink-2: #3a4a63;      /* 次级文字 */
+  /* 说明/单位/次要标签。取值由 WCAG 反推：这档文字会压在最深的浅底 track
+   * (#e8eef7) 上，需 >=4.5:1，故不能沿用深色版的「提亮」思路。 */
+  --color-ink-muted: #4f5f78;  /* track 5.56 · canvas 5.77 · surface 6.48 */
+  /* 最弱一级注释。比 muted 再浅一档但同样受 canvas 兜底约束（最严 4.75）。 */
+  --color-ink-subtle: #5c6c85; /* canvas 4.75 · surface-2 5.05 · track 4.57 */
+  --color-on-bright: #ffffff;  /* 饱和色底片上的文字 */
 
-  /* —— 语义强调色 —— */
-  --color-accent: #20cfff;     /* 主高亮：青蓝 */
-  --color-ok: #23e6b1;         /* 正常/达标 */
-  --color-warn: #ffb84d;       /* 关注/临近阈值 */
-  --color-danger: #ff7d92;     /* 异常/预警。原 #ff536c 作小字只有 3.6:1，已提亮 */
-  --color-violet: #9d7fff;     /* 辅助紫。原 #815cff 作小字只有 3.3:1，已提亮 */
-  --color-info: #6ba3ff;       /* 信息蓝。原 #397cff 作小字只有 3.7:1，已提亮 */
+  /* —— 语义强调色 ——
+   * 深色版用的是「提亮到小字也能过对比度」的思路；浅底上方向相反，
+   * 必须整体下沉到中深色，否则青蓝/绿/黄在白底上只有 1.5–2.5:1。 */
+  --color-accent: #0a7196;     /* 主高亮：青蓝 */
+  --color-ok: #0a6b4f;         /* 正常/达标 */
+  --color-warn: #8a5a06;       /* 关注/临近阈值 */
+  --color-danger: #b32b45;     /* 异常/预警 */
+  --color-violet: #5b3fc0;     /* 辅助紫 */
+  --color-info: #1a55c0;       /* 信息蓝 */
 
   /* —— 描边 —— */
-  --color-line: #2b4170;
-  --color-line-2: #1e2f57;
+  --color-line: #c9d6e6;
+  --color-line-2: #dce5f0;
+
+  /* —— 面 —— */
+  --color-canvas: #eef2f8;     /* 页面底：柔和浅灰蓝 */
+  --color-chrome: #ffffff;     /* 顶栏 / 底栏 */
+  --color-surface: #ffffff;    /* 标准面板 */
+  --color-surface-2: #f6f9fd;  /* 次级 / 嵌套面板 */
+  --color-track: #e8eef7;      /* 进度条轨道 / 内凹槽 */
+
+  /* —— 语义淡色底（徽章、提示条的背景） —— */
+  --color-tint-info: #e9f1fd;
+  --color-tint-ok: #e6f5f0;
+  --color-tint-warn: #fdf2e2;
+  --color-tint-danger: #fdecef;
+  --color-tint-violet: #f0ecfd;
+  --color-tint-neutral: #f0f3f8;
+
+  /* —— 字号：命名档位在主题层直接改写，保证覆盖 Tailwind 默认值 ——
+   * 浅色版按「大屏远距离观看」重新标定，整体上浮约 15%。
+   * 必须与下面的 --fs-* 同步上浮，否则 text-[10px]→11.5px 会撞上没变的
+   * text-xs(12px)，字号层级直接塌掉。 */
+  --text-xs: 0.875rem;   /* 12 → 14 */
+  --text-sm: 1rem;       /* 14 → 16 */
+  --text-base: 1.125rem; /* 16 → 18 */
+  --text-lg: 1.25rem;    /* 18 → 20 */
+  --text-xl: 1.375rem;   /* 20 → 22 */
+  --text-2xl: 1.625rem;  /* 24 → 26 */
 }
 
+/* ⚠️ 超宽断点**不要**用 @theme 的 --breakpoint-* 定义。
+ * 实测 Tailwind 4.3.3 会把它排在默认断点**之前**（产物里 min-width:2200px
+ * 出现在 min-width:40rem / 64rem 之前），于是 `lg:` 系列反过来覆盖 `3xl:` 系列；
+ * 更隐蔽的是 `lg:col-span-2`（grid-column **简写**）会把 `3xl:col-start-2`
+ * （grid-column-start **长写**）整个重置掉，布局静默错位、且看不出报错。
+ * 超宽布局一律写成下面的**裸 CSS 类**：裸 CSS 不在 @layer 内，按 cascade layer
+ * 规则天然胜过 Tailwind 的 @layer utilities，与媒体查询顺序无关。 */
+
 /* 字号令牌。
- * 全站有 490 处 ≤11px 的任意值字号（text-[10px] 占 320 处），大屏远距离观看偏小，
- * 这里收成变量，供「大字号」档整体上浮。
- *
  * 用 --fs-scale 统一驱动，而不是给每一档写死两个值：SVG 里的 fontSize 是
  * 布局期算出来的动态值（如 10.4px），没法预先枚举，只能靠 calc(Npx * var(--fs-scale)) 缩放。 */
 :root {
-  --fs-scale: 1;
+  /* 基线整体上浮 15%（深色版是 1）—— 大屏远距离观看，原尺寸偏小。 */
+  --fs-scale: 1.15;
   /* 最小可读字号（全站兜底）。两处需要它：
    *   ① 固定小字号令牌 --fs-8 本身只有 8px；
    *   ② 「跟着容器尺寸等比缩小」的微标签 —— 如 ScoreGauge 的 % 单位在 64px
    *      表盘上只有 7px，光靠 --fs-scale 放大仍不够。
-   * 「大字号」档把它一并抬到 11px，保证开档后不存在小于 11px 的文字。 */
-  --fs-floor: 9px;
+   * 深色版这里是 9px，用户仍反馈偏小，浅色版直接抬到 11px。 */
+  --fs-floor: 11px;
   --fs-8: max(var(--fs-floor), calc(8px * var(--fs-scale)));
   --fs-9: max(var(--fs-floor), calc(9px * var(--fs-scale)));
   --fs-10: calc(10px * var(--fs-scale));
@@ -56,24 +99,26 @@
 /* ============================================================================
  * 显示档位 1：高对比
  * ----------------------------------------------------------------------------
- * 不是「换个配色」而是「把文字从底色里拔出来」：文字统一提亮，
- * 描边同步提亮让卡片边界可见。底色不动 —— 底色已经很深，再压没有余量。
+ * 浅底上的语义与深底相反：不是「提亮」而是「压深」—— 文字全部推向近黑，
+ * 描边加深让卡片边界更硬。底色不动（已经很浅，再往白没有余量）。
  * ========================================================================== */
 :root[data-contrast="high"] {
-  --color-ink: #ffffff;
-  --color-ink-2: #e9effc;
-  --color-ink-muted: #c6d2ea;
-  --color-ink-subtle: #a3b1d4;
+  --color-ink: #000000;
+  --color-ink-2: #1c2a40;
+  --color-ink-muted: #3d4d66;
+  --color-ink-subtle: #4a5a72;
 
-  --color-accent: #6fdcff;
-  --color-ok: #63f7d0;
-  --color-warn: #ffd48f;
-  --color-danger: #ff9cae;
-  --color-violet: #bda6ff;
-  --color-info: #96c2ff;
+  --color-accent: #075a78;
+  --color-ok: #075540;
+  --color-warn: #6d4705;
+  --color-danger: #8f1f34;
+  --color-violet: #472f9c;
+  --color-info: #14418f;
 
-  --color-line: #3f5c99;
-  --color-line-2: #33507f;
+  --color-line: #8fa3bd;
+  --color-line-2: #a8b8cd;
+
+  --color-track: #dce6f2;
 }
 
 /* ============================================================================
@@ -87,15 +132,61 @@
  * 只放大字号、不动间距，避免整页重排导致的溢出。
  * ========================================================================== */
 :root[data-size="large"] {
-  --fs-scale: 1.2;
-  --fs-floor: 11px;      /* 开档后全站不再有小于 11px 的文字 */
+  /* 基线已经是 1.15，这一档再上浮到 1.3（相对原始约 +30%）。 */
+  --fs-scale: 1.3;
+  --fs-floor: 12px;      /* 开档后全站不再有小于 12px 的文字 */
 
-  --text-xs: 0.875rem;   /* 12 → 14 */
-  --text-sm: 1rem;       /* 14 → 16 */
-  --text-base: 1.125rem; /* 16 → 18 */
-  --text-lg: 1.25rem;
-  --text-xl: 1.375rem;
-  --text-2xl: 1.625rem;
+  --text-xs: 1rem;       /* 14 → 16 */
+  --text-sm: 1.125rem;   /* 16 → 18 */
+  --text-base: 1.25rem;  /* 18 → 20 */
+  --text-lg: 1.375rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.75rem;
+}
+
+/* ============================================================================
+ * 深色视口作用域
+ * ----------------------------------------------------------------------------
+ * 3D 数字孪生画布与知识图谱画布保持深色。原理：令牌就是 CSS 变量，
+ * 在子树根节点上重新断言深色取值，所有后代自动回到深色观感，
+ * 而兄弟节点（工具栏、侧栏、详情面板）仍是浅色 —— 不必为它们写第二套样式。
+ *
+ * 画布内的 SVG 用的是字面 hex（为深底调的光晕/渐变/发光色），不参与令牌替换，
+ * 因此天然保持深色，无需逐个改写；而走令牌的部分（节点填充、标签）在这里
+ * 会拿到深色值。
+ * ========================================================================== */
+.viewport-dark {
+  --color-canvas: #090d18;
+  --color-chrome: #091127;
+  --color-surface: #101a33;
+  --color-surface-2: #0c1429;
+  --color-track: #152347;
+
+  --color-ink: #eef4ff;
+  --color-ink-2: #cad5e8;
+  --color-ink-muted: #8996b8;
+  --color-ink-subtle: #7b8ab5;
+  --color-on-bright: #090d18;
+
+  --color-accent: #20cfff;
+  --color-ok: #23e6b1;
+  --color-warn: #ffb84d;
+  --color-danger: #ff7d92;
+  --color-violet: #9d7fff;
+  --color-info: #6ba3ff;
+
+  --color-line: #2b4170;
+  --color-line-2: #1e2f57;
+
+  --color-tint-info: #0c1e38;
+  --color-tint-ok: #0c2019;
+  --color-tint-warn: #241121;
+  --color-tint-danger: #241121;
+  --color-tint-violet: #1a0f1c;
+  --color-tint-neutral: #1a1c29;
+
+  /* 视口自身底色：与 three.js 场景背景 0x0a1020 对齐，避免画布边缘露白 */
+  background-color: #0a1020;
 }
 
 /* ============================================================================
@@ -158,22 +249,85 @@
   animation: historyFadeIn 300ms ease-out;
 }
 
-/* 结果列表滚动条（深色医疗 UI） */
-.history-scroll::-webkit-scrollbar {
+/* 细滚动条。必须走令牌 —— 深色版这里是写死的深色轨道/滑块，
+ * 直接沿用会在白面板上拖出一条黑边。
+ * `.history-scroll` 是历史样本库的语义名；`.thin-scroll` 供超宽布局里
+ * 「限高 + 内部滚动」的侧栏复用，两者样式一致。 */
+.history-scroll::-webkit-scrollbar,
+.thin-scroll::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
-.history-scroll::-webkit-scrollbar-track {
-  background: #091127;
+.history-scroll::-webkit-scrollbar-track,
+.thin-scroll::-webkit-scrollbar-track {
+  background: var(--color-track);
   border-radius: 3px;
 }
 
-.history-scroll::-webkit-scrollbar-thumb {
-  background: #2b4170;
+.history-scroll::-webkit-scrollbar-thumb,
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-line);
   border-radius: 3px;
 }
 
-.history-scroll::-webkit-scrollbar-thumb:hover {
-  background: #397cff;
+.history-scroll::-webkit-scrollbar-thumb:hover,
+.thin-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+/* ============================================================================
+ * 屏 1 · 超宽布局（49 寸 5120×1440 / 32:9 带鱼屏）
+ * ----------------------------------------------------------------------------
+ * 起因：屏 1 挂在 32:9 带鱼屏上，内容被 App 的 max-w-[1600px] 居中后
+ * 两侧各空出 1760px。修法是解除宽度上限 + 三栏排布：
+ *   左栏 = 患者侧（队列结构与流转）｜中栏 = 3D 孪生舱（居中）｜右栏 = 资源侧
+ *
+ * 断点取 2200px：5120 全屏与 2560 屏都触发，1920 屏不触发（退化为
+ * 「3D 整宽 + 左右两组并排」，见组件里的 lg: 类）。
+ *
+ * ⚠️ 为什么是裸 CSS 而不是 `3xl:` 工具类：见文件上方 @theme 之后的注释 ——
+ * Tailwind 4 会把自定义断点的媒体查询排在默认断点之前，导致 `lg:` 反杀 `3xl:`，
+ * 并且 `lg:col-span-2` 的 grid-column 简写会重置 `3xl:col-start-2`。
+ * 裸 CSS 不在 @layer 内，按 cascade layer 规则天然胜过 @layer utilities。
+ * ========================================================================== */
+@media (min-width: 2200px) {
+  /* 三栏骨架：中栏占 2 份，两侧各 1 份 —— 5120 屏上约为 1250 / 2500 / 1250 */
+  .wb-uw-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  /* 显式定位，避免依赖 DOM 顺序与自动排布 */
+  .wb-uw-left {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .wb-uw-center {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .wb-uw-right {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  /* 三栏等高：跟随视口，扣掉顶栏(4rem) + 上下文栏 + 内边距。
+   * 3D 舱靠 flex-1 填满，画布用 ResizeObserver 自适应；
+   * 两侧面板总高超过限高时各自内部滚动（配 .thin-scroll），不推高整页。 */
+  .wb-uw-col {
+    height: calc(100vh - 16rem);
+    min-height: 760px;
+  }
+
+  .wb-uw-scroll {
+    overflow-y: auto;
+  }
+
+  /* 分栏依据说明条只在三栏成立时出现 */
+  .wb-uw-note {
+    display: flex;
+  }
 }

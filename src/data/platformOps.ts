@@ -54,12 +54,12 @@ export interface PathwayStage {
  * 相邻两段相除得到的「转化率」没有意义。真正的流转漏斗见 MONTHLY_FLOW_FUNNEL。
  */
 export const PATHWAY_STAGES: ReadonlyArray<PathwayStage> = [
-  { stage: '1. 临床评估', count: 28, percent: '14%', color: 'border-[#397cff] text-info' },
-  { stage: '2. 菌群测序', count: 19, percent: '10%', color: 'border-[#20cfff] text-accent' },
-  { stage: '3. 供体匹配', count: 14, percent: '7%', color: 'border-[#815cff] text-violet' },
-  { stage: '4. FMT执行', count: 36, percent: '18%', color: 'border-[#23e6b1] text-ok' },
-  { stage: '5. 定植随访', count: 52, percent: '26%', color: 'border-[#ffb84d] text-warn' },
-  { stage: '6. 疗效评价', count: 48, percent: '25%', color: 'border-[#20cfff] text-ink' }
+  { stage: '1. 临床评估', count: 28, percent: '14%', color: 'border-info text-info' },
+  { stage: '2. 菌群测序', count: 19, percent: '10%', color: 'border-accent text-accent' },
+  { stage: '3. 供体匹配', count: 14, percent: '7%', color: 'border-violet text-violet' },
+  { stage: '4. FMT执行', count: 36, percent: '18%', color: 'border-ok text-ok' },
+  { stage: '5. 定植随访', count: 52, percent: '26%', color: 'border-warn text-warn' },
+  { stage: '6. 疗效评价', count: 48, percent: '25%', color: 'border-accent text-ink' }
 ];
 
 export interface CohortBucket {
@@ -70,11 +70,11 @@ export interface CohortBucket {
 }
 
 export const COHORTS: ReadonlyArray<CohortBucket> = [
-  { name: '溃疡性结肠炎 (UC)', count: 83, share: 42, color: 'bg-[#20cfff]' },
-  { name: '复发性艰难梭菌感染 (rCDI)', count: 47, share: 24, color: 'bg-[#ff536c]' },
-  { name: '肠易激综合征 (IBS-D/C)', count: 35, share: 18, color: 'bg-[#815cff]' },
-  { name: '克罗恩病与未定型IBD', count: 22, share: 11, color: 'bg-[#ffb84d]' },
-  { name: '神经微生态队列 (ASD/PD)', count: 10, share: 5, color: 'bg-[#23e6b1]' }
+  { name: '溃疡性结肠炎 (UC)', count: 83, share: 42, color: 'bg-accent' },
+  { name: '复发性艰难梭菌感染 (rCDI)', count: 47, share: 24, color: 'bg-danger' },
+  { name: '肠易激综合征 (IBS-D/C)', count: 35, share: 18, color: 'bg-violet' },
+  { name: '克罗恩病与未定型IBD', count: 22, share: 11, color: 'bg-warn' },
+  { name: '神经微生态队列 (ASD/PD)', count: 10, share: 5, color: 'bg-ok' }
 ];
 
 /** 在管队列总数——由 PATHWAY_STAGES 求和得出，不另存 */
@@ -182,23 +182,23 @@ export interface DonorPoolSummary {
 }
 
 const RATING_COLOR: Record<string, string> = {
-  'A+': '#23e6b1',
-  A: '#20cfff',
-  B: '#ffb84d',
-  C: '#ff536c'
+  'A+': 'var(--color-ok)',
+  A: 'var(--color-accent)',
+  B: 'var(--color-warn)',
+  C: 'var(--color-danger)'
 };
 
 const TYPE_COLOR: Record<string, string> = {
-  '超级供体(Super Donor)': '#815cff',
-  健康志愿者: '#397cff',
-  亲属供体: '#ffb84d'
+  '超级供体(Super Donor)': 'var(--color-violet)',
+  健康志愿者: 'var(--color-info)',
+  亲属供体: 'var(--color-warn)'
 };
 
 const SCREENING_COLOR: Record<string, string> = {
-  '合格(有效期待定)': '#23e6b1',
-  复筛中: '#20cfff',
-  临近过期: '#ffb84d',
-  不可用: '#ff536c'
+  '合格(有效期待定)': 'var(--color-ok)',
+  复筛中: 'var(--color-accent)',
+  临近过期: 'var(--color-warn)',
+  不可用: 'var(--color-danger)'
 };
 
 /** 供体池结构。所有分组计数都从 donors 现算，不缓存 */
@@ -211,7 +211,7 @@ export function summarizeDonorPool(donors: ReadonlyArray<DonorProfile>): DonorPo
     keys.map(key => ({
       key,
       count: donors.filter(d => pick(d) === key).length,
-      color: colors[key] ?? '#8996b8'
+      color: colors[key] ?? 'var(--color-ink-muted)'
     }));
 
   const rescreenDue = donors
@@ -264,16 +264,16 @@ export const BATCH_SHELF_LIFE_DAYS = 182;
 export const BATCH_NEAR_EXPIRY_RATIO = 0.6;
 
 const STATUS_COLOR: Record<string, string> = {
-  '已释放(可使用)': '#23e6b1',
-  检测中: '#20cfff',
-  已使用: '#8996b8',
-  已临期: '#ffb84d'
+  '已释放(可使用)': 'var(--color-ok)',
+  检测中: 'var(--color-accent)',
+  已使用: 'var(--color-ink-muted)',
+  已临期: 'var(--color-warn)'
 };
 
 const GRADE_COLOR: Record<string, string> = {
-  '特级 (临床级)': '#815cff',
-  优级: '#397cff',
-  待评定: '#8996b8'
+  '特级 (临床级)': 'var(--color-violet)',
+  优级: 'var(--color-info)',
+  待评定: 'var(--color-ink-muted)'
 };
 
 export interface BatchSummary {

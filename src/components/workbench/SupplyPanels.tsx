@@ -223,7 +223,7 @@ export const DonorScreeningPanel: React.FC = () => {
                   </span>
                 </span>
               </div>
-              <div className="w-full h-2 bg-[#152347] rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-track rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full"
                   style={{ width: `${Math.max(1.5, cumulative)}%`, background: color }}

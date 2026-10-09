@@ -52,7 +52,7 @@ export function SecondaryNav<T extends string>({
   return (
     <nav
       id="module-secondary-nav"
-      className="flex flex-wrap items-center justify-between gap-3 p-1.5 rounded-xl bg-[#101a33] border border-line/60 text-xs"
+      className="flex flex-wrap items-center justify-between gap-3 p-1.5 rounded-xl bg-surface border border-line/60 text-xs"
     >
       <div className="flex flex-wrap items-center gap-1">
         {items.map(item => {
@@ -67,8 +67,8 @@ export function SecondaryNav<T extends string>({
               onClick={() => onChange(item.id)}
               className={`px-3.5 py-2 rounded-lg font-medium transition-all flex items-center gap-1.5 ${
                 isActive
-                  ? 'bg-[#20cfff] text-on-bright font-bold shadow-[0_0_12px_rgba(32,207,255,0.25)]'
-                  : 'text-ink-muted hover:text-ink hover:bg-[#152347]'
+                  ? 'bg-accent text-on-bright font-bold shadow-[0_0_12px_rgba(32,207,255,0.25)]'
+                  : 'text-ink-muted hover:text-ink hover:bg-track'
               }`}
             >
               {Icon && <Icon className="w-3.5 h-3.5" />}
@@ -76,7 +76,7 @@ export function SecondaryNav<T extends string>({
               {item.badge != null && (
                 <span
                   className={`px-1.5 py-0.5 rounded text-[length:var(--fs-10)] font-mono ${
-                    isActive ? 'bg-[#090d18]/20 text-on-bright' : 'bg-[#152347] text-ink-muted'
+                    isActive ? 'bg-canvas/20 text-on-bright' : 'bg-track text-ink-muted'
                   }`}
                 >
                   {item.badge}

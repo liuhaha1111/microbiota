@@ -30,10 +30,10 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   const { mode, toggle } = useDisplayMode();
 
   return (
-    <header id="app-top-header" className="h-16 px-4 border-b border-line-2 bg-[#091127] flex items-center justify-between gap-4 select-none z-30 sticky top-0">
+    <header id="app-top-header" className="h-16 px-4 border-b border-line-2 bg-chrome flex items-center justify-between gap-4 select-none z-30 sticky top-0">
       {/* Brand Identity */}
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#20cfff] to-[#397cff] flex items-center justify-center shadow-[0_0_15px_rgba(32,207,255,0.4)]">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-info flex items-center justify-center shadow-[0_0_15px_rgba(32,207,255,0.4)]">
           <Dna className="w-5 h-5 text-on-bright" />
         </div>
         <div>
@@ -41,7 +41,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             <h1 className="text-base font-extrabold tracking-wide text-ink font-sans">
               MicroFMT
             </h1>
-            <span className="text-[length:var(--fs-10)] px-1.5 py-0.2 rounded bg-[#20cfff]/20 text-accent border border-[#20cfff]/40 font-semibold">
+            <span className="text-[length:var(--fs-10)] px-1.5 py-0.2 rounded bg-accent/20 text-accent border border-accent/40 font-semibold">
               精准诊疗平台
             </span>
           </div>
@@ -58,7 +58,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             id="back-to-home"
             onClick={onGoHome}
             title="返回启动台主屏"
-            className="ml-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#101a33] border border-line text-[length:var(--fs-11)] text-ink-muted hover:text-accent hover:border-[#20cfff]/60 hover:bg-[#152347] transition-all"
+            className="ml-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-surface border border-line text-[length:var(--fs-11)] text-ink-muted hover:text-accent hover:border-accent/60 hover:bg-track transition-all"
           >
             <LayoutGrid className="w-3.5 h-3.5" />
             <span className="hidden md:inline">启动台</span>
@@ -77,10 +77,10 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
               const selected = mockPatients.find(p => p.id === e.target.value);
               if (selected) onSelectPatient(selected);
             }}
-            className="appearance-none pl-3 pr-8 py-1.5 rounded-lg bg-[#101a33] border border-line text-xs text-ink font-medium focus:outline-none focus:border-[#20cfff] cursor-pointer hover:bg-[#152347] transition-all"
+            className="appearance-none pl-3 pr-8 py-1.5 rounded-lg bg-surface border border-line text-xs text-ink font-medium focus:outline-none focus:border-accent cursor-pointer hover:bg-track transition-all"
           >
             {mockPatients.map(p => (
-              <option key={p.id} value={p.id} className="bg-[#091127] text-ink">
+              <option key={p.id} value={p.id} className="bg-chrome text-ink">
                 {p.name} · {p.age}岁 ({p.primaryDiagnosis.split(' ')[0]})
               </option>
             ))}
@@ -88,7 +88,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           <ChevronDown className="w-3.5 h-3.5 text-ink-muted absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
 
-        <span className="text-[length:var(--fs-11)] px-2 py-0.5 rounded bg-[#101a33] text-accent border border-line/60 font-mono hidden lg:inline">
+        <span className="text-[length:var(--fs-11)] px-2 py-0.5 rounded bg-surface text-accent border border-line/60 font-mono hidden lg:inline">
           {currentPatient.mrn}
         </span>
       </div>
@@ -98,7 +98,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         {/* Cloud Genomics & Biobank Link Status */}
         <div className="hidden xl:flex items-center gap-3 text-[length:var(--fs-11)] text-ink-muted border-r border-line-2 pr-3">
           <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#23e6b1] animate-pulse"></span>
+            <span className="w-2 h-2 rounded-full bg-ok animate-pulse"></span>
             mNGS测序云网: 连通
           </span>
           <span className="flex items-center gap-1.5">
@@ -112,7 +112,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             这两个开关分别对付「对比度」和「字号」，互相独立、可同时开。
             状态落在 <html> 的 data-contrast / data-size 上（见 index.css 的令牌覆盖块），
             由 localStorage 持久化，刷新后保持。 */}
-        <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-[#101a33] border border-line">
+        <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-surface border border-line">
           <button
             id="display-toggle-contrast"
             type="button"
@@ -121,8 +121,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             title="高对比：提亮全站文字与描边"
             className={`flex items-center gap-1 px-2 py-1 rounded-md text-[length:var(--fs-11)] font-medium transition-colors ${
               mode.contrast
-                ? 'bg-[#20cfff] text-on-bright'
-                : 'text-ink-muted hover:text-ink hover:bg-[#152347]'
+                ? 'bg-accent text-on-bright'
+                : 'text-ink-muted hover:text-ink hover:bg-track'
             }`}
           >
             <Contrast className="w-3.5 h-3.5" />
@@ -137,8 +137,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             title="大字号：全站字号上浮一档"
             className={`flex items-center gap-1 px-2 py-1 rounded-md text-[length:var(--fs-11)] font-medium transition-colors ${
               mode.largeText
-                ? 'bg-[#20cfff] text-on-bright'
-                : 'text-ink-muted hover:text-ink hover:bg-[#152347]'
+                ? 'bg-accent text-on-bright'
+                : 'text-ink-muted hover:text-ink hover:bg-track'
             }`}
           >
             <ALargeSmall className="w-3.5 h-3.5" />
@@ -152,15 +152,15 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         <div
           role="status"
           title="全局红线预警指示灯 · 详情见启动台主屏常驻预警栏"
-          className="p-2 rounded-lg bg-[#101a33] border border-[#ff536c]/40 text-danger relative"
+          className="p-2 rounded-lg bg-surface border border-danger/40 text-danger relative"
         >
           <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#ff536c] animate-pulse"></span>
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-danger animate-pulse"></span>
         </div>
 
         {/* Physician Profile */}
         <div className="flex items-center gap-2 pl-1">
-          <div className="w-8 h-8 rounded-full bg-[#152347] border border-[#20cfff]/40 flex items-center justify-center text-accent font-bold text-xs">
+          <div className="w-8 h-8 rounded-full bg-track border border-accent/40 flex items-center justify-center text-accent font-bold text-xs">
             陈
           </div>
           <div className="hidden sm:block text-left">

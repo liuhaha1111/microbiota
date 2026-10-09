@@ -32,7 +32,7 @@ export const HistorySampleCard: React.FC<HistorySampleCardProps> = ({
     <button
       onClick={onSelect}
       className={`w-full text-left rounded-xl border p-3 transition-all relative overflow-hidden ${
-        selected ? 'bg-[#152347] border-[#20cfff] shadow-[0_0_14px_rgba(32,207,255,0.22)]' : 'bg-[#0c1429] hover:bg-[#101a33]'
+        selected ? 'bg-track border-accent shadow-[0_0_14px_rgba(32,207,255,0.22)]' : 'bg-surface-2 hover:bg-surface'
       }`}
       style={!selected ? { borderColor: badOutcome ? 'rgba(255,83,108,0.5)' : 'rgba(43,65,112,0.6)' } : undefined}
     >

@@ -239,7 +239,7 @@ export const PhysicianLoadPanel: React.FC = () => {
                   </span>
                 </span>
               </div>
-              <div className="w-full h-1.5 bg-[#152347] rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-track rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full"
                   style={{ width: `${Math.min(100, load * 100)}%`, background: tone }}

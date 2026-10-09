@@ -13,9 +13,9 @@ import { withAlpha } from '../../utils/color';
  *   #ffb84d 橙（警告） / #ff536c 红（严重） / #8996b8 灰（低强度）
  * ========================================================================== */
 
-export const OPS_PANEL = 'p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg';
-export const OPS_INNER = 'p-2.5 rounded-lg bg-[#0c1429] border border-line/50';
-export const OPS_TRACK = 'bg-[#152347]';
+export const OPS_PANEL = 'p-4 rounded-xl bg-surface border border-line/60 shadow-lg';
+export const OPS_INNER = 'p-2.5 rounded-lg bg-surface-2 border border-line/50';
+export const OPS_TRACK = 'bg-track';
 
 export const OPS_TONE: Record<string, string> = {
   ok: 'var(--color-ok)',
@@ -186,7 +186,7 @@ export const RatioBar: React.FC<RatioBarProps> = ({
         <div className="h-full rounded-full" style={{ width: `${pct}%`, background: fill }} />
         {mark !== undefined && mark > 0 && mark < max && (
           <div
-            className="absolute top-0 bottom-0 w-px bg-[#eef4ff]/50"
+            className="absolute top-0 bottom-0 w-px bg-ink/50"
             style={{ left: `${(mark / max) * 100}%` }}
           />
         )}
@@ -227,7 +227,7 @@ export const DonutArc: React.FC<DonutArcProps> = ({
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="#152347"
+          stroke="var(--color-track)"
           strokeWidth={thickness}
         />
         {total > 0 &&

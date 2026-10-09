@@ -35,7 +35,7 @@ export function SegmentedControl<T extends string>({
 }: SegmentedControlProps<T>) {
   return (
     <div id="module-segmented-control" className={`flex flex-wrap items-center justify-between gap-2 ${className}`}>
-      <div className="flex items-center p-1 rounded-lg bg-[#0c1429] border border-line/60 text-xs">
+      <div className="flex items-center p-1 rounded-lg bg-surface-2 border border-line/60 text-xs">
         {items.map(item => {
           const isActive = item.id === active;
           const Icon = item.icon;
@@ -47,7 +47,7 @@ export function SegmentedControl<T extends string>({
               onClick={() => onChange(item.id)}
               className={`px-3 py-1.5 rounded-md font-medium transition-all flex items-center gap-1.5 ${
                 isActive
-                  ? 'bg-[#152347] text-accent font-bold border border-[#20cfff]/40'
+                  ? 'bg-track text-accent font-bold border border-accent/40'
                   : 'text-ink-muted hover:text-ink border border-transparent'
               }`}
             >
