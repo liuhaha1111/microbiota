@@ -15,6 +15,15 @@
     every other screen, and the Home Console idle counter is a global truth
     rather than a per-window guess.
 
+    WHICH BUILD THIS LAUNCHES
+    This copy drives the LIGHT build of the platform. index.html carries
+    <meta name="microfmt-variant" content="light">, and the launcher reads that
+    tag back off the target port before it decides to reuse a running server.
+    Both builds default to port 3000, so "something is listening" is NOT the
+    same as "my dev server is listening" -- checking the port alone is how you
+    end up opening five windows onto the wrong app. When the port turns out to
+    be serving the other build, that dev server is stopped first.
+
     WHY ONE SHARED PROFILE
     BroadcastChannel and localStorage are scoped to "same origin + same browser
     profile". Separate profiles are separate browser instances that cannot hear
@@ -44,6 +53,9 @@
 
 .PARAMETER Port
     Vite dev server port. Default 3000 (matches package.json "dev" script).
+    Both builds of the platform default to 3000. If the port already serves the
+    other build, this script stops that dev server and starts its own instead --
+    reusing it would open the windows onto the wrong app.
 
 .PARAMETER Url
     Full URL override. Takes precedence over -Port. The ?wall= parameter is
@@ -126,6 +138,14 @@ $ErrorActionPreference = 'Stop'
 # window would have no module to host.
 $MAX_SLOTS = 5
 
+# Which build of the platform this launcher drives. The value is written into
+# index.html as <meta name="microfmt-variant">, and read back off whatever is
+# already listening on the target port, so the launcher can tell "my own dev
+# server" from "the other build's dev server" instead of silently opening the
+# wrong app. The dark build carries no such meta, so "absent" means "dark".
+# Changing this string means changing index.html too.
+$VARIANT = 'light'
+
 # Chromium draws a title bar and a resize border around the client area that
 # --window-size describes. Subtract a typical allowance so a filled window does
 # not spill past the monitor edge.
@@ -167,7 +187,7 @@ function Resolve-ProjectDir {
             return $candidate
         }
     }
-    return 'D:\vscode_code\microbiota'
+    return 'D:\vscode_code\microbiota-light'
 }
 
 # ---------------------------------------------------------------------------
@@ -344,14 +364,117 @@ function Get-SpreadLayout {
 # ---------------------------------------------------------------------------
 # Dev server
 # ---------------------------------------------------------------------------
+
+# Fetch a URL with the system proxy explicitly bypassed. A localhost probe must
+# never be routed through a proxy: a proxy that is not actually listening on the
+# target answers 502, and "502" is indistinguishable from "a web server replied"
+# unless you look at the status code. Returns $null when the request fails.
+function Get-HttpText {
+    param([string] $Target, [int] $TimeoutSec = 4)
+
+    $wc = New-Object System.Net.WebClient
+    try {
+        $wc.Proxy = $null
+        $wc.Headers.Add('User-Agent', 'MicroFMT-MultiScreen-Launcher')
+        return $wc.DownloadString($Target)
+    } catch {
+        return $null
+    } finally {
+        $wc.Dispose()
+    }
+}
+
 function Test-DevServer {
     param([string] $Target)
+    return ($null -ne (Get-HttpText -Target $Target))
+}
+
+# Which build is answering on $Target? 'light' | 'dark' | 'other' | 'none'.
+# Both builds default to the same port, so "something is listening" is NOT the
+# same as "my dev server is listening" -- checking the port alone is how you end
+# up opening five windows onto the wrong app.
+function Get-ServedVariant {
+    param([string] $Target)
+
+    $html = Get-HttpText -Target $Target
+    if ($null -eq $html) { return 'none' }
+
+    if ($html -match 'microfmt-variant"\s+content="light"') { return 'light' }
+    if ($html -match 'MicroFMT') { return 'dark' }
+    return 'other'
+}
+
+# Who owns the listening socket on $Port? Returns $null when nothing is bound.
+function Get-PortOwner {
+    param([int] $Port)
+
+    $conn = $null
     try {
-        $r = Invoke-WebRequest -Uri $Target -UseBasicParsing -TimeoutSec 4
-        return ($r.StatusCode -ge 200 -and $r.StatusCode -lt 400)
+        $conn = Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction Stop |
+            Select-Object -First 1
     } catch {
+        return $null
+    }
+    if (-not $conn) { return $null }
+
+    $proc = Get-CimInstance Win32_Process -Filter "ProcessId=$($conn.OwningProcess)" -ErrorAction SilentlyContinue
+    if (-not $proc) { return $null }
+
+    return @{
+        Pid         = [int]$conn.OwningProcess
+        Name        = "$($proc.Name)"
+        CommandLine = "$($proc.CommandLine)"
+        ParentId    = [int]$proc.ParentProcessId
+    }
+}
+
+# Take the port back from the other build's dev server.
+#
+# The caller only gets here after Get-ServedVariant proved the port is serving a
+# MicroFMT build that is not ours, so the socket genuinely belongs to this
+# project. It is still re-checked against the process name before anything is
+# stopped: this script must never kill an unrelated program that merely happens
+# to sit on the same port number.
+function Stop-ForeignDevServer {
+    param([int] $Port)
+
+    $owner = Get-PortOwner -Port $Port
+    if (-not $owner) { return $true }
+
+    # `npm run dev` starts Vite through node; the launcher's own Start-DevServer
+    # wraps that in `cmd /k`. Accept either shape.
+    $isDevServer = ($owner.CommandLine -match 'vite') -or ($owner.Name -match '^node')
+    if (-not $isDevServer) {
+        Write-Warn "Port $Port is held by PID $($owner.Pid) ($($owner.Name)), which is not a Node/Vite process."
+        Write-Dim 'Leaving it alone. Free the port yourself, or re-run with -Port <other>.'
         return $false
     }
+
+    Write-Warn "Port $Port is held by the other build's dev server (PID $($owner.Pid))."
+    Write-Dim "$($owner.CommandLine)"
+    Write-Step 'Stopping it so this launcher can serve its own build ...'
+    try {
+        Stop-Process -Id $owner.Pid -Force -ErrorAction Stop
+        Write-Ok "Stopped PID $($owner.Pid)"
+    } catch {
+        Write-Warn "Could not stop PID $($owner.Pid): $($_.Exception.Message)"
+        return $false
+    }
+
+    # The console window that `cmd /k npm run dev` opened outlives the node
+    # process. Close it too, otherwise it lingers with a dead prompt.
+    if ($owner.ParentId -gt 0) {
+        $parent = Get-CimInstance Win32_Process -Filter "ProcessId=$($owner.ParentId)" -ErrorAction SilentlyContinue
+        if ($parent -and "$($parent.Name)" -match 'cmd' -and "$($parent.CommandLine)" -match 'npm') {
+            try {
+                Stop-Process -Id $owner.ParentId -Force -ErrorAction Stop
+                Write-Ok "Closed the dev server console (PID $($owner.ParentId))"
+            } catch {
+                Write-Dim "Left the console window (PID $($owner.ParentId)) open."
+            }
+        }
+    }
+    return $true
 }
 
 function Start-DevServer {
@@ -385,8 +508,8 @@ function Start-DevServer {
 # Main
 # ===========================================================================
 Write-Host ''
-Write-Host '  MicroFMT - multi-screen launcher' -ForegroundColor Magenta
-Write-Host '  --------------------------------' -ForegroundColor DarkGray
+Write-Host "  MicroFMT ($VARIANT build) - multi-screen launcher" -ForegroundColor Magenta
+Write-Host '  ------------------------------------------------' -ForegroundColor DarkGray
 Write-Host ''
 
 $ProjectDir = Resolve-ProjectDir -Explicit $ProjectDir -ScriptRoot $PSScriptRoot
@@ -476,15 +599,37 @@ if (-not (Test-Path $viteMarker)) {
     Write-Ok 'Dependencies installed.'
 }
 
-if (Test-DevServer -Target $target) {
-    Write-Ok 'Dev server is already running.'
+$served = Get-ServedVariant -Target $target
+
+if ($served -eq $VARIANT) {
+    Write-Ok "Dev server is already running ($VARIANT build)."
 }
-elseif ($NoServe) {
-    Write-Fail "Nothing is serving $target, and -NoServe was given."
-    Write-Dim "Start it yourself:  cd $ProjectDir; npm run dev"
-    return
+elseif ($served -eq 'none') {
+    if ($NoServe) {
+        Write-Fail "Nothing is serving $target, and -NoServe was given."
+        Write-Dim "Start it yourself:  cd $ProjectDir; npm run dev"
+        return
+    }
+    Write-Warn "Nothing is serving $target yet."
+    if (-not (Start-DevServer -Dir $ProjectDir -Target $target)) {
+        Write-Fail 'The dev server did not come up within the time limit.'
+        Write-Dim 'Check the dev server console window for errors, then run this again.'
+        return
+    }
+    Write-Ok 'Dev server is up.'
 }
 else {
+    # Something is listening, but it is not this build. In practice that is the
+    # other build's dev server: both package.json files default to the same
+    # port, and the other one was probably started first and never closed.
+    # Carrying on would open five windows onto the wrong app, so take the port.
+    Write-Warn "$target is serving the '$served' build, not '$VARIANT'."
+    if (-not (Stop-ForeignDevServer -Port $Port)) {
+        Write-Fail 'The port is still occupied by another build.'
+        Write-Dim 'Close that dev server window, or re-run with -Port <other>.'
+        return
+    }
+    Start-Sleep -Seconds 2
     Write-Warn "Nothing is serving $target yet."
     if (-not (Start-DevServer -Dir $ProjectDir -Target $target)) {
         Write-Fail 'The dev server did not come up within the time limit.'

@@ -5,6 +5,23 @@
 > 位于仓库的 `tools/multiscreen/`。项目源码为支持「无侧边栏 + 跨屏联动」做过一轮改造，
 > 见下面第三节。
 
+> ### ⚠️ 现在启动的是**浅色构建**（light build）
+>
+> 平台有两个构建，各自一份 checkout，但**推同一个远程仓库**：
+>
+> | 构建 | checkout | 分支 | 启动器 |
+> |---|---|---|---|
+> | **浅色（当前使用）** | `D:\vscode_code\microbiota-light` | `light` | 该目录下的 `Start-MultiScreen.bat` |
+> | 深色（保留，不在演示链路上） | `D:\vscode_code\microbiota` | `main` | 已改为**转发**到浅色版 |
+>
+> 两个 `package.json` 的 `dev` 脚本都用 **3000** 端口，所以「端口上有东西」**不等于**「我的 dev server 在跑」——
+> 早先的启动器只看端口，于是在深色 dev server 还开着的时候，点浅色版脚本会打开深色版的应用。
+>
+> 现在启动器会读 `index.html` 里的 `<meta name="microfmt-variant" content="light">` 来判断端口上到底是哪一版：
+> 不是自己这一版就**先关掉那个 dev server** 再起自己的（只关 Node/Vite 进程，见
+> `Start-MicroFMT-MultiScreen.ps1` 的 `Get-ServedVariant` / `Stop-ForeignDevServer`）。
+> 深色版没有这个 meta，「没有标记」即判为深色版。
+
 ---
 
 ## 一、怎么用（双击即可）
@@ -17,7 +34,8 @@ Start-MultiScreen.bat        ← 双击这个
 
 1. 找到浏览器（优先 Chrome，没有就用 Edge）
 2. 枚举你接了几块显示器、各自在哪
-3. **检查 dev server 是否在跑，没跑就自动帮你起**（会多开一个控制台窗口，演示期间别关）
+3. **检查 dev server 是否在跑，没跑就自动帮你起**（会多开一个控制台窗口，演示期间别关）；
+   如果 3000 端口上跑的是**另一版**，先把它关掉再起自己这一版
 4. 启动浏览器并打开调试端口
 5. 算出每个窗口的位置，通过调试协议把窗口逐个摆到对应屏上
 6. 默认**全屏**
@@ -298,7 +316,7 @@ tools\multiscreen\Start-MultiScreen.bat
 ### 第一次运行会发生什么
 
 1. 发现没有 `node_modules` → 自动执行 `npm install`（装了 bun 就用 `bun install`），可能几分钟
-2. 发现 dev server 没起 → 自动开一个控制台窗口跑 `npm run dev`
+2. 发现 dev server 没起 → 自动开一个控制台窗口跑 `npm run dev`；若 3000 端口上跑的是**另一版构建**，先关掉那个 dev server（连它的控制台窗口一起关）
 3. 探测到几块显示器 → 开 **5 个**窗口，按屏数决定怎么摆（5 屏及以上每屏一个全屏窗口；2–4 块屏共享，窗口不全屏；单屏平铺）
 4. 每个窗口都停在启动台，各自点一张入口卡
 
