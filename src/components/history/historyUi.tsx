@@ -84,7 +84,10 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
           <span className="font-mono font-bold text-ink leading-none" style={{ fontSize: `calc(${size * 0.24}px * var(--fs-scale))` }}>
             {pct.toFixed(1)}
           </span>
-          <span className="text-ink-muted leading-none mt-0.5" style={{ fontSize: `calc(${size * 0.11}px * var(--fs-scale))` }}>
+          <span
+            className="text-ink-muted leading-none mt-0.5"
+            style={{ fontSize: `max(var(--fs-floor), calc(${size * 0.11}px * var(--fs-scale)))` }}
+          >
             %
           </span>
         </div>
@@ -150,7 +153,7 @@ export const MiniRadar3: React.FC<MiniRadar3Props> = ({
             x={p.x}
             y={p.y}
             fill="var(--color-ink-muted)"
-            fontSize="calc(8.5px * var(--fs-scale))"
+            fontSize="max(var(--fs-floor), calc(8.5px * var(--fs-scale)))"
             textAnchor="middle"
             dominantBaseline="middle"
           >
@@ -377,7 +380,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
             x={points[i]?.x ?? 0}
             y={height - 0.5}
             fill="var(--color-ink-muted)"
-            fontSize="calc(7.5px * var(--fs-scale))"
+            fontSize="max(var(--fs-floor), calc(7.5px * var(--fs-scale)))"
             textAnchor="middle"
           >
             {lb}

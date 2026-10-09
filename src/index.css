@@ -41,8 +41,14 @@
  * 布局期算出来的动态值（如 10.4px），没法预先枚举，只能靠 calc(Npx * var(--fs-scale)) 缩放。 */
 :root {
   --fs-scale: 1;
-  --fs-8: calc(8px * var(--fs-scale));
-  --fs-9: calc(9px * var(--fs-scale));
+  /* 最小可读字号（全站兜底）。两处需要它：
+   *   ① 固定小字号令牌 --fs-8 本身只有 8px；
+   *   ② 「跟着容器尺寸等比缩小」的微标签 —— 如 ScoreGauge 的 % 单位在 64px
+   *      表盘上只有 7px，光靠 --fs-scale 放大仍不够。
+   * 「大字号」档把它一并抬到 11px，保证开档后不存在小于 11px 的文字。 */
+  --fs-floor: 9px;
+  --fs-8: max(var(--fs-floor), calc(8px * var(--fs-scale)));
+  --fs-9: max(var(--fs-floor), calc(9px * var(--fs-scale)));
   --fs-10: calc(10px * var(--fs-scale));
   --fs-11: calc(11px * var(--fs-scale));
 }
@@ -82,6 +88,7 @@
  * ========================================================================== */
 :root[data-size="large"] {
   --fs-scale: 1.2;
+  --fs-floor: 11px;      /* 开档后全站不再有小于 11px 的文字 */
 
   --text-xs: 0.875rem;   /* 12 → 14 */
   --text-sm: 1rem;       /* 14 → 16 */

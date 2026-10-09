@@ -115,7 +115,7 @@ const Radar6: React.FC<{ values: number[]; labels: string[]; size?: number; colo
       {labels.map((lb, i) => {
         const p = pt(i, 1.24);
         return (
-          <text key={lb} x={p.x} y={p.y} fill="var(--color-ink-muted)" fontSize="calc(9px * var(--fs-scale))" textAnchor="middle" dominantBaseline="middle">
+          <text key={lb} x={p.x} y={p.y} fill="var(--color-ink-muted)" fontSize="max(var(--fs-floor), calc(9px * var(--fs-scale)))" textAnchor="middle" dominantBaseline="middle">
             {lb}
           </text>
         );
