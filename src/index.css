@@ -65,16 +65,15 @@
   --color-tint-neutral: #f0f3f8;
 
   /* —— 字号：命名档位在主题层直接改写，保证覆盖 Tailwind 默认值 ——
-   * 浅色版按「大屏远距离观看」重新标定，已两次上浮：先是 +15%（1.15），
-   * 用户仍反馈偏小，再抬到 1.3 并把兜底字号从 11px 提到 13px。
-   * 必须与下面的 --fs-* 同步上浮，否则 text-[10px]→13px 会撞上没变的
-   * text-xs(14px)，字号层级直接塌掉。 */
-  --text-xs: 1rem;       /* 12 → 16 */
-  --text-sm: 1.125rem;   /* 14 → 18 */
-  --text-base: 1.25rem;  /* 16 → 20 */
-  --text-lg: 1.375rem;   /* 18 → 22 */
-  --text-xl: 1.5rem;     /* 20 → 24 */
-  --text-2xl: 1.75rem;   /* 24 → 28 */
+   * 浅色版按「大屏远距离观看」重新标定，已三次上浮：+15%（1.15）→ 1.3 → 1.45。
+   * 必须与下面的 --fs-* 同步上浮，否则 text-[10px] 会撞上没变的
+   * text-xs，字号层级直接塌掉。 */
+  --text-xs: 1.125rem;   /* 12 → 18 */
+  --text-sm: 1.25rem;    /* 14 → 20 */
+  --text-base: 1.375rem; /* 16 → 22 */
+  --text-lg: 1.5rem;     /* 18 → 24 */
+  --text-xl: 1.75rem;    /* 20 → 28 */
+  --text-2xl: 2rem;      /* 24 → 32 */
 }
 
 /* ⚠️ 超宽断点**不要**用 @theme 的 --breakpoint-* 定义。
@@ -89,15 +88,15 @@
  * 用 --fs-scale 统一驱动，而不是给每一档写死两个值：SVG 里的 fontSize 是
  * 布局期算出来的动态值（如 10.4px），没法预先枚举，只能靠 calc(Npx * var(--fs-scale)) 缩放。 */
 :root {
-  /* 基线整体上浮 30%（深色版是 1）—— 大屏远距离观看，原尺寸偏小。
-   * 1.15 时用户仍反馈「字太小」，故再抬一档。 */
-  --fs-scale: 1.3;
+  /* 基线整体上浮 45%（深色版是 1）—— 大屏远距离观看，原尺寸偏小。
+   * 演进：1（深色版）→ 1.15 → 1.3 → 1.45。 */
+  --fs-scale: 1.45;
   /* 最小可读字号（全站兜底）。两处需要它：
    *   ① 固定小字号令牌 --fs-8 / --fs-9 本身只有 8–9px；
    *   ② 「跟着容器尺寸等比缩小」的微标签 —— 如 ScoreGauge 的 % 单位在 64px
    *      表盘上只有 7px，光靠 --fs-scale 放大仍不够。
-   * 演进：深色版 9px → 浅色版 11px → 13px。 */
-  --fs-floor: 13px;
+   * 演进：深色版 9px → 浅色版 11px → 13px → 14px。 */
+  --fs-floor: 14px;
   /* 三档都套兜底：--fs-10/--fs-11 在当前 scale 下本就高于兜底，
    * 套上是为了以后调小 scale 时不会悄悄掉到兜底以下。 */
   --fs-8: max(var(--fs-floor), calc(8px * var(--fs-scale)));
@@ -142,16 +141,87 @@
  * 只放大字号、不动间距，避免整页重排导致的溢出。
  * ========================================================================== */
 :root[data-size="large"] {
-  /* 基线已经是 1.3，这一档再上浮到 1.5（相对原始约 +50%）。 */
-  --fs-scale: 1.5;
-  --fs-floor: 15px;      /* 开档后全站不再有小于 15px 的文字 */
+  /* 基线已经是 1.45，这一档再上浮到 1.65（相对原始约 +65%）。 */
+  --fs-scale: 1.65;
+  --fs-floor: 16px;      /* 开档后全站不再有小于 16px 的文字 */
 
-  --text-xs: 1.125rem;   /* 16 → 18 */
-  --text-sm: 1.25rem;    /* 18 → 20 */
-  --text-base: 1.375rem; /* 20 → 22 */
-  --text-lg: 1.5rem;     /* 22 → 24 */
-  --text-xl: 1.75rem;    /* 24 → 28 */
-  --text-2xl: 2rem;      /* 28 → 32 */
+  --text-xs: 1.25rem;    /* 18 → 20 */
+  --text-sm: 1.375rem;   /* 20 → 22 */
+  --text-base: 1.5rem;   /* 22 → 24 */
+  --text-lg: 1.625rem;   /* 24 → 26 */
+  --text-xl: 1.875rem;   /* 28 → 30 */
+  --text-2xl: 2.25rem;   /* 32 → 36 */
+}
+
+/* ============================================================================
+ * 显示档位 4：大光标
+ * ----------------------------------------------------------------------------
+ * 多屏演示时操作者站在屏前一米开外，系统光标（约 20px 的箭头）根本认不出
+ * 指到哪。开档后全站换成 48px 的自绘 SVG 光标。
+ *
+ * 三个实现要点：
+ *   ① 走 CSS 自定义光标（cursor: url(...) <x> <y>, <keyword>）。浏览器对图片
+ *      光标有尺寸上限（Chromium 128px），48 在各家都安全；**图片加载失败或
+ *      超限时会自动退回关键字**，所以最坏情况等于没开这一档，不会出现「光标
+ *      消失」——这也是不选「cursor:none + JS 跟随元素」的原因。
+ *   ② 热点是 url() 之后的两个数字，单位是**图片自身的 CSS 像素**（这里即
+ *      48x48 坐标系）。箭头取左上角尖端、工字取正中、手取食指指尖。
+ *   ③ 图形里的颜色**必须写死 hex**，不能引用 --color-* —— data URI 里的 SVG
+ *      是独立文档，拿不到外部 CSS 变量。这里用深色本体 + 白色外圈：浅底靠
+ *      深色看得见，深色视口（3D 舱 / 图谱）靠白圈看得见。
+ *
+ * 多形状的光标（手、拳头）画两层：先铺一层粗白描边当外圈，再用同样的形状
+ * 填一次深色盖住内部白线，否则各部件之间会留下白边。
+ * ========================================================================== */
+:root {
+  --cur-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M3 3v39l10-9.5 6.5 13.5 7-3-6.5-13.5h11z' fill='%230f1b2e' stroke='%23fff' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E") 2 2, default;
+
+  --cur-pointer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg fill='%230f1b2e' stroke='%23fff' stroke-width='5' stroke-linejoin='round'%3E%3Crect x='18' y='4' width='8.5' height='28' rx='4.25'/%3E%3Crect x='27.5' y='9' width='8.5' height='23' rx='4.25'/%3E%3Crect x='36.5' y='12' width='7' height='20' rx='3.5'/%3E%3Crect x='17' y='26' width='27' height='20' rx='9'/%3E%3C/g%3E%3Cg fill='%230f1b2e'%3E%3Crect x='18' y='4' width='8.5' height='28' rx='4.25'/%3E%3Crect x='27.5' y='9' width='8.5' height='23' rx='4.25'/%3E%3Crect x='36.5' y='12' width='7' height='20' rx='3.5'/%3E%3Crect x='17' y='26' width='27' height='20' rx='9'/%3E%3C/g%3E%3C/svg%3E") 22 5, pointer;
+
+  --cur-grab: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg fill='%230f1b2e' stroke='%23fff' stroke-width='5' stroke-linejoin='round'%3E%3Crect x='18' y='4' width='8.5' height='28' rx='4.25'/%3E%3Crect x='27.5' y='9' width='8.5' height='23' rx='4.25'/%3E%3Crect x='36.5' y='12' width='7' height='20' rx='3.5'/%3E%3Crect x='17' y='26' width='27' height='20' rx='9'/%3E%3C/g%3E%3Cg fill='%230f1b2e'%3E%3Crect x='18' y='4' width='8.5' height='28' rx='4.25'/%3E%3Crect x='27.5' y='9' width='8.5' height='23' rx='4.25'/%3E%3Crect x='36.5' y='12' width='7' height='20' rx='3.5'/%3E%3Crect x='17' y='26' width='27' height='20' rx='9'/%3E%3C/g%3E%3C/svg%3E") 22 5, grab;
+
+  --cur-grabbing: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg fill='%230f1b2e' stroke='%23fff' stroke-width='5' stroke-linejoin='round'%3E%3Crect x='11' y='18' width='28' height='24' rx='10'/%3E%3Crect x='14' y='15' width='8' height='12' rx='4'/%3E%3Crect x='23' y='13' width='8' height='14' rx='4'/%3E%3Crect x='32' y='15' width='7' height='12' rx='3.5'/%3E%3C/g%3E%3Cg fill='%230f1b2e'%3E%3Crect x='11' y='18' width='28' height='24' rx='10'/%3E%3Crect x='14' y='15' width='8' height='12' rx='4'/%3E%3Crect x='23' y='13' width='8' height='14' rx='4'/%3E%3Crect x='32' y='15' width='7' height='12' rx='3.5'/%3E%3C/g%3E%3C/svg%3E") 24 18, grabbing;
+
+  --cur-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg fill='none' stroke='%23fff' stroke-width='5.5' stroke-linecap='round'%3E%3Cpath d='M18 6h12M24 6v36M18 42h12'/%3E%3C/g%3E%3Cg fill='none' stroke='%230f1b2e' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M18 6h12M24 6v36M18 42h12'/%3E%3C/g%3E%3C/svg%3E") 24 24, text;
+
+  --cur-not-allowed: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg fill='none' stroke='%23fff' stroke-width='7.5'%3E%3Ccircle cx='24' cy='24' r='15'/%3E%3Cpath d='M13.4 13.4 34.6 34.6'/%3E%3C/g%3E%3Cg fill='none' stroke='%230f1b2e' stroke-width='3.5'%3E%3Ccircle cx='24' cy='24' r='15'/%3E%3Cpath d='M13.4 13.4 34.6 34.6'/%3E%3C/g%3E%3C/svg%3E") 24 24, not-allowed;
+}
+
+/* ① 全站先铺默认箭头。`:root` 本身也要写 —— `*` 不含根元素。 */
+:root[data-cursor="large"],
+:root[data-cursor="large"] * {
+  cursor: var(--cur-default);
+}
+
+/* ② 可点击。Tailwind 的 .cursor-pointer 只有 (0,1,0)，会被上面的 (0,2,0) 压掉，
+ *    所以这里显式带类名把它捞回来（本规则 (0,3,0)）。 */
+:root[data-cursor="large"] a,
+:root[data-cursor="large"] button,
+:root[data-cursor="large"] summary,
+:root[data-cursor="large"] select,
+:root[data-cursor="large"] label[for],
+:root[data-cursor="large"] [role="button"],
+:root[data-cursor="large"] [role="tab"],
+:root[data-cursor="large"] .cursor-pointer {
+  cursor: var(--cur-pointer);
+}
+
+/* ③ 文本输入。checkbox / radio 是点选控件，不是文本光标，排除掉。 */
+:root[data-cursor="large"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+:root[data-cursor="large"] textarea,
+:root[data-cursor="large"] [contenteditable="true"] {
+  cursor: var(--cur-text);
+}
+
+/* ④ 拖拽（3D 舱旋转、图谱拖移）。 */
+:root[data-cursor="large"] .cursor-grab { cursor: var(--cur-grab); }
+:root[data-cursor="large"] .cursor-grabbing { cursor: var(--cur-grabbing); }
+
+/* ⑤ 禁用态。放在最后：与 ② 同为 (0,3,0)，靠源序取胜。 */
+:root[data-cursor="large"] .cursor-not-allowed,
+:root[data-cursor="large"] button:disabled,
+:root[data-cursor="large"] [aria-disabled="true"] {
+  cursor: var(--cur-not-allowed);
 }
 
 /* ============================================================================
@@ -406,13 +476,20 @@
     grid-row: 1;
   }
 
-  /* 三栏等高：跟随视口，扣掉顶栏(5rem) + 上下文栏 + 内边距。
-   * ⚠️ 顶栏从 h-16(4rem) 改成 h-20(5rem) 时，这里的减数必须跟着 +1rem，
-   * 否则三栏会比可视区高出一截、底部被页脚切掉。
+  /* 三栏等高：超宽屏的硬约束是「整页一屏放下、不出滚动条」。
+   * 减数 = 视口里除三栏以外的全部纵向占用，实测（5120×1440，px）：
+   *   顶栏 80 + 主区上下 padding 48 + ContextBar ≈109
+   *   + grid↔说明条间距 16 + 说明条 ≈22 + 页脚 40
+   *   ≈ 315 @std(--fs-scale 1.45) / ≈ 321 @large(--fs-scale 1.65)。
+   * 这些块的高度随 --fs-scale 变（字号档会改它们），而 rem 恒为 16px，
+   * 所以减数取「最大档 + 余量」= 21.5rem(344px)，两档都不溢出。
+   * ⚠️ 改动顶栏 / ContextBar / 说明条 / 页脚高度，或调整字号档后，
+   *    必须回来重测本页 docScrollHeight 并同步这个值——曾因顶栏 h-16→h-20
+   *    漏改（只补了 1rem）而让三栏底部被推出视口 38px。
    * 3D 舱靠 flex-1 填满，画布用 ResizeObserver 自适应；
    * 两侧面板总高超过限高时各自内部滚动（配 .thin-scroll），不推高整页。 */
   .wb-uw-col {
-    height: calc(100vh - 17rem);
+    height: calc(100vh - 21.5rem);
     min-height: 760px;
   }
 

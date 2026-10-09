@@ -1,5 +1,5 @@
 import React from 'react';
-import { 
+import {
   Dna, 
   ChevronDown, 
   Bell, 
@@ -7,7 +7,8 @@ import {
   LayoutGrid,
   Contrast,
   ALargeSmall,
-  Palette
+  Palette,
+  MousePointer2
 } from 'lucide-react';
 import { ClinicalPatient } from '../types';
 import { mockPatients } from '../data/mockMicroFmtData';
@@ -32,7 +33,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   const { mode, toggle, cycleBackground } = useDisplayMode();
 
   return (
-    <header id="app-top-header" className="h-20 px-5 border-b border-line-2 bg-chrome flex items-center justify-between gap-4 select-none z-30 sticky top-0">
+    <header id="app-top-header" className="min-h-20 px-5 py-1 border-b border-line-2 bg-chrome flex items-center justify-between gap-4 select-none z-30 sticky top-0">
       {/* Brand Identity */}
       <div className="flex items-center gap-3">
         <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-accent to-info flex items-center justify-center shadow-[0_0_15px_rgba(32,207,255,0.4)]">
@@ -70,7 +71,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
       {/* Center: Active Patient Switcher & Clinical Status */}
       <div className="flex items-center gap-2">
-        <span className="text-xs text-ink-muted hidden md:inline">受体病例:</span>
+        <span className="text-xs text-ink-muted whitespace-nowrap hidden md:inline">受体病例:</span>
         <div className="relative">
           <select
             id="patient-case-switcher"
@@ -124,7 +125,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             type="button"
             onClick={cycleBackground}
             title={`切换背景质感 · 当前：${backgroundLabel(mode.background)}（${backgroundHint(mode.background)}）`}
-            className="flex items-center gap-1 px-2 py-1 rounded-md text-[length:var(--fs-11)] font-medium text-ink-muted hover:text-ink hover:bg-track transition-colors"
+            className="flex items-center gap-1 px-2 py-1 rounded-md whitespace-nowrap text-[length:var(--fs-11)] font-medium text-ink-muted hover:text-ink hover:bg-track transition-colors"
           >
             <Palette className="w-3.5 h-3.5" />
             <span className="hidden lg:inline">背景 · {backgroundLabel(mode.background)}</span>
@@ -136,7 +137,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             onClick={() => toggle('contrast')}
             aria-pressed={mode.contrast}
             title="高对比：提亮全站文字与描边"
-            className={`flex items-center gap-1 px-2 py-1 rounded-md text-[length:var(--fs-11)] font-medium transition-colors ${
+            className={`flex items-center gap-1 px-2 py-1 rounded-md whitespace-nowrap text-[length:var(--fs-11)] font-medium transition-colors ${
               mode.contrast
                 ? 'bg-accent text-on-bright'
                 : 'text-ink-muted hover:text-ink hover:bg-track'
@@ -152,7 +153,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             onClick={() => toggle('largeText')}
             aria-pressed={mode.largeText}
             title="大字号：全站字号上浮一档"
-            className={`flex items-center gap-1 px-2 py-1 rounded-md text-[length:var(--fs-11)] font-medium transition-colors ${
+            className={`flex items-center gap-1 px-2 py-1 rounded-md whitespace-nowrap text-[length:var(--fs-11)] font-medium transition-colors ${
               mode.largeText
                 ? 'bg-accent text-on-bright'
                 : 'text-ink-muted hover:text-ink hover:bg-track'
@@ -160,6 +161,24 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           >
             <ALargeSmall className="w-3.5 h-3.5" />
             <span className="hidden 2xl:inline">大字号</span>
+          </button>
+
+          {/* 大光标：多屏演示时人离屏一两米，系统光标（约 20px）认不出指到哪。
+              开启后全站换成 48px 自绘光标，见 index.css 的 --cur-* 变量。 */}
+          <button
+            id="display-toggle-cursor"
+            type="button"
+            onClick={() => toggle('largeCursor')}
+            aria-pressed={mode.largeCursor}
+            title="大光标：全站换成 48px 光标，方便远距离观看"
+            className={`flex items-center gap-1 px-2 py-1 rounded-md whitespace-nowrap text-[length:var(--fs-11)] font-medium transition-colors ${
+              mode.largeCursor
+                ? 'bg-accent text-on-bright'
+                : 'text-ink-muted hover:text-ink hover:bg-track'
+            }`}
+          >
+            <MousePointer2 className="w-3.5 h-3.5" />
+            <span className="hidden 2xl:inline">大光标</span>
           </button>
         </div>
 
@@ -180,7 +199,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           <div className="w-8 h-8 rounded-full bg-track border border-accent/40 flex items-center justify-center text-accent font-bold text-xs">
             陈
           </div>
-          <div className="hidden sm:block text-left">
+          <div className="hidden sm:block text-left whitespace-nowrap">
             <span className="text-xs font-semibold text-ink block leading-none">陈建国 主任</span>
             <span className="text-[length:var(--fs-10)] text-ink-muted leading-none mt-1 block">FMT MDT组长</span>
           </div>

@@ -1,12 +1,12 @@
 /**
- * 显示档位：高对比 / 大字号 / 背景质感。
+ * 显示档位：高对比 / 大字号 / 背景质感 / 大光标。
  *
  * 档位状态不放进组件 state，而是落到 <html> 的 data-* 属性上 —— 具体样式由
  * index.css 里的令牌覆盖块负责。这样换档只是重新赋值 CSS 变量：
  *   ① 不触发 React 重渲染，全站一次性生效；
  *   ② three.js 场景、SVG 描边这些不由 React 管理的部分也跟着变。
  *
- * 三个档位互相独立，可同时开启。
+ * 四个档位互相独立，可同时开启。
  */
 
 /**
@@ -51,18 +51,24 @@ export function nextBackground(id: BackgroundId): BackgroundId {
 export interface DisplayMode {
   /** 提亮文字与描边。用于强光环境或远距离观看。 */
   contrast: boolean;
-  /** 全站字号上浮一档。10px 档会抬到 12px。 */
+  /** 全站字号上浮一档。 */
   largeText: boolean;
+  /**
+   * 大光标。多屏演示时操作者站在屏前一两米外，系统默认的箭头（约 20px）
+   * 根本认不出指到哪了。开启后全站换成 48px 的自绘光标。
+   */
+  largeCursor: boolean;
   /** 页面背景质感。 */
   background: BackgroundId;
 }
 
 /** 只能整体开关的档位。`background` 是多选一，走 nextBackground，不在其中。 */
-export type DisplayToggleKey = 'contrast' | 'largeText';
+export type DisplayToggleKey = 'contrast' | 'largeText' | 'largeCursor';
 
 export const DEFAULT_DISPLAY_MODE: DisplayMode = {
   contrast: false,
   largeText: false,
+  largeCursor: false,
   background: DEFAULT_BACKGROUND,
 };
 
@@ -77,6 +83,7 @@ export function loadDisplayMode(): DisplayMode {
     return {
       contrast: parsed.contrast === true,
       largeText: parsed.largeText === true,
+      largeCursor: parsed.largeCursor === true,
       // 校验取值：旧版本存的档位、或手改过的 localStorage 都可能在 BACKGROUNDS 之外，
       // 直接塞进 data-bg 会得到一个没有样式的属性，页面看上去像「背景坏了」。
       background:
@@ -105,6 +112,8 @@ export function applyDisplayMode(mode: DisplayMode): void {
   else el.removeAttribute('data-contrast');
   if (mode.largeText) el.setAttribute('data-size', 'large');
   else el.removeAttribute('data-size');
+  if (mode.largeCursor) el.setAttribute('data-cursor', 'large');
+  else el.removeAttribute('data-cursor');
   // 素色档不写属性，与「未选择」等价，省掉一条 :root[data-bg="plain"] 规则。
   if (mode.background && mode.background !== DEFAULT_BACKGROUND) {
     el.setAttribute('data-bg', mode.background);
