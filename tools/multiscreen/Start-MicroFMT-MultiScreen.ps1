@@ -187,7 +187,7 @@ function Resolve-ProjectDir {
             return $candidate
         }
     }
-    return 'D:\vscode_code\microbiota-light'
+    return 'D:\vscode_code\microbiota'
 }
 
 # ---------------------------------------------------------------------------

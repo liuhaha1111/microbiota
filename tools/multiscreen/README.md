@@ -5,22 +5,16 @@
 > 位于仓库的 `tools/multiscreen/`。项目源码为支持「无侧边栏 + 跨屏联动」做过一轮改造，
 > 见下面第三节。
 
-> ### ⚠️ 现在启动的是**浅色构建**（light build）
+> ### 这一份就是**浅色构建**（light build）
 >
-> 平台有两个构建，各自一份 checkout，但**推同一个远程仓库**：
+> 2026-10-09 起 `light` 分支已合并进 `main`，**本 checkout 即浅色版，也是唯一在维护的版本**。
+> 浅色主题原先在另一个 checkout（`D:\vscode_code\microbiota-light`）上以独立分支开发，
+> 现已并入 `main`；那个目录不再需要。
 >
-> | 构建 | checkout | 分支 | 启动器 |
-> |---|---|---|---|
-> | **浅色（当前使用）** | `D:\vscode_code\microbiota-light` | `light` | 该目录下的 `Start-MultiScreen.bat` |
-> | 深色（保留，不在演示链路上） | `D:\vscode_code\microbiota` | `main` | 已改为**转发**到浅色版 |
->
-> 两个 `package.json` 的 `dev` 脚本都用 **3000** 端口，所以「端口上有东西」**不等于**「我的 dev server 在跑」——
-> 早先的启动器只看端口，于是在深色 dev server 还开着的时候，点浅色版脚本会打开深色版的应用。
->
-> 现在启动器会读 `index.html` 里的 `<meta name="microfmt-variant" content="light">` 来判断端口上到底是哪一版：
-> 不是自己这一版就**先关掉那个 dev server** 再起自己的（只关 Node/Vite 进程，见
-> `Start-MicroFMT-MultiScreen.ps1` 的 `Get-ServedVariant` / `Stop-ForeignDevServer`）。
-> 深色版没有这个 meta，「没有标记」即判为深色版。
+> 启动器仍保留**变体判定**：它读 `index.html` 里的 `<meta name="microfmt-variant" content="light">`，
+> 若 3000 端口上跑的是**另一版构建**（例如那个旧 checkout 还开着 dev server），就先关掉它再起自己的
+> （只关 Node/Vite 进程，见 `Start-MicroFMT-MultiScreen.ps1` 的 `Get-ServedVariant` / `Stop-ForeignDevServer`）。
+> 两个构建的 `dev` 脚本都用 **3000** 端口，所以「端口上有东西」**不等于**「我的 dev server 在跑」。
 
 ---
 
