@@ -249,7 +249,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* 左列：六维雷达 */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
               <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
                 <div className="flex items-center gap-2">
                   <span className="p-1 rounded bg-accent/20 text-accent">
@@ -376,7 +376,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
             </div>
 
             {/* 候选供体速览 */}
-            <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
               <h3 className="text-xs font-semibold text-ink pb-2 mb-3 border-b border-line-2 flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5 text-accent" />
                 候选供体池（点击切换雷达对比）
@@ -418,7 +418,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
           {/* 右列：候选对比 + 可解释理由 */}
           <div className="lg:col-span-7 space-y-4">
             {/* 候选供体六维得分横向对比 */}
-            <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
               <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
                 <h3 className="text-xs font-semibold text-ink flex items-center gap-1.5">
                   <TrendingUp className="w-3.5 h-3.5 text-accent" />
@@ -468,7 +468,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
             </div>
 
             {/* 可解释 AI 配型理由 */}
-            <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs space-y-3">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs space-y-3">
               <h3 className="text-xs font-semibold text-accent pb-2 border-b border-line-2 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" /> 可解释配型理由 · 系统推荐 {evaluation.donorCode} (Explainable Rationales)
               </h3>
@@ -546,7 +546,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* 左列：供体库 */}
             <div className="lg:col-span-5">
-              <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs h-full">
+              <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs h-full">
                 <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
                   <h3 className="font-semibold text-ink flex items-center gap-1.5">
                     <Database className="w-4 h-4 text-accent" />
@@ -619,7 +619,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
             {/* 右列：选中供体档案 + 批次表 */}
             <div className="lg:col-span-7 space-y-4">
               {/* 供体档案详情 */}
-              <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
+              <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
                 <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
                   <h3 className="font-semibold text-ink flex items-center gap-1.5">
                     <Microscope className="w-4 h-4 text-accent" />
@@ -671,7 +671,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
               </div>
 
               {/* 冷链批次表 */}
-              <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
+              <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
                 <div className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-3 border-b border-line-2">
                   <h3 className="font-semibold text-ink flex items-center gap-1.5">
                     <Thermometer className="w-4 h-4 text-accent" />
@@ -762,7 +762,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* 左列：处方正文 */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs space-y-3">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-line-2">
                 <div className="flex items-center gap-2">
                   <FileCheck className="w-4 h-4 text-accent" />
@@ -858,7 +858,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
 
           {/* 右列：安全门控 + 签署 */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
               <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
                 <span className="font-semibold text-ink flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-ok" />
@@ -916,7 +916,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
             </div>
 
             {/* 签署与下发 */}
-            <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs space-y-3">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-line-2">
                 <h3 className="font-semibold text-ink flex items-center gap-1.5">
                   <UserCheck className="w-4 h-4 text-accent" />

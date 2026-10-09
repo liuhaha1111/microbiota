@@ -25,8 +25,14 @@
   /* 说明/单位/次要标签。取值由 WCAG 反推：这档文字会压在最深的浅底 track
    * (#e8eef7) 上，需 >=4.5:1，故不能沿用深色版的「提亮」思路。 */
   --color-ink-muted: #4f5f78;  /* track 5.56 · canvas 5.77 · surface 6.48 */
-  /* 最弱一级注释。比 muted 再浅一档但同样受 canvas 兜底约束（最严 4.75）。 */
-  --color-ink-subtle: #5c6c85; /* canvas 4.75 · surface-2 5.05 · track 4.57 */
+  /* 最弱一级注释。比 muted 再浅一档但同样受 canvas 兜底约束。
+   * ⚠️ 这一档的取值不是自由的 —— 它同时是**背景纹理的预算来源**。
+   * 纹理只压深底色（往 --color-ink 叠 alpha），而本档文字是压在 canvas 上最浅的
+   * 一档，所以「纹理最深处」就是它的最坏背景。实测：
+   *   alpha 0.05 → bg(227,231,238)，#5c6c85 只剩 4.30:1（不合格）
+   *   alpha 0.05 → 换成 #56657e 得 4.76:1；alpha 0.06 仍有 4.67:1
+   * 故纹理强度一律不得超过 0.06，本档也定在 #56657e。**改纹理前先重算这张表。** */
+  --color-ink-subtle: #56657e; /* canvas 5.25 · surface-2 5.58 · track 5.06 */
   --color-on-bright: #ffffff;  /* 饱和色底片上的文字 */
 
   /* —— 语义强调色 ——
@@ -59,15 +65,16 @@
   --color-tint-neutral: #f0f3f8;
 
   /* —— 字号：命名档位在主题层直接改写，保证覆盖 Tailwind 默认值 ——
-   * 浅色版按「大屏远距离观看」重新标定，整体上浮约 15%。
-   * 必须与下面的 --fs-* 同步上浮，否则 text-[10px]→11.5px 会撞上没变的
-   * text-xs(12px)，字号层级直接塌掉。 */
-  --text-xs: 0.875rem;   /* 12 → 14 */
-  --text-sm: 1rem;       /* 14 → 16 */
-  --text-base: 1.125rem; /* 16 → 18 */
-  --text-lg: 1.25rem;    /* 18 → 20 */
-  --text-xl: 1.375rem;   /* 20 → 22 */
-  --text-2xl: 1.625rem;  /* 24 → 26 */
+   * 浅色版按「大屏远距离观看」重新标定，已两次上浮：先是 +15%（1.15），
+   * 用户仍反馈偏小，再抬到 1.3 并把兜底字号从 11px 提到 13px。
+   * 必须与下面的 --fs-* 同步上浮，否则 text-[10px]→13px 会撞上没变的
+   * text-xs(14px)，字号层级直接塌掉。 */
+  --text-xs: 1rem;       /* 12 → 16 */
+  --text-sm: 1.125rem;   /* 14 → 18 */
+  --text-base: 1.25rem;  /* 16 → 20 */
+  --text-lg: 1.375rem;   /* 18 → 22 */
+  --text-xl: 1.5rem;     /* 20 → 24 */
+  --text-2xl: 1.75rem;   /* 24 → 28 */
 }
 
 /* ⚠️ 超宽断点**不要**用 @theme 的 --breakpoint-* 定义。
@@ -82,18 +89,21 @@
  * 用 --fs-scale 统一驱动，而不是给每一档写死两个值：SVG 里的 fontSize 是
  * 布局期算出来的动态值（如 10.4px），没法预先枚举，只能靠 calc(Npx * var(--fs-scale)) 缩放。 */
 :root {
-  /* 基线整体上浮 15%（深色版是 1）—— 大屏远距离观看，原尺寸偏小。 */
-  --fs-scale: 1.15;
+  /* 基线整体上浮 30%（深色版是 1）—— 大屏远距离观看，原尺寸偏小。
+   * 1.15 时用户仍反馈「字太小」，故再抬一档。 */
+  --fs-scale: 1.3;
   /* 最小可读字号（全站兜底）。两处需要它：
-   *   ① 固定小字号令牌 --fs-8 本身只有 8px；
+   *   ① 固定小字号令牌 --fs-8 / --fs-9 本身只有 8–9px；
    *   ② 「跟着容器尺寸等比缩小」的微标签 —— 如 ScoreGauge 的 % 单位在 64px
    *      表盘上只有 7px，光靠 --fs-scale 放大仍不够。
-   * 深色版这里是 9px，用户仍反馈偏小，浅色版直接抬到 11px。 */
-  --fs-floor: 11px;
+   * 演进：深色版 9px → 浅色版 11px → 13px。 */
+  --fs-floor: 13px;
+  /* 三档都套兜底：--fs-10/--fs-11 在当前 scale 下本就高于兜底，
+   * 套上是为了以后调小 scale 时不会悄悄掉到兜底以下。 */
   --fs-8: max(var(--fs-floor), calc(8px * var(--fs-scale)));
   --fs-9: max(var(--fs-floor), calc(9px * var(--fs-scale)));
-  --fs-10: calc(10px * var(--fs-scale));
-  --fs-11: calc(11px * var(--fs-scale));
+  --fs-10: max(var(--fs-floor), calc(10px * var(--fs-scale)));
+  --fs-11: max(var(--fs-floor), calc(11px * var(--fs-scale)));
 }
 
 /* ============================================================================
@@ -132,16 +142,16 @@
  * 只放大字号、不动间距，避免整页重排导致的溢出。
  * ========================================================================== */
 :root[data-size="large"] {
-  /* 基线已经是 1.15，这一档再上浮到 1.3（相对原始约 +30%）。 */
-  --fs-scale: 1.3;
-  --fs-floor: 12px;      /* 开档后全站不再有小于 12px 的文字 */
+  /* 基线已经是 1.3，这一档再上浮到 1.5（相对原始约 +50%）。 */
+  --fs-scale: 1.5;
+  --fs-floor: 15px;      /* 开档后全站不再有小于 15px 的文字 */
 
-  --text-xs: 1rem;       /* 14 → 16 */
-  --text-sm: 1.125rem;   /* 16 → 18 */
-  --text-base: 1.25rem;  /* 18 → 20 */
-  --text-lg: 1.375rem;
-  --text-xl: 1.5rem;
-  --text-2xl: 1.75rem;
+  --text-xs: 1.125rem;   /* 16 → 18 */
+  --text-sm: 1.25rem;    /* 18 → 20 */
+  --text-base: 1.375rem; /* 20 → 22 */
+  --text-lg: 1.5rem;     /* 22 → 24 */
+  --text-xl: 1.75rem;    /* 24 → 28 */
+  --text-2xl: 2rem;      /* 28 → 32 */
 }
 
 /* ============================================================================
@@ -187,6 +197,84 @@
 
   /* 视口自身底色：与 three.js 场景背景 0x0a1020 对齐，避免画布边缘露白 */
   background-color: #0a1020;
+}
+
+/* ============================================================================
+ * 背景质感（老式网站的纸纹 / 方格 / 网点 / 斜纹 / 亚麻 / 横线）
+ * ----------------------------------------------------------------------------
+ * 全部用 CSS 现画（渐变 + SVG feTurbulence），不引任何图片资源 —— 这个项目是
+ * 纯前端演示，多一个外链就多一处会 404 的地方，而且平铺图还得管缩放。
+ *
+ * 强度一律压到「几个百分点」：纹理只负责让白底不像塑料，一旦有存在感，
+ * 正文读数就会变累 —— 医疗场景里这是负分。
+ *
+ * ⚠️ 上限是硬约束：**任何纹理的 alpha 都不得超过 0.06**。
+ * 这个数字由 --color-ink-subtle 的最坏对比度反推而来，推导过程见该令牌处的注释。
+ * 调高任何一个纹理的 alpha，都要重算那一档的对比度，否则「纹理好看」会以
+ * 「最弱一级注释读不清」为代价 —— 而这一档正是单位、脚注、说明文字。
+ *
+ * 对比度上也是安全的，理由值得写下来：所有纹理都是**压深**底色（往 --color-ink
+ * 方向叠很低的 alpha），而浅色版的正文全是深色字，底色压深只会让对比度**更高**。
+ * 反向（往白里提）才有风险，这里没有一种纹理这么做。
+ *
+ * 因此审计脚本量不到纹理也不影响结论 —— 它按 background-color 取值，
+ * 拿到的是纹理的「基底色」，而那正是对比度的下界。
+ *
+ * 注意 data-bg 与 data-contrast / data-size 是正交的，可以任意组合：
+ * 换背景不动字号，换字号不动背景。
+ * ========================================================================== */
+:root {
+  --bg-tex: none;
+  --bg-tex-size: auto;
+  --bg-tex-repeat: repeat;
+}
+
+/* 素色档不写 data-bg（见 displayMode.ts），--bg-tex 保持 none，
+ * 于是退化成纯 --color-canvas，不需要单独的 :root[data-bg="plain"] 规则。 */
+
+:root[data-bg="paper"] {
+  --bg-tex: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23p)' opacity='0.06'/%3E%3C/svg%3E");
+  --bg-tex-size: 200px 200px;
+}
+
+/* ⚠️ 交叉纹理的 alpha **不是**你写多少就是多少：经纬在交点处会叠两次。
+ * 合并结果 = 1-(1-a)^2 ≈ 2a，实测 a=0.06 时交点像素压到 (213,218,226)，
+ * 等效 alpha 0.112，--color-ink-subtle 掉到 4.20:1（不合格）。
+ * 把经纬写成同一条 SVG path 的**两个子路径**并不能免除叠加 —— Chrome 仍然按
+ * 子路径分别上色（实测与 1-(1-a)^2 完全吻合），所以这里只能按合并值反推：
+ * 目标合并 0.055 → 单层 a = 1-sqrt(1-0.055) ≈ 0.028。
+ * 想加强网格，必须先重算 --color-ink-subtle 那张表，不能只改这个数字。 */
+:root[data-bg="grid"] {
+  --bg-tex: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M0 0.5H24M0.5 0V24' fill='none' stroke='%230f1b2e' stroke-opacity='0.028' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+:root[data-bg="dots"] {
+  --bg-tex: radial-gradient(rgba(15, 27, 46, 0.06) 1px, transparent 1.4px);
+  --bg-tex-size: 18px 18px;
+}
+
+:root[data-bg="diagonal"] {
+  --bg-tex: repeating-linear-gradient(45deg, rgba(15, 27, 46, 0.05) 0 1px, transparent 1px 8px);
+}
+
+/* 织物经纬：同 grid 的交叉叠加问题，alpha 同样按合并值反推。
+ * 节距更密（6px vs 24px），所以再压一点，读起来像布而不像坐标纸。 */
+:root[data-bg="linen"] {
+  --bg-tex: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Cpath d='M0 0.5H6M0.5 0V6' fill='none' stroke='%230f1b2e' stroke-opacity='0.026' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+:root[data-bg="ruled"] {
+  --bg-tex: repeating-linear-gradient(to bottom, rgba(15, 27, 46, 0.055) 0 1px, transparent 1px 30px);
+}
+
+/* 页面底：颜色 + 纹理一次给全。
+ * 与 Tailwind 的 bg-canvas 二选一 —— 两个都写在同一个元素上，
+ * background-color 会被后者覆盖（纹理还在，颜色悄悄变了），排查起来很难看。 */
+.app-bg {
+  background-color: var(--color-canvas);
+  background-image: var(--bg-tex);
+  background-size: var(--bg-tex-size);
+  background-repeat: var(--bg-tex-repeat);
 }
 
 /* ============================================================================
@@ -314,11 +402,13 @@
     grid-row: 1;
   }
 
-  /* 三栏等高：跟随视口，扣掉顶栏(4rem) + 上下文栏 + 内边距。
+  /* 三栏等高：跟随视口，扣掉顶栏(5rem) + 上下文栏 + 内边距。
+   * ⚠️ 顶栏从 h-16(4rem) 改成 h-20(5rem) 时，这里的减数必须跟着 +1rem，
+   * 否则三栏会比可视区高出一截、底部被页脚切掉。
    * 3D 舱靠 flex-1 填满，画布用 ResizeObserver 自适应；
    * 两侧面板总高超过限高时各自内部滚动（配 .thin-scroll），不推高整页。 */
   .wb-uw-col {
-    height: calc(100vh - 16rem);
+    height: calc(100vh - 17rem);
     min-height: 760px;
   }
 

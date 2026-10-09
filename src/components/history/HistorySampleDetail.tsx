@@ -396,7 +396,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                 { label: '条件致病菌负荷', value: `${sample.microbiome.pathogenLoad}%`, hint: '越低越好', tone: sample.microbiome.pathogenLoad > 45 ? UI.red : UI.amber },
                 { label: 'FMT 适应性评分', value: `${sample.microbiome.fmtAdaptabilityScore}`, hint: '当初入库得分', tone: sample.microbiome.fmtAdaptabilityScore >= 80 ? UI.cyan : UI.amber }
               ].map(item => (
-                <div key={item.label} className="p-2.5 rounded-lg bg-surface-2 border border-line/50 text-center">
+                <div key={item.label} className="p-3.5 rounded-lg bg-surface-2 border border-line/50 text-center">
                   <span className="text-[length:var(--fs-10)] text-ink-muted block">{item.label}</span>
                   <span className="font-mono font-bold text-base block my-0.5" style={{ color: item.tone }}>{item.value}</span>
                   <span className="text-[length:var(--fs-9)] text-ink-muted">{item.hint}</span>
@@ -404,7 +404,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               ))}
             </div>
 
-            <div className="p-2.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-11)] text-ink-muted">
+            <div className="p-3.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-11)] text-ink-muted">
               <span className="text-accent font-semibold">主导失衡特征：</span>
               {sample.microbiome.dominantFeature}
             </div>
@@ -592,7 +592,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </SectionCard>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5">
+            <div className="p-3.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5">
               <Info className="w-3.5 h-3.5 text-accent" />
               供受体匹配记录为历史样本当时的真实评估结果。当前患者的供体选择必须基于当前供体库存、菌液批次效期重新计算，不可沿用历史供体。
             </div>
@@ -679,7 +679,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </div>
 
               {/* 给药节奏 + 随访节点：给药次数直接取自方案文本，不按下标编造 */}
-              <div className="mt-3 p-2.5 rounded-lg bg-surface-2 border border-line/50">
+              <div className="mt-3 p-3.5 rounded-lg bg-surface-2 border border-line/50">
                 <div className="flex items-center justify-between text-[length:var(--fs-10)] mb-1.5">
                   <span className="text-ink-muted">给药节奏可视化</span>
                   <span className="text-accent font-mono">{doseCount} 个给药节点 · 该样本已全部完成</span>
@@ -711,7 +711,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                   { label: '联合用药', value: protocol.combinedTherapy, icon: <Pill className="w-3.5 h-3.5 text-warn" /> },
                   { label: '营养干预', value: protocol.nutritionalIntervention, icon: <Activity className="w-3.5 h-3.5 text-ok" /> }
                 ].map(item => (
-                  <div key={item.label} className="p-2.5 rounded-lg bg-surface-2 border border-line/50">
+                  <div key={item.label} className="p-3.5 rounded-lg bg-surface-2 border border-line/50">
                     <span className="text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5 mb-1">
                       {item.icon}
                       {item.label}
@@ -722,7 +722,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </div>
 
               {/* 随访里程碑 */}
-              <div className="mt-3 p-2.5 rounded-lg bg-surface-2 border border-line/50">
+              <div className="mt-3 p-3.5 rounded-lg bg-surface-2 border border-line/50">
                 <span className="text-[length:var(--fs-10)] text-ink-muted block mb-1.5">预设复评节点</span>
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {protocol.reviewMilestones.map(m => <Tag key={m} text={m} color={UI.blue} />)}
@@ -805,7 +805,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </div>
             </SectionCard>
 
-            <div className="p-2.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5">
+            <div className="p-3.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5">
               <BookMarked className="w-3.5 h-3.5 text-accent" />
               历史医生当时选择该方案的推荐理由，请见「MDT 纪要 & 医生备注」Tab —— 该部分对研判价值最高。
             </div>
@@ -822,7 +822,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                 { label: '终末供体定植率', value: `${sample.finalEngraftmentRate}%`, tone: sample.finalEngraftmentRate >= 60 ? UI.green : UI.amber },
                 { label: '不良事件', value: `${sample.adverseEvents.length} 例${sample.adverseEvents.some(a => a.isSAE) ? '（含 SAE）' : ''}`, tone: sample.adverseEvents.some(a => a.isSAE) ? UI.red : UI.muted }
               ].map(item => (
-                <div key={item.label} className="p-2.5 rounded-lg bg-surface-2 border border-line/50">
+                <div key={item.label} className="p-3.5 rounded-lg bg-surface-2 border border-line/50">
                   <span className="text-[length:var(--fs-10)] text-ink-muted block">{item.label}</span>
                   <span className="text-[length:var(--fs-11)] font-bold block mt-1 leading-tight" style={{ color: item.tone }}>{item.value}</span>
                 </div>

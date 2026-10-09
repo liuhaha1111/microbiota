@@ -71,7 +71,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
         {right && <div className="shrink-0">{right}</div>}
       </div>
 
-      {isOpen && <div className="p-4">{children}</div>}
+      {isOpen && <div className="p-5">{children}</div>}
     </section>
   );
 };

@@ -6,11 +6,13 @@ import {
   Database,
   LayoutGrid,
   Contrast,
-  ALargeSmall
+  ALargeSmall,
+  Palette
 } from 'lucide-react';
 import { ClinicalPatient } from '../types';
 import { mockPatients } from '../data/mockMicroFmtData';
 import { useDisplayMode } from '../hooks/useDisplayMode';
+import { backgroundHint, backgroundLabel } from '../utils/displayMode';
 
 interface TopHeaderProps {
   currentPatient: ClinicalPatient;
@@ -27,14 +29,14 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   isHome,
   onGoHome
 }) => {
-  const { mode, toggle } = useDisplayMode();
+  const { mode, toggle, cycleBackground } = useDisplayMode();
 
   return (
-    <header id="app-top-header" className="h-16 px-4 border-b border-line-2 bg-chrome flex items-center justify-between gap-4 select-none z-30 sticky top-0">
+    <header id="app-top-header" className="h-20 px-5 border-b border-line-2 bg-chrome flex items-center justify-between gap-4 select-none z-30 sticky top-0">
       {/* Brand Identity */}
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-info flex items-center justify-center shadow-[0_0_15px_rgba(32,207,255,0.4)]">
-          <Dna className="w-5 h-5 text-on-bright" />
+        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-accent to-info flex items-center justify-center shadow-[0_0_15px_rgba(32,207,255,0.4)]">
+          <Dna className="w-6 h-6 text-on-bright" />
         </div>
         <div>
           <div className="flex items-center gap-2">
@@ -111,8 +113,23 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             投在大屏上远距离观看时，深色底 + 10px 小字会一起糊掉，看不清。
             这两个开关分别对付「对比度」和「字号」，互相独立、可同时开。
             状态落在 <html> 的 data-contrast / data-size 上（见 index.css 的令牌覆盖块），
-            由 localStorage 持久化，刷新后保持。 */}
+            由 localStorage 持久化，刷新后保持。
+
+            背景质感是**多选一**而不是开关，所以单独一个按钮循环切换，
+            并常显当前档位名 —— 两个开关按下去有高亮可看，循环按钮没有，
+            不给名字的话用户点完不知道现在是哪一种。 */}
         <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-surface border border-line">
+          <button
+            id="display-toggle-bg"
+            type="button"
+            onClick={cycleBackground}
+            title={`切换背景质感 · 当前：${backgroundLabel(mode.background)}（${backgroundHint(mode.background)}）`}
+            className="flex items-center gap-1 px-2 py-1 rounded-md text-[length:var(--fs-11)] font-medium text-ink-muted hover:text-ink hover:bg-track transition-colors"
+          >
+            <Palette className="w-3.5 h-3.5" />
+            <span className="hidden lg:inline">背景 · {backgroundLabel(mode.background)}</span>
+          </button>
+
           <button
             id="display-toggle-contrast"
             type="button"

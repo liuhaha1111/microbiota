@@ -71,7 +71,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-canvas text-ink font-sans flex flex-col selection:bg-accent selection:text-on-bright">
+    <div className="min-h-screen app-bg text-ink font-sans flex flex-col selection:bg-accent selection:text-on-bright">
       {/* 1. Universal Top Header
           侧边导航已移除，顶栏的「启动台」按钮是模块屏回到主屏的唯一回路。 */}
       <TopHeader
@@ -84,10 +84,13 @@ export default function App() {
       {/* 2. Full-bleed Workspace
           分屏约束：每块屏只承载一个模块，模块之间不互相跳转，因此不再有左侧目录。
           每屏所需的全部上下文由各模块的 ContextBar 常驻承载（信息自洽）。
-          id 供页内锚点导航（AnchorNav）定位滚动容器使用。 */}
+          id 供页内锚点导航（AnchorNav）定位滚动容器使用。
+
+          这里**不再画背景**：原先是一层 from-canvas via-surface-2 to-canvas 的
+          竖向渐变，会把根节点上的背景纹理整片盖住。深度感现在由纹理负责。 */}
       <main
         id="app-scroll-root"
-        className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 bg-gradient-to-b from-canvas via-surface-2 to-canvas"
+        className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6"
       >
         <div
           className={`mx-auto w-full ${
@@ -128,8 +131,10 @@ export default function App() {
         </div>
       </main>
 
-      {/* 3. Deep Tech Medical Footer */}
-      <footer className="h-9 px-4 bg-canvas border-t border-line-2 flex items-center justify-between text-[length:var(--fs-11)] text-ink-muted select-none z-20">
+      {/* 3. Deep Tech Medical Footer
+          不画底色，让根节点的背景纹理一路铺到底 —— 否则页脚会在纹理中间
+          切出一条与周围不同色的带子。 */}
+      <footer className="h-10 px-4 border-t border-line-2 flex items-center justify-between text-[length:var(--fs-11)] text-ink-muted select-none z-20">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-ok"></span>

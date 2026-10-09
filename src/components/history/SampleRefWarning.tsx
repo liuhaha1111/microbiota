@@ -87,7 +87,7 @@ export const CopyConfirmModal: React.FC<CopyConfirmModalProps> = ({
             </div>
           )}
 
-          <div className="p-2.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-11)]">
+          <div className="p-3.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-11)]">
             <span className="text-ink-muted">该历史样本当时结局：</span>
             <span className="text-ink font-semibold ml-1">{outcomeLabel}</span>
           </div>

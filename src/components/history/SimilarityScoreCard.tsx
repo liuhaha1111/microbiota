@@ -121,7 +121,7 @@ export const SimilarityScoreCard: React.FC<SimilarityScoreCardProps> = ({
       </div>
 
       {/* 差异小结：防止医生只看到相似度、忽略两个患者的本质不同 */}
-      <div className="mt-3 p-2.5 rounded-lg bg-surface-2 border border-line/50">
+      <div className="mt-3 p-3.5 rounded-lg bg-surface-2 border border-line/50">
         <h4 className="text-[length:var(--fs-11)] font-semibold text-ink mb-1.5">可视化差异小结</h4>
         <p className="text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
           <span className="text-ok">主要相似点：</span>

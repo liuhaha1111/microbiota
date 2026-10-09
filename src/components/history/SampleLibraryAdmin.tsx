@@ -58,14 +58,14 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
             { label: '典型案例标记', value: typicalCount, tone: UI.purple },
             { label: '已屏蔽', value: blockedCount, tone: UI.red }
           ].map(item => (
-            <div key={item.label} className="p-2.5 rounded-lg bg-surface-2 border border-line/50 text-center">
+            <div key={item.label} className="p-3.5 rounded-lg bg-surface-2 border border-line/50 text-center">
               <span className="text-[length:var(--fs-10)] text-ink-muted block">{item.label}</span>
               <span className="font-mono font-bold text-lg block mt-0.5" style={{ color: item.tone }}>{item.value}</span>
             </div>
           ))}
         </div>
 
-        <div className="mt-3 p-2.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-10)] text-ink-muted leading-relaxed space-y-1">
+        <div className="mt-3 p-3.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-10)] text-ink-muted leading-relaxed space-y-1">
           <p className="flex items-start gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-ok shrink-0 mt-0.5" />
             <span><strong className="text-ink">入库规则：</strong>只有完整走完 FMT 诊疗闭环（评估 → 菌群画像 → 供受体匹配 → 方案 → 执行 → 随访结局 → 不良事件）且数据完整度 = 100% 的病例方可入库；中途脱落、数据不全的病例禁止入库。</span>

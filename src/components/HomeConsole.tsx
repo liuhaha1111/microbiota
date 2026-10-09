@@ -151,20 +151,21 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
         </div>
       </div>
 
-      {/* 核心指标带 */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      {/* 核心指标带。方片加大：字号上浮后原来的 p-3.5 会让「28 / +3 新增」挤在一起，
+          并且给一个最小高度，让五张卡在宽屏上等高、数值基线对齐。 */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {KPI_CARDS.map(card => {
           const Icon = card.icon;
           return (
             <div
               key={card.label}
-              className="p-3.5 rounded-xl bg-surface border border-line/60 shadow-lg relative overflow-hidden"
+              className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg relative overflow-hidden min-h-[8.5rem] flex flex-col justify-between"
             >
-              <div className="flex items-center justify-between text-ink-muted text-xs">
+              <div className="flex items-center justify-between text-ink-muted text-xs gap-2">
                 <span>{card.label}</span>
-                <Icon className="w-4 h-4" style={{ color: card.accent }} />
+                <Icon className="w-5 h-5 shrink-0" style={{ color: card.accent }} />
               </div>
-              <div className="mt-2 flex items-baseline gap-2">
+              <div className="mt-2 flex items-baseline gap-2 flex-wrap">
                 <span className="text-2xl font-bold font-mono text-ink">{card.value}</span>
                 <span className={`text-[length:var(--fs-11)] ${TONE_CLASS[card.tone]}`}>{card.note}</span>
               </div>
@@ -178,7 +179,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
       </div>
 
       {/* 屏位入口卡：主屏的核心动作就是「把哪块屏调起来」 */}
-      <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg">
+      <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg">
         <div className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-3 border-b border-line-2">
           <h4 className="text-xs font-semibold text-ink flex items-center gap-1.5">
             <LayoutDashboard className="w-3.5 h-3.5 text-accent" />
@@ -189,7 +190,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {SCREEN_SLOTS.map(slot => {
             const Icon = slot.icon;
             const isDispatched = dispatched.includes(slot.tab);
@@ -199,7 +200,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
                 key={slot.tab}
                 id={`home-entry-slot-${slot.slot}`}
                 onClick={() => onEnter(slot.tab)}
-                className={`group text-left p-3.5 rounded-xl border transition-all flex flex-col ${
+                className={`group text-left p-5 rounded-xl border transition-all flex flex-col ${
                   isDispatched
                     ? 'bg-gradient-to-b from-surface to-tint-info border-accent/45 hover:border-accent/80'
                     : 'bg-surface-2 border-line/60 hover:bg-surface hover:border-accent/50'
@@ -223,15 +224,15 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
                 </div>
 
                 {/* 模块身份 */}
-                <div className="flex items-start gap-2.5 mt-3">
+                <div className="flex items-start gap-3 mt-3.5">
                   <div
-                    className={`w-9 h-9 shrink-0 rounded-lg flex items-center justify-center border transition-colors ${
+                    className={`w-12 h-12 shrink-0 rounded-xl flex items-center justify-center border transition-colors ${
                       isDispatched
                         ? 'bg-accent/20 border-accent/50 text-accent'
                         : 'bg-track border-line/60 text-ink-muted group-hover:text-accent'
                     }`}
                   >
-                    <Icon className="w-4.5 h-4.5" />
+                    <Icon className="w-6 h-6" />
                   </div>
                   <div className="min-w-0">
                     <div className="text-sm font-bold text-ink leading-tight">{slot.name}</div>
@@ -267,7 +268,7 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
       </div>
 
       {/* 临床风险预警与再决策推送 */}
-      <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg">
+      <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg">
         <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
           <h4 className="text-xs font-semibold text-danger flex items-center gap-1.5">
             <AlertTriangle className="w-3.5 h-3.5 text-danger" />

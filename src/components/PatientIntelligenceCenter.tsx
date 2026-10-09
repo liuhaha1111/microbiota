@@ -104,7 +104,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
       {activeTab === 'clinical' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* 重点临床检验指标 */}
-          <div className="lg:col-span-5 p-4 rounded-xl bg-surface border border-line/60 shadow-lg">
+          <div className="lg:col-span-5 p-5 rounded-xl bg-surface border border-line/60 shadow-lg">
             <h3 className="text-xs font-semibold text-ink pb-2 mb-3 border-b border-line-2 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <Activity className="w-3.5 h-3.5 text-accent" /> 重点临床检验指标
@@ -171,7 +171,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
           </div>
 
           {/* 临床病史与诊断表型 */}
-          <div className="lg:col-span-7 p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs space-y-3">
+          <div className="lg:col-span-7 p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs space-y-3">
             <h3 className="text-xs font-semibold text-ink pb-2 border-b border-line-2 flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-accent" /> 临床病史与诊断表型
             </h3>
@@ -278,7 +278,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
               />
             </div>
           ) : (
-            <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-xl text-xs space-y-3 min-h-[480px]">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-xl text-xs space-y-3 min-h-[480px]">
               <div className="flex items-center justify-between pb-2 border-b border-line-2">
                 <h4 className="font-semibold text-ink flex items-center gap-1.5">
                   <Layers className="w-4 h-4 text-accent" />
@@ -354,7 +354,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
           )}
 
           {/* 微生态关键指标与失衡特征分析 */}
-          <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
+          <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
             <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
               <h4 className="font-semibold text-ink flex items-center gap-1.5">
                 <Dna className="w-3.5 h-3.5 text-accent" />
@@ -402,7 +402,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
       {activeTab === 'pathway' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* FMT 适应性安全评估 */}
-          <div className="lg:col-span-5 p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
+          <div className="lg:col-span-5 p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
             <h3 className="text-xs font-semibold text-ink pb-2 mb-3 border-b border-line-2 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <ShieldAlert className="w-3.5 h-3.5 text-accent" /> FMT 适应性安全评估
@@ -485,7 +485,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
           </div>
 
           {/* 菌群功能通路损伤评估 */}
-          <div className="lg:col-span-7 p-4 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
+          <div className="lg:col-span-7 p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
             <h3 className="text-xs font-semibold text-ink pb-2 mb-3 border-b border-line-2 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5 text-accent" /> 菌群功能通路损伤评估

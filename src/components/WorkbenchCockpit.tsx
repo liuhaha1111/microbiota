@@ -59,7 +59,7 @@ interface WorkbenchCockpitProps {
 
 /** 全流程患者治疗路径分布 —— 六阶段当期分布（各阶段并存，相邻两段相除没有转化率含义） */
 const PathwayPanel: React.FC = () => (
-  <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg">
+  <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg">
     <div className="flex items-center justify-between mb-3 text-xs">
       <span className="font-semibold text-ink flex items-center gap-1.5">
         <Clock className="w-3.5 h-3.5 text-accent" />
@@ -97,7 +97,7 @@ const PathwayPanel: React.FC = () => (
 
 /** 适应症疾病队列分布 */
 const CohortMixPanel: React.FC = () => (
-  <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-lg">
+  <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg">
     <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
       <h4 className="text-xs font-semibold text-ink flex items-center gap-1.5">
         <PieChart className="w-3.5 h-3.5 text-accent" />
@@ -133,7 +133,7 @@ const CohortMixPanel: React.FC = () => (
  * 否则由 min-h 兜底（普通屏下 3D 整宽）。
  */
 const TwinStage: React.FC<{ patient: ClinicalPatient }> = ({ patient }) => (
-  <div className="p-4 rounded-xl bg-surface border border-line/60 shadow-xl flex flex-col h-full">
+  <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-xl flex flex-col h-full">
     <div className="flex flex-wrap items-center justify-between gap-2 mb-3 shrink-0">
       <div className="flex items-center gap-2">
         <div className="w-2.5 h-2.5 rounded-full bg-accent animate-ping" />

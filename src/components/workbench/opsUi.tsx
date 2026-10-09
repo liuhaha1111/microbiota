@@ -13,8 +13,8 @@ import { withAlpha } from '../../utils/color';
  *   #ffb84d 橙（警告） / #ff536c 红（严重） / #8996b8 灰（低强度）
  * ========================================================================== */
 
-export const OPS_PANEL = 'p-4 rounded-xl bg-surface border border-line/60 shadow-lg';
-export const OPS_INNER = 'p-2.5 rounded-lg bg-surface-2 border border-line/50';
+export const OPS_PANEL = 'p-5 rounded-xl bg-surface border border-line/60 shadow-lg';
+export const OPS_INNER = 'p-3.5 rounded-lg bg-surface-2 border border-line/50';
 export const OPS_TRACK = 'bg-track';
 
 export const OPS_TONE: Record<string, string> = {
