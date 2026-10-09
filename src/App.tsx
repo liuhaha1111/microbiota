@@ -71,7 +71,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090d18] text-[#eef4ff] font-sans flex flex-col selection:bg-[#20cfff] selection:text-[#090d18]">
+    <div className="min-h-screen bg-[#090d18] text-ink font-sans flex flex-col selection:bg-[#20cfff] selection:text-on-bright">
       {/* 1. Universal Top Header
           侧边导航已移除，顶栏的「启动台」按钮是模块屏回到主屏的唯一回路。 */}
       <TopHeader
@@ -121,22 +121,22 @@ export default function App() {
       </main>
 
       {/* 3. Deep Tech Medical Footer */}
-      <footer className="h-9 px-4 bg-[#070b14] border-t border-[#1e2f57] flex items-center justify-between text-[11px] text-[#8996b8] select-none z-20">
+      <footer className="h-9 px-4 bg-[#070b14] border-t border-line-2 flex items-center justify-between text-[length:var(--fs-11)] text-ink-muted select-none z-20">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#23e6b1]"></span>
             <span>MicroFMT 菌群移植精准诊疗与科研一体化平台</span>
           </span>
-          <span className="hidden md:inline text-[#2b4170]">|</span>
+          <span className="hidden md:inline text-ink-subtle">|</span>
           <span className="hidden md:inline">适应症标准：ACG / ECCO 2024 结肠菌群移植临床共识</span>
         </div>
 
-        <div className="flex items-center gap-4 text-[10px]">
+        <div className="flex items-center gap-4 text-[length:var(--fs-10)]">
           <span className="hidden sm:inline">冷链质控标准: cGMP-Micro24</span>
           <span className="hidden sm:inline">·</span>
           <span>基因组学质控: Q30 &gt; 92%</span>
           <span className="hidden sm:inline">·</span>
-          <span className="text-[#20cfff] font-mono">v2.8-Production</span>
+          <span className="text-accent font-mono">v2.8-Production</span>
         </div>
       </footer>
     </div>

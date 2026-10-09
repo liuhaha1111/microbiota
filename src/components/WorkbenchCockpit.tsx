@@ -97,20 +97,20 @@ export const WorkbenchCockpit: React.FC<WorkbenchCockpitProps> = ({ currentPatie
 
       {/* ==================== 切面一：数字孪生（3D 舱整宽） ==================== */}
       {activeTab === 'twin' && (
-        <div className="p-4 rounded-xl bg-[#101a33] border border-[#2b4170]/60 shadow-xl">
+        <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-xl">
           <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <div className="flex items-center gap-2">
               <div className="w-2.5 h-2.5 rounded-full bg-[#20cfff] animate-ping" />
-              <h3 className="text-sm font-bold text-[#eef4ff] tracking-wide flex items-center gap-2">
+              <h3 className="text-sm font-bold text-ink tracking-wide flex items-center gap-2">
                 Gut Microbiome Digital Twin
-                <span className="text-xs font-normal text-[#20cfff] font-mono">
+                <span className="text-xs font-normal text-accent font-mono">
                   肠道微生态3D数字孪生舱
                 </span>
               </h3>
             </div>
-            <div className="flex items-center gap-2 text-xs text-[#8996b8]">
+            <div className="flex items-center gap-2 text-xs text-ink-muted">
               <span>实时映射受体:</span>
-              <span className="font-semibold text-[#eef4ff] px-2 py-0.5 rounded bg-[#151f3d] border border-[#2b4170]/50">
+              <span className="font-semibold text-ink px-2 py-0.5 rounded bg-[#151f3d] border border-line/50">
                 {currentPatient.name} ({currentPatient.primaryDiagnosis.split(' ')[0]})
               </span>
             </div>
@@ -127,13 +127,13 @@ export const WorkbenchCockpit: React.FC<WorkbenchCockpitProps> = ({ currentPatie
         <div className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* 六阶段当期分布 */}
-            <div className="lg:col-span-5 p-4 rounded-xl bg-[#101a33] border border-[#2b4170]/60 shadow-lg">
+            <div className="lg:col-span-5 p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg">
               <div className="flex items-center justify-between mb-3 text-xs">
-                <span className="font-semibold text-[#eef4ff] flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-[#20cfff]" />
+                <span className="font-semibold text-ink flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-accent" />
                   全流程患者治疗路径分布
                 </span>
-                <span className="text-[#8996b8] font-mono">总计 {MANAGED_COHORT_TOTAL} 例</span>
+                <span className="text-ink-muted font-mono">总计 {MANAGED_COHORT_TOTAL} 例</span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -142,19 +142,19 @@ export const WorkbenchCockpit: React.FC<WorkbenchCockpitProps> = ({ currentPatie
                     key={stage.stage}
                     className={`p-3 rounded-lg bg-[#0c1429] border ${stage.color} flex flex-col justify-between text-xs`}
                   >
-                    <span className="text-[11px] text-[#8996b8]">{stage.stage}</span>
+                    <span className="text-[length:var(--fs-11)] text-ink-muted">{stage.stage}</span>
                     <div className="mt-2 flex items-baseline justify-between">
-                      <span className="text-xl font-bold font-mono text-[#eef4ff]">
+                      <span className="text-xl font-bold font-mono text-ink">
                         {stage.count}
                       </span>
-                      <span className="text-[10px] text-[#8996b8]">{stage.percent}</span>
+                      <span className="text-[length:var(--fs-10)] text-ink-muted">{stage.percent}</span>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <p className="mt-3 pt-2.5 border-t border-[#1e2f57] text-[10px] text-[#8996b8] leading-relaxed flex items-start gap-1.5">
-                <Sparkles className="w-3 h-3 text-[#20cfff] shrink-0 mt-0.5" />
+              <p className="mt-3 pt-2.5 border-t border-line-2 text-[length:var(--fs-10)] text-ink-muted leading-relaxed flex items-start gap-1.5">
+                <Sparkles className="w-3 h-3 text-accent shrink-0 mt-0.5" />
                 <span>
                   定植随访与疗效评价合计占比 51%，说明队列主体已进入移植后监测期；
                   这是当期分布，各阶段并存，因此相邻两段相除没有转化率含义。
@@ -163,20 +163,20 @@ export const WorkbenchCockpit: React.FC<WorkbenchCockpitProps> = ({ currentPatie
             </div>
 
             {/* 适应症疾病队列分布 */}
-            <div className="lg:col-span-3 p-4 rounded-xl bg-[#101a33] border border-[#2b4170]/60 shadow-lg">
-              <div className="flex items-center justify-between pb-2 mb-3 border-b border-[#1e2f57]">
-                <h4 className="text-xs font-semibold text-[#eef4ff] flex items-center gap-1.5">
-                  <PieChart className="w-3.5 h-3.5 text-[#20cfff]" />
+            <div className="lg:col-span-3 p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg">
+              <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
+                <h4 className="text-xs font-semibold text-ink flex items-center gap-1.5">
+                  <PieChart className="w-3.5 h-3.5 text-accent" />
                   适应症疾病队列
                 </h4>
-                <span className="text-[10px] text-[#8996b8]">真实世界</span>
+                <span className="text-[length:var(--fs-10)] text-ink-muted">真实世界</span>
               </div>
 
               <div className="space-y-3">
                 {COHORTS.map(cohort => (
                   <div key={cohort.name} className="text-xs">
-                    <div className="flex justify-between items-center mb-1 text-[#8996b8]">
-                      <span className="text-[#eef4ff] font-medium truncate">{cohort.name}</span>
+                    <div className="flex justify-between items-center mb-1 text-ink-muted">
+                      <span className="text-ink font-medium truncate">{cohort.name}</span>
                       <span className="font-mono shrink-0 ml-2">
                         {cohort.count}例 ({cohort.share}%)
                       </span>

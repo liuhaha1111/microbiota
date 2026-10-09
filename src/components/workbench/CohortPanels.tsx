@@ -11,7 +11,16 @@ import { OpsPanel, Pill, RatioBar, TrendChart, OPS_INNER } from './opsUi';
 
 /* ========================= B1 本月阶段流转漏斗 ========================= */
 
-const FLOW_COLORS = ['#397cff', '#20cfff', '#20cfff', '#815cff', '#23e6b1', '#23e6b1'];
+// 漏斗各阶段的配色。注意这组颜色既画柱也当数字文字色，
+// 所以必须走令牌：原先的 #815cff 作 9–12px 文字在面板底上只有 4.03:1，不达标。
+const FLOW_COLORS = [
+  'var(--color-info)',
+  'var(--color-accent)',
+  'var(--color-accent)',
+  'var(--color-violet)',
+  'var(--color-ok)',
+  'var(--color-ok)',
+];
 
 /**
  * 月度流转漏斗。
@@ -29,14 +38,14 @@ export const MonthlyFlowPanel: React.FC = () => {
       title="本月阶段流转漏斗"
       icon={Activity}
       right={
-        <span className="text-[10px] text-[#8996b8] font-mono">
+        <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">
           端到端完成率 {((tail / head) * 100).toFixed(1)}%
         </span>
       }
     >
       <div className="flex gap-1.5">
         {MONTHLY_FLOW_FUNNEL.map((s, i) => {
-          const color = FLOW_COLORS[i] ?? '#20cfff';
+          const color = FLOW_COLORS[i] ?? 'var(--color-accent)';
           const barH = 20 + (s.count / head) * 62;
           const prev = i === 0 ? null : MONTHLY_FLOW_FUNNEL[i - 1].count;
           const conv = prev ? (s.count / prev) * 100 : 100;
@@ -54,8 +63,8 @@ export const MonthlyFlowPanel: React.FC = () => {
                 />
               </div>
               <div className="mt-1.5 text-center">
-                <div className="text-[10px] text-[#eef4ff] leading-tight truncate">{s.short}</div>
-                <div className="text-[9px] font-mono leading-tight mt-0.5" style={{ color }}>
+                <div className="text-[length:var(--fs-10)] text-ink leading-tight truncate">{s.short}</div>
+                <div className="text-[length:var(--fs-9)] font-mono leading-tight mt-0.5" style={{ color }}>
                   {i === 0 ? '基准' : `${conv.toFixed(1)}%`}
                 </div>
               </div>
@@ -64,7 +73,7 @@ export const MonthlyFlowPanel: React.FC = () => {
         })}
       </div>
 
-      <p className="mt-3 pt-2.5 border-t border-[#1e2f57] text-[10px] text-[#8996b8] leading-relaxed">
+      <p className="mt-3 pt-2.5 border-t border-line-2 text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
         柱间百分比为环比转化率。最大流失出现在「匹配 → 移植」段，
         与供体复筛窗口收紧有关，属可干预环节。
       </p>
@@ -85,7 +94,7 @@ export const StageTatPanel: React.FC = () => {
     <OpsPanel
       title="各阶段平均停留时长"
       icon={Clock}
-      right={<Pill color="#ffb84d">瓶颈 · {bottleneck.stage}</Pill>}
+      right={<Pill color="var(--color-warn)">瓶颈 · {bottleneck.stage}</Pill>}
     >
       <div className="space-y-2.5">
         {STAGE_TAT.map(s => {
@@ -98,14 +107,14 @@ export const StageTatPanel: React.FC = () => {
               value={s.days}
               max={max}
               mark={s.benchmark}
-              color="#20cfff"
-              overColor="#ffb84d"
+              color="var(--color-accent)"
+              overColor="var(--color-warn)"
               right={
                 <span className="flex items-center gap-1.5">
                   <span className="font-mono">{s.days.toFixed(1)} 天</span>
                   <span
-                    className="text-[9px] font-mono"
-                    style={{ color: over ? '#ffb84d' : '#23e6b1' }}
+                    className="text-[length:var(--fs-9)] font-mono"
+                    style={{ color: over ? 'var(--color-warn)' : 'var(--color-ok)' }}
                   >
                     {/* 与基准持平时不写「−0%」——负号加零读起来像缺陷，不是结论 */}
                     {Math.abs(delta) < 0.5
@@ -119,7 +128,7 @@ export const StageTatPanel: React.FC = () => {
         })}
       </div>
 
-      <p className="mt-3 pt-2.5 border-t border-[#1e2f57] text-[10px] text-[#8996b8] leading-relaxed">
+      <p className="mt-3 pt-2.5 border-t border-line-2 text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
         竖线为院内基准值。菌群测序超基准{' '}
         {(((bottleneck.days - bottleneck.benchmark) / bottleneck.benchmark) * 100).toFixed(0)}%
         ——受限于外送测序排期，是当前流程的主要瓶颈。
@@ -140,9 +149,9 @@ export const FlowTrendPanel: React.FC = () => {
       title="近 12 周入组 / 结项趋势"
       icon={TrendingUp}
       right={
-        <span className="text-[10px] font-mono">
-          <span className="text-[#8996b8]">净增 </span>
-          <span className={net >= 0 ? 'text-[#23e6b1]' : 'text-[#ff536c]'}>
+        <span className="text-[length:var(--fs-10)] font-mono">
+          <span className="text-ink-muted">净增 </span>
+          <span className={net >= 0 ? 'text-ok' : 'text-danger'}>
             {net >= 0 ? '+' : ''}
             {net} 例
           </span>
@@ -156,39 +165,39 @@ export const FlowTrendPanel: React.FC = () => {
             key: 'enrolled',
             label: `新入组 ${enrolled}`,
             values: FLOW_TREND.map(w => w.enrolled),
-            color: '#20cfff'
+            color: 'var(--color-accent)'
           },
           {
             key: 'closed',
             label: `结项 ${closed}`,
             values: FLOW_TREND.map(w => w.closed),
-            color: '#23e6b1'
+            color: 'var(--color-ok)'
           }
         ]}
       />
 
       <div className="mt-3 grid grid-cols-3 gap-2">
         <div className={OPS_INNER}>
-          <span className="text-[10px] text-[#8996b8] block">周均入组</span>
-          <span className="font-mono font-bold text-sm text-[#20cfff]">
+          <span className="text-[length:var(--fs-10)] text-ink-muted block">周均入组</span>
+          <span className="font-mono font-bold text-sm text-accent">
             {(enrolled / FLOW_TREND.length).toFixed(1)}
           </span>
         </div>
         <div className={OPS_INNER}>
-          <span className="text-[10px] text-[#8996b8] block">周均结项</span>
-          <span className="font-mono font-bold text-sm text-[#23e6b1]">
+          <span className="text-[length:var(--fs-10)] text-ink-muted block">周均结项</span>
+          <span className="font-mono font-bold text-sm text-ok">
             {(closed / FLOW_TREND.length).toFixed(1)}
           </span>
         </div>
         <div className={OPS_INNER}>
-          <span className="text-[10px] text-[#8996b8] block">在管规模</span>
-          <span className="font-mono font-bold text-sm text-[#eef4ff]">
+          <span className="text-[length:var(--fs-10)] text-ink-muted block">在管规模</span>
+          <span className="font-mono font-bold text-sm text-ink">
             {PATHWAY_STAGES.reduce((s, x) => s + x.count, 0)}
           </span>
         </div>
       </div>
 
-      <p className="mt-2.5 text-[10px] text-[#8996b8] leading-relaxed">
+      <p className="mt-2.5 text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
         近四周结项数已追平入组数，队列规模趋于稳定，重心从「扩量」转向「随访质量」。
       </p>
     </OpsPanel>
@@ -205,7 +214,7 @@ export const PhysicianLoadPanel: React.FC = () => {
       title="医师负荷分布"
       icon={Users}
       right={
-        <span className="text-[10px] text-[#8996b8] font-mono">
+        <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">
           在管合计 {totalActive} 例
         </span>
       }
@@ -213,19 +222,19 @@ export const PhysicianLoadPanel: React.FC = () => {
       <div className="space-y-3">
         {PHYSICIAN_LOAD.map(p => {
           const load = p.active / p.capacity;
-          const tone = load >= 0.9 ? '#ff536c' : load >= 0.75 ? '#ffb84d' : '#23e6b1';
+          const tone = load >= 0.9 ? 'var(--color-danger)' : load >= 0.75 ? 'var(--color-warn)' : 'var(--color-ok)';
           return (
             <div key={p.name}>
-              <div className="flex items-center justify-between gap-2 text-[11px] mb-1">
+              <div className="flex items-center justify-between gap-2 text-[length:var(--fs-11)] mb-1">
                 <span className="flex items-center gap-1.5 min-w-0">
-                  <span className="text-[#eef4ff] shrink-0">{p.name}</span>
-                  <span className="text-[10px] text-[#8996b8] truncate">{p.role}</span>
+                  <span className="text-ink shrink-0">{p.name}</span>
+                  <span className="text-[length:var(--fs-10)] text-ink-muted truncate">{p.role}</span>
                 </span>
                 <span className="flex items-center gap-1.5 shrink-0">
                   <span className="font-mono" style={{ color: tone }}>
                     {p.active}/{p.capacity}
                   </span>
-                  <span className="text-[9px] font-mono text-[#8996b8]">
+                  <span className="text-[length:var(--fs-9)] font-mono text-ink-muted">
                     {Math.round(load * 100)}%
                   </span>
                 </span>
@@ -241,7 +250,7 @@ export const PhysicianLoadPanel: React.FC = () => {
         })}
       </div>
 
-      <p className="mt-3 pt-2.5 border-t border-[#1e2f57] text-[10px] text-[#8996b8] leading-relaxed">
+      <p className="mt-3 pt-2.5 border-t border-line-2 text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
         负荷 = 在管例数 / 可承载例数。主任医师陈建国已接近上限，
         新增入组建议向感染科与主治医师侧分流。
       </p>

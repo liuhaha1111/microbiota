@@ -48,8 +48,8 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
     <div className="space-y-3.5">
       <SectionCard
         title="历史样本库管理（知识规则中心）"
-        icon={<Database className="w-3.5 h-3.5 text-[#20cfff]" />}
-        right={<span className="text-[10px] text-[#8996b8]">管理员权限 · 全库只读，仅可调整入库与标签属性</span>}
+        icon={<Database className="w-3.5 h-3.5 text-accent" />}
+        right={<span className="text-[length:var(--fs-10)] text-ink-muted">管理员权限 · 全库只读，仅可调整入库与标签属性</span>}
       >
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {[
@@ -58,26 +58,26 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
             { label: '典型案例标记', value: typicalCount, tone: UI.purple },
             { label: '已屏蔽', value: blockedCount, tone: UI.red }
           ].map(item => (
-            <div key={item.label} className="p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/50 text-center">
-              <span className="text-[10px] text-[#8996b8] block">{item.label}</span>
+            <div key={item.label} className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50 text-center">
+              <span className="text-[length:var(--fs-10)] text-ink-muted block">{item.label}</span>
               <span className="font-mono font-bold text-lg block mt-0.5" style={{ color: item.tone }}>{item.value}</span>
             </div>
           ))}
         </div>
 
-        <div className="mt-3 p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/50 text-[10px] text-[#8996b8] leading-relaxed space-y-1">
+        <div className="mt-3 p-2.5 rounded-lg bg-[#0c1429] border border-line/50 text-[length:var(--fs-10)] text-ink-muted leading-relaxed space-y-1">
           <p className="flex items-start gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#23e6b1] shrink-0 mt-0.5" />
-            <span><strong className="text-[#eef4ff]">入库规则：</strong>只有完整走完 FMT 诊疗闭环（评估 → 菌群画像 → 供受体匹配 → 方案 → 执行 → 随访结局 → 不良事件）且数据完整度 = 100% 的病例方可入库；中途脱落、数据不全的病例禁止入库。</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-ok shrink-0 mt-0.5" />
+            <span><strong className="text-ink">入库规则：</strong>只有完整走完 FMT 诊疗闭环（评估 → 菌群画像 → 供受体匹配 → 方案 → 执行 → 随访结局 → 不良事件）且数据完整度 = 100% 的病例方可入库；中途脱落、数据不全的病例禁止入库。</span>
           </p>
           <p className="flex items-start gap-1.5">
-            <UserX className="w-3.5 h-3.5 text-[#ffb84d] shrink-0 mt-0.5" />
-            <span><strong className="text-[#eef4ff]">脱敏要求：</strong>历史患者真实姓名全部脱敏，仅保留病历编号（形如 MRN-H2025-001）；本页不展示任何可识别个人身份的信息。</span>
+            <UserX className="w-3.5 h-3.5 text-warn shrink-0 mt-0.5" />
+            <span><strong className="text-ink">脱敏要求：</strong>历史患者真实姓名全部脱敏，仅保留病历编号（形如 MRN-H2025-001）；本页不展示任何可识别个人身份的信息。</span>
           </p>
         </div>
       </SectionCard>
 
-      <SectionCard title="样本清单与标签维护" icon={<Tags className="w-3.5 h-3.5 text-[#20cfff]" />}>
+      <SectionCard title="样本清单与标签维护" icon={<Tags className="w-3.5 h-3.5 text-accent" />}>
         <div className="space-y-2">
           {samples.map(s => {
             const e = effective(s);
@@ -91,18 +91,18 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-mono font-bold text-[11px] text-[#eef4ff]">{s.id}</span>
-                      <span className="text-[10px] text-[#8996b8] font-mono">{s.anonymizedMrn}</span>
+                      <span className="font-mono font-bold text-[length:var(--fs-11)] text-ink">{s.id}</span>
+                      <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">{s.anonymizedMrn}</span>
                       <OutcomeBadge outcome={s.outcome} />
                       <Tag text={`数据完整度 ${s.dataCompleteness}%`} color={s.dataCompleteness === 100 ? UI.green : UI.red} />
                       {e.typical && (
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px]" style={{ color: UI.cyan, background: 'rgba(32,207,255,0.12)' }}>
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[length:var(--fs-10)]" style={{ color: UI.cyan, background: 'rgba(32,207,255,0.12)' }}>
                           <Star className="w-2.5 h-2.5" fill={UI.cyan} /> 典型案例
                         </span>
                       )}
                       {!e.allowRef && <Tag text="仅作风险借鉴" color={UI.red} />}
                     </div>
-                    <p className="text-[10px] text-[#8996b8] mt-1 truncate">
+                    <p className="text-[length:var(--fs-10)] text-ink-muted mt-1 truncate">
                       {s.diagnosisLabel} · {s.gender} {s.age}岁 · 随访 {s.followUpWeeks} 周
                     </p>
                   </div>
@@ -111,10 +111,10 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
                     <button
                       onClick={() => onChange(s.id, { libraryStatus: blocked ? 'in_library' : 'blocked' })}
                       disabled={s.dataCompleteness < 100 && blocked}
-                      className={`px-2 py-1 rounded text-[10px] font-semibold border transition-all flex items-center gap-1 ${
+                      className={`px-2 py-1 rounded text-[length:var(--fs-10)] font-semibold border transition-all flex items-center gap-1 ${
                         blocked
-                          ? 'bg-[#23e6b1]/15 text-[#23e6b1] border-[#23e6b1]/45 hover:bg-[#23e6b1]/25'
-                          : 'bg-[#0f1830] text-[#8996b8] border-[#2b4170]/60 hover:text-[#ff536c] hover:border-[#ff536c]/45'
+                          ? 'bg-[#23e6b1]/15 text-ok border-[#23e6b1]/45 hover:bg-[#23e6b1]/25'
+                          : 'bg-[#0f1830] text-ink-muted border-line/60 hover:text-danger hover:border-[#ff536c]/45'
                       } ${s.dataCompleteness < 100 && blocked ? 'opacity-40 cursor-not-allowed' : ''}`}
                       title={s.dataCompleteness < 100 ? '数据不全的病例禁止入库' : ''}
                     >
@@ -124,10 +124,10 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
 
                     <button
                       onClick={() => onChange(s.id, { typicalCase: !e.typical })}
-                      className={`px-2 py-1 rounded text-[10px] font-semibold border transition-all flex items-center gap-1 ${
+                      className={`px-2 py-1 rounded text-[length:var(--fs-10)] font-semibold border transition-all flex items-center gap-1 ${
                         e.typical
-                          ? 'bg-[#20cfff]/15 text-[#20cfff] border-[#20cfff]/45'
-                          : 'bg-[#0f1830] text-[#8996b8] border-[#2b4170]/60 hover:text-[#20cfff]'
+                          ? 'bg-[#20cfff]/15 text-accent border-[#20cfff]/45'
+                          : 'bg-[#0f1830] text-ink-muted border-line/60 hover:text-accent'
                       }`}
                     >
                       <Star className="w-3 h-3" fill={e.typical ? UI.cyan : 'none'} />
@@ -136,10 +136,10 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
 
                     <button
                       onClick={() => onChange(s.id, { allowClinicalReference: !e.allowRef })}
-                      className={`px-2 py-1 rounded text-[10px] font-semibold border transition-all flex items-center gap-1 ${
+                      className={`px-2 py-1 rounded text-[length:var(--fs-10)] font-semibold border transition-all flex items-center gap-1 ${
                         e.allowRef
-                          ? 'bg-[#23e6b1]/15 text-[#23e6b1] border-[#23e6b1]/45'
-                          : 'bg-[#ff536c]/15 text-[#ff536c] border-[#ff536c]/45'
+                          ? 'bg-[#23e6b1]/15 text-ok border-[#23e6b1]/45'
+                          : 'bg-[#ff536c]/15 text-danger border-[#ff536c]/45'
                       }`}
                     >
                       {e.allowRef ? '允许临床参考' : '仅作风险借鉴'}
@@ -148,8 +148,8 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
                 </div>
 
                 {/* 标签维护 */}
-                <div className="mt-2 pt-2 border-t border-[#1e2f57]/70 flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[9px] text-[#8996b8]">案例标签：</span>
+                <div className="mt-2 pt-2 border-t border-line-2/70 flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[length:var(--fs-9)] text-ink-muted">案例标签：</span>
                   {ALL_TAGS.map(tag => {
                     const on = e.tags.includes(tag);
                     return (
@@ -160,8 +160,8 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
                             caseTags: on ? e.tags.filter(t => t !== tag) : [...e.tags, tag]
                           })
                         }
-                        className={`px-1.5 py-0.5 rounded text-[9px] border transition-all ${
-                          on ? 'text-[#815cff] border-[#815cff]/60 bg-[#815cff]/12' : 'text-[#8996b8] border-[#2b4170]/50 hover:text-[#eef4ff]'
+                        className={`px-1.5 py-0.5 rounded text-[length:var(--fs-9)] border transition-all ${
+                          on ? 'text-violet border-[#815cff]/60 bg-[#815cff]/12' : 'text-ink-muted border-line/50 hover:text-ink'
                         }`}
                       >
                         {on ? '✓ ' : '+ '}

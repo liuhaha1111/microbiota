@@ -31,11 +31,11 @@ interface ContextBarProps {
 }
 
 const TONE_TEXT: Record<ContextTone, string> = {
-  default: 'text-[#eef4ff]',
-  ok: 'text-[#23e6b1]',
-  warn: 'text-[#ffb84d]',
-  danger: 'text-[#ff536c]',
-  info: 'text-[#20cfff]'
+  default: 'text-ink',
+  ok: 'text-ok',
+  warn: 'text-warn',
+  danger: 'text-danger',
+  info: 'text-accent'
 };
 
 /**
@@ -64,7 +64,7 @@ export const ContextBar: React.FC<ContextBarProps> = ({
       className={`${sticky ? 'sticky top-0 z-20' : ''} px-4 py-3 rounded-xl border shadow-xl backdrop-blur-sm ${
         isDanger
           ? 'bg-[#1a0f1c]/95 border-[#ff536c]/50'
-          : 'bg-[#0d1730]/95 border-[#2b4170]/60'
+          : 'bg-[#0d1730]/95 border-line/60'
       }`}
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -74,8 +74,8 @@ export const ContextBar: React.FC<ContextBarProps> = ({
             <div
               className={`w-10 h-10 shrink-0 rounded-xl flex items-center justify-center border ${
                 isDanger
-                  ? 'bg-[#ff536c]/15 border-[#ff536c]/40 text-[#ff536c]'
-                  : 'bg-[#20cfff]/12 border-[#20cfff]/35 text-[#20cfff]'
+                  ? 'bg-[#ff536c]/15 border-[#ff536c]/40 text-danger'
+                  : 'bg-[#20cfff]/12 border-[#20cfff]/35 text-accent'
               }`}
             >
               <Icon className={`w-5 h-5 ${isDanger ? 'animate-pulse' : ''}`} />
@@ -85,7 +85,7 @@ export const ContextBar: React.FC<ContextBarProps> = ({
             <div className="flex flex-wrap items-center gap-2">
               <h2
                 className={`text-base font-bold truncate ${
-                  isDanger ? 'text-[#ff536c]' : 'text-[#eef4ff]'
+                  isDanger ? 'text-danger' : 'text-ink'
                 }`}
               >
                 {title}
@@ -93,7 +93,7 @@ export const ContextBar: React.FC<ContextBarProps> = ({
               {badges}
             </div>
             {subtitle && (
-              <p className="text-[11px] text-[#8996b8] mt-0.5 truncate">{subtitle}</p>
+              <p className="text-[length:var(--fs-11)] text-ink-muted mt-0.5 truncate">{subtitle}</p>
             )}
           </div>
         </div>
@@ -103,7 +103,7 @@ export const ContextBar: React.FC<ContextBarProps> = ({
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             {metrics.map(m => (
               <div key={m.label} className="text-right">
-                <span className="text-[10px] text-[#8996b8] block leading-none">{m.label}</span>
+                <span className="text-[length:var(--fs-10)] text-ink-muted block leading-none">{m.label}</span>
                 <span
                   className={`font-mono font-bold text-sm leading-tight block mt-1 ${
                     TONE_TEXT[m.tone ?? 'default']
@@ -117,7 +117,7 @@ export const ContextBar: React.FC<ContextBarProps> = ({
         )}
 
         {/* 状态区 */}
-        {status && <div className="text-[10px] text-[#8996b8] shrink-0">{status}</div>}
+        {status && <div className="text-[length:var(--fs-10)] text-ink-muted shrink-0">{status}</div>}
       </div>
     </div>
   );

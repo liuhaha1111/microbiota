@@ -9,6 +9,7 @@ import {
   SafetyRuleGate,
   TwinSnapshot
 } from '../types';
+import { withAlpha } from '../utils/color';
 
 /* ============================================================================
  * 历史治疗样本参考库 · 入库数据集
@@ -1445,14 +1446,23 @@ export const historicalSamples: HistoricalSample[] = [
 
 /* ------------------------------ 查询辅助 ------------------------------ */
 
+/**
+ * 结局配色统一指向语义令牌，这样「高对比」档能一并提亮这组标签。
+ * 原先写死 hex 且底色用 rgba 字面量，切档时这一组会掉队。
+ */
+function outcomeTone(token: string): { color: string; bg: string; border: string } {
+  const c = `var(--color-${token})`;
+  return { color: c, bg: withAlpha(c, 14), border: withAlpha(c, 45) };
+}
+
 export const SAMPLE_OUTCOME_META: Record<
   HistoricalSample['outcome'],
   { label: string; short: string; color: string; bg: string; border: string }
 > = {
-  remission: { label: '临床缓解', short: '缓解', color: '#23e6b1', bg: 'rgba(35,230,177,0.14)', border: 'rgba(35,230,177,0.45)' },
-  partial: { label: '部分应答', short: '部分应答', color: '#ffb84d', bg: 'rgba(255,184,77,0.14)', border: 'rgba(255,184,77,0.45)' },
-  no_response: { label: '无应答', short: '无应答', color: '#ff536c', bg: 'rgba(255,83,108,0.14)', border: 'rgba(255,83,108,0.45)' },
-  relapse: { label: '复发', short: '复发', color: '#ff536c', bg: 'rgba(255,83,108,0.14)', border: 'rgba(255,83,108,0.45)' }
+  remission: { label: '临床缓解', short: '缓解', ...outcomeTone('ok') },
+  partial: { label: '部分应答', short: '部分应答', ...outcomeTone('warn') },
+  no_response: { label: '无应答', short: '无应答', ...outcomeTone('danger') },
+  relapse: { label: '复发', short: '复发', ...outcomeTone('danger') }
 };
 
 /** 结局长标签，用于列表与详情头部 */

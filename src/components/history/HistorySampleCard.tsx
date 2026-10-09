@@ -39,7 +39,7 @@ export const HistorySampleCard: React.FC<HistorySampleCardProps> = ({
       {/* 风险角标 */}
       {concern && (
         <span
-          className="absolute top-0 right-0 px-1.5 py-0.5 rounded-bl-lg text-[9px] font-bold flex items-center gap-0.5"
+          className="absolute top-0 right-0 px-1.5 py-0.5 rounded-bl-lg text-[length:var(--fs-9)] font-bold flex items-center gap-0.5"
           style={{
             background: badOutcome ? 'rgba(255,83,108,0.22)' : 'rgba(255,184,77,0.2)',
             color: badOutcome ? UI.red : UI.amber
@@ -55,16 +55,16 @@ export const HistorySampleCard: React.FC<HistorySampleCardProps> = ({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="font-mono font-bold text-xs text-[#eef4ff]">{sample.id}</span>
-            <span className="text-[10px] text-[#8996b8] font-mono">{sample.anonymizedMrn}</span>
-            {favorited && <Star className="w-3 h-3 text-[#ffb84d]" fill="#ffb84d" />}
+            <span className="font-mono font-bold text-xs text-ink">{sample.id}</span>
+            <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">{sample.anonymizedMrn}</span>
+            {favorited && <Star className="w-3 h-3 text-warn" fill="var(--color-warn)" />}
             {sample.typicalCase && <Tag text="典型案例" color={UI.purple} />}
             {sample.mdtDiscussed && <Tag text="MDT 讨论" color={UI.cyan} />}
           </div>
 
-          <div className="text-[11px] text-[#eef4ff] mt-1 truncate">{sample.diagnosisLabel}</div>
+          <div className="text-[length:var(--fs-11)] text-ink mt-1 truncate">{sample.diagnosisLabel}</div>
 
-          <div className="flex items-center gap-2 mt-1 text-[10px] text-[#8996b8] flex-wrap">
+          <div className="flex items-center gap-2 mt-1 text-[length:var(--fs-10)] text-ink-muted flex-wrap">
             <span>{sample.gender} · {sample.age}岁</span>
             <span>BMI {sample.bmi}</span>
             <span className="font-mono">FC {sample.clinicalMarkers.fecalCalprotectin} μg/g</span>
@@ -84,11 +84,11 @@ export const HistorySampleCard: React.FC<HistorySampleCardProps> = ({
       </div>
 
       {/* 关键摘要标签 */}
-      <div className="flex items-center gap-1 mt-2 pt-2 border-t border-[#1e2f57]/70 flex-wrap">
+      <div className="flex items-center gap-1 mt-2 pt-2 border-t border-line-2/70 flex-wrap">
         {sample.caseTags.slice(0, 3).map(tag => (
           <Tag key={tag} text={tag} color={UI.blue} />
         ))}
-        <span className="ml-auto text-[9px] text-[#8996b8] flex items-center gap-0.5">
+        <span className="ml-auto text-[length:var(--fs-9)] text-ink-muted flex items-center gap-0.5">
           <Stethoscope className="w-2.5 h-2.5" />
           随访 {sample.followUpWeeks} 周 · 定植 {sample.finalEngraftmentRate}%
         </span>

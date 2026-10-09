@@ -2,22 +2,28 @@ import React from 'react';
 import { AlertTriangle, ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
 import { SampleOutcome, TwinSnapshot } from '../../types';
 import { SAMPLE_OUTCOME_META } from '../../data/historicalSamples';
+import { withAlpha } from '../../utils/color';
 
 /* ============================================================================
  * 历史治疗样本参考库 · 可视化原语
  * 全部沿用平台既定深色医疗科技规范：
  *   高相似 #20CFFF ／ 正常匹配 #397CFF ／ 低相似 #8996B8
  *   成功结局 #23E6B1 ／ 警告风险 #FFB84D ／ 严重风险 #FF536C ／ 辅助紫 #815CFF
+ *
+ * 调色板指向 CSS 令牌而不是写死 hex —— 这样「高对比」档能一并提亮本模块。
+ * 注意：凡是需要半透明的地方一律用 withAlpha()，不能再拼 `${color}33`，
+ * 因为 color 现在是 var(...)，拼 hex 后缀会得到非法值。
  * ========================================================================== */
 
 export const UI = {
-  cyan: '#20cfff',
-  blue: '#397cff',
-  purple: '#815cff',
-  green: '#23e6b1',
-  amber: '#ffb84d',
-  red: '#ff536c',
-  muted: '#8996b8',
+  cyan: 'var(--color-accent)',
+  blue: 'var(--color-info)',
+  purple: 'var(--color-violet)',
+  green: 'var(--color-ok)',
+  amber: 'var(--color-warn)',
+  red: 'var(--color-danger)',
+  muted: 'var(--color-ink-muted)',
+  // 以下三项是「面」不是「字」，不参与高对比档的提亮，保持字面值
   panel: '#101a33',
   panelDeep: '#0c1429',
   line: '#2b4170'
@@ -60,7 +66,7 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
       <div className="relative" style={{ width: size, height: size }}>
         <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
           {showTrack && (
-            <circle cx="18" cy="18" r={r} fill="none" stroke="#1e2f57" strokeWidth={strokeWidth} />
+            <circle cx="18" cy="18" r={r} fill="none" stroke="var(--color-line-2)" strokeWidth={strokeWidth} />
           )}
           <circle
             cx="18"
@@ -75,16 +81,16 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="font-mono font-bold text-[#eef4ff] leading-none" style={{ fontSize: size * 0.24 }}>
+          <span className="font-mono font-bold text-ink leading-none" style={{ fontSize: `calc(${size * 0.24}px * var(--fs-scale))` }}>
             {pct.toFixed(1)}
           </span>
-          <span className="text-[#8996b8] leading-none mt-0.5" style={{ fontSize: size * 0.11 }}>
+          <span className="text-ink-muted leading-none mt-0.5" style={{ fontSize: `calc(${size * 0.11}px * var(--fs-scale))` }}>
             %
           </span>
         </div>
       </div>
-      {label && <span className="text-[10px] text-[#eef4ff] mt-1 font-medium">{label}</span>}
-      {sublabel && <span className="text-[9px] text-[#8996b8]">{sublabel}</span>}
+      {label && <span className="text-[length:var(--fs-10)] text-ink mt-1 font-medium">{label}</span>}
+      {sublabel && <span className="text-[length:var(--fs-9)] text-ink-muted">{sublabel}</span>}
     </div>
   );
 };
@@ -125,13 +131,13 @@ export const MiniRadar3: React.FC<MiniRadar3Props> = ({
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {[0.33, 0.66, 1].map(lv => (
-        <polygon key={lv} points={poly(lv)} fill="none" stroke="#1e2f57" strokeWidth="1" />
+        <polygon key={lv} points={poly(lv)} fill="none" stroke="var(--color-line-2)" strokeWidth="1" />
       ))}
       {angles.map((_, i) => {
         const p = pointAt(i, 1);
-        return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="#1e2f57" strokeWidth="1" />;
+        return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="var(--color-line-2)" strokeWidth="1" />;
       })}
-      <polygon points={valuePoly} fill={`${color}33`} stroke={color} strokeWidth="1.5" />
+      <polygon points={valuePoly} fill={withAlpha(color, 20)} stroke={color} strokeWidth="1.5" />
       {values.map((v, i) => {
         const p = pointAt(i, Math.max(0.04, Math.min(1, v / 100)));
         return <circle key={i} cx={p.x} cy={p.y} r="2.2" fill={color} />;
@@ -143,8 +149,8 @@ export const MiniRadar3: React.FC<MiniRadar3Props> = ({
             key={lb}
             x={p.x}
             y={p.y}
-            fill="#8996b8"
-            fontSize="8.5"
+            fill="var(--color-ink-muted)"
+            fontSize="calc(8.5px * var(--fs-scale))"
             textAnchor="middle"
             dominantBaseline="middle"
           >
@@ -167,7 +173,7 @@ export const OutcomeBadge: React.FC<{ outcome: SampleOutcome; text?: string; siz
   return (
     <span
       className={`inline-flex items-center gap-1 rounded font-semibold border ${
-        size === 'sm' ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs'
+        size === 'sm' ? 'px-1.5 py-0.5 text-[length:var(--fs-10)]' : 'px-2 py-1 text-xs'
       }`}
       style={{ color: meta.color, background: meta.bg, borderColor: meta.border }}
     >
@@ -193,8 +199,8 @@ export const RouteTag: React.FC<{ route: string }> = ({ route }) => {
   const color = routeTone(route);
   return (
     <span
-      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] border"
-      style={{ color, background: `${color}1f`, borderColor: `${color}66` }}
+      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[length:var(--fs-10)] border"
+      style={{ color, background: withAlpha(color, 12), borderColor: withAlpha(color, 40) }}
     >
       {route}
     </span>
@@ -203,8 +209,8 @@ export const RouteTag: React.FC<{ route: string }> = ({ route }) => {
 
 export const Tag: React.FC<{ text: string; color?: string }> = ({ text, color = UI.muted }) => (
   <span
-    className="px-1.5 py-0.5 rounded text-[10px] border whitespace-nowrap"
-    style={{ color, background: `${color}14`, borderColor: `${color}3d` }}
+    className="px-1.5 py-0.5 rounded text-[length:var(--fs-10)] border whitespace-nowrap"
+    style={{ color, background: withAlpha(color, 8), borderColor: withAlpha(color, 24) }}
   >
     {text}
   </span>
@@ -229,9 +235,9 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   className = '',
   bodyClassName = ''
 }) => (
-  <div className={`rounded-xl bg-[#101a33] border border-[#2b4170]/60 shadow-lg ${className}`}>
-    <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 border-b border-[#1e2f57]">
-      <h3 className="text-xs font-semibold text-[#eef4ff] flex items-center gap-1.5">
+  <div className={`rounded-xl bg-[#101a33] border border-line/60 shadow-lg ${className}`}>
+    <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 border-b border-line-2">
+      <h3 className="text-xs font-semibold text-ink flex items-center gap-1.5">
         {icon}
         {title}
       </h3>
@@ -274,29 +280,29 @@ export const PairBar: React.FC<PairBarProps> = ({
   return (
     <div
       className={`p-2 rounded-lg border bg-[#0c1429] ${
-        flagged ? 'border-[#ffb84d]/60' : 'border-[#2b4170]/40'
+        flagged ? 'border-[#ffb84d]/60' : 'border-line/40'
       }`}
     >
-      <div className="flex items-center justify-between text-[10px] mb-1.5">
-        <span className="text-[#8996b8]">{label}</span>
+      <div className="flex items-center justify-between text-[length:var(--fs-10)] mb-1.5">
+        <span className="text-ink-muted">{label}</span>
         <span className="flex items-center gap-1 font-mono">
-          <span className="text-[#8996b8]">{fmt(sampleValue)}</span>
-          <span className="text-[#2b4170]">→</span>
-          <span className={flagged ? 'text-[#ffb84d] font-bold' : 'text-[#eef4ff] font-bold'}>
+          <span className="text-ink-muted">{fmt(sampleValue)}</span>
+          <span className="text-ink-subtle">→</span>
+          <span className={flagged ? 'text-warn font-bold' : 'text-ink font-bold'}>
             {fmt(currentValue)}
           </span>
-          {unit && <span className="text-[#8996b8] font-normal">{unit}</span>}
+          {unit && <span className="text-ink-muted font-normal">{unit}</span>}
         </span>
       </div>
       <div className="space-y-1">
         <div className="flex items-center gap-1.5">
-          <span className="text-[9px] text-[#815cff] w-8 shrink-0">历史</span>
+          <span className="text-[length:var(--fs-9)] text-violet w-8 shrink-0">历史</span>
           <div className="flex-1 h-1.5 rounded-full bg-[#091127] overflow-hidden">
             <div className="h-full rounded-full bg-[#815cff]" style={{ width: `${(sampleValue / max) * 100}%` }} />
           </div>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[9px] text-[#20cfff] w-8 shrink-0">当前</span>
+          <span className="text-[length:var(--fs-9)] text-accent w-8 shrink-0">当前</span>
           <div className="flex-1 h-1.5 rounded-full bg-[#091127] overflow-hidden">
             <div
               className="h-full rounded-full bg-[#20cfff]"
@@ -305,13 +311,13 @@ export const PairBar: React.FC<PairBarProps> = ({
           </div>
         </div>
       </div>
-      <div className="mt-1.5 flex items-center gap-1 text-[9px]">
+      <div className="mt-1.5 flex items-center gap-1 text-[length:var(--fs-9)]">
         {Math.abs(delta) < 0.05 ? (
-          <span className="text-[#8996b8] flex items-center gap-0.5">
+          <span className="text-ink-muted flex items-center gap-0.5">
             <Minus className="w-2.5 h-2.5" /> 两者基本持平
           </span>
         ) : (
-          <span className={`flex items-center gap-0.5 ${worse ? 'text-[#ff536c]' : 'text-[#23e6b1]'}`}>
+          <span className={`flex items-center gap-0.5 ${worse ? 'text-danger' : 'text-ok'}`}>
             {delta > 0 ? <ArrowUpRight className="w-2.5 h-2.5" /> : <ArrowDownRight className="w-2.5 h-2.5" />}
             当前较历史 {delta > 0 ? '+' : ''}
             {fmt(delta)}
@@ -359,7 +365,7 @@ export const Sparkline: React.FC<SparklineProps> = ({
 
   return (
     <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="w-full">
-      <path d={area} fill={`${color}1a`} />
+      <path d={area} fill={withAlpha(color, 10)} />
       <path d={path} fill="none" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       {points.map((p, i) => (
         <circle key={i} cx={p.x} cy={p.y} r="2" fill={color} />
@@ -370,8 +376,8 @@ export const Sparkline: React.FC<SparklineProps> = ({
             key={lb}
             x={points[i]?.x ?? 0}
             y={height - 0.5}
-            fill="#8996b8"
-            fontSize="7.5"
+            fill="var(--color-ink-muted)"
+            fontSize="calc(7.5px * var(--fs-scale))"
             textAnchor="middle"
           >
             {lb}
@@ -397,14 +403,14 @@ export const TwinSnapshotStrip: React.FC<{ snapshot: TwinSnapshot; tone?: string
   caption
 }) => (
   <div className="space-y-1.5">
-    {caption && <span className="text-[10px] text-[#8996b8] block">{caption}</span>}
+    {caption && <span className="text-[length:var(--fs-10)] text-ink-muted block">{caption}</span>}
     {TWIN_ITEMS.map(item => {
       const value = snapshot[item.key];
       const isBad = item.key === 'dysbiosisDegree' || item.key === 'inflammationLevel';
       const color = isBad ? (value > 60 ? UI.red : value > 35 ? UI.amber : UI.green) : value >= 65 ? UI.green : value >= 40 ? UI.amber : UI.red;
       return (
-        <div key={item.key} className="flex items-center gap-2 text-[10px]">
-          <span className="text-[#8996b8] w-16 shrink-0">{item.label}</span>
+        <div key={item.key} className="flex items-center gap-2 text-[length:var(--fs-10)]">
+          <span className="text-ink-muted w-16 shrink-0">{item.label}</span>
           <div className="flex-1 h-1.5 rounded-full bg-[#091127] overflow-hidden">
             <div className="h-full rounded-full" style={{ width: `${value}%`, background: color }} />
           </div>
@@ -414,7 +420,7 @@ export const TwinSnapshotStrip: React.FC<{ snapshot: TwinSnapshot; tone?: string
         </div>
       );
     })}
-    <span className="text-[9px] text-[#2b4170] block pt-0.5">数字孪生为辅助可视化，判断依据以左侧量化指标为准</span>
+    <span className="text-[length:var(--fs-9)] text-ink-subtle block pt-0.5">数字孪生为辅助可视化，判断依据以左侧量化指标为准</span>
     <span className="hidden" style={{ color: tone }} />
   </div>
 );
@@ -428,9 +434,9 @@ export const RiskFlag: React.FC<{ text: string; tone?: string; dense?: boolean }
 }) => (
   <span
     className={`inline-flex items-center gap-1 rounded border font-semibold ${
-      dense ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-[11px]'
+      dense ? 'px-1.5 py-0.5 text-[length:var(--fs-10)]' : 'px-2 py-1 text-[length:var(--fs-11)]'
     }`}
-    style={{ color: tone, background: `${tone}1a`, borderColor: `${tone}66` }}
+    style={{ color: tone, background: withAlpha(tone, 10), borderColor: withAlpha(tone, 40) }}
   >
     <AlertTriangle className={dense ? 'w-3 h-3' : 'w-3.5 h-3.5'} />
     {text}
@@ -446,8 +452,8 @@ export const RatioBar: React.FC<{ label: string; value: number; tone?: string; s
   suffix = ''
 }) => (
   <div className="space-y-1">
-    <div className="flex items-center justify-between text-[10px]">
-      <span className="text-[#8996b8]">{label}</span>
+    <div className="flex items-center justify-between text-[length:var(--fs-10)]">
+      <span className="text-ink-muted">{label}</span>
       <span className="font-mono font-bold" style={{ color: tone }}>
         {value}
         {suffix}

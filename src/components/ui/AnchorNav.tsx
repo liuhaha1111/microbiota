@@ -91,7 +91,7 @@ export const AnchorNav: React.FC<AnchorNavProps> = ({
   return (
     <nav
       id="module-anchor-nav"
-      className="flex flex-wrap items-center justify-between gap-3 px-3 py-2 rounded-xl bg-[#0c1429] border border-[#2b4170]/60 text-xs"
+      className="flex flex-wrap items-center justify-between gap-3 px-3 py-2 rounded-xl bg-[#0c1429] border border-line/60 text-xs"
     >
       <div className="flex flex-wrap items-center gap-1">
         {items.map(item => {
@@ -103,8 +103,8 @@ export const AnchorNav: React.FC<AnchorNavProps> = ({
               onClick={() => go(item.id)}
               className={`px-2.5 py-1.5 rounded-lg font-medium transition-all ${
                 isActive
-                  ? 'bg-[#152347] text-[#20cfff] border border-[#20cfff]/40 font-bold'
-                  : 'text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347] border border-transparent'
+                  ? 'bg-[#152347] text-accent border border-[#20cfff]/40 font-bold'
+                  : 'text-ink-muted hover:text-ink hover:bg-[#152347] border border-transparent'
               }`}
             >
               {item.label}
@@ -112,7 +112,7 @@ export const AnchorNav: React.FC<AnchorNavProps> = ({
           );
         })}
       </div>
-      {trailing && <span className="text-[10px] text-[#8996b8] pr-1">{trailing}</span>}
+      {trailing && <span className="text-[length:var(--fs-10)] text-ink-muted pr-1">{trailing}</span>}
     </nav>
   );
 };

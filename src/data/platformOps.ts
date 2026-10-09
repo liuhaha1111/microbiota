@@ -54,12 +54,12 @@ export interface PathwayStage {
  * 相邻两段相除得到的「转化率」没有意义。真正的流转漏斗见 MONTHLY_FLOW_FUNNEL。
  */
 export const PATHWAY_STAGES: ReadonlyArray<PathwayStage> = [
-  { stage: '1. 临床评估', count: 28, percent: '14%', color: 'border-[#397cff] text-[#397cff]' },
-  { stage: '2. 菌群测序', count: 19, percent: '10%', color: 'border-[#20cfff] text-[#20cfff]' },
-  { stage: '3. 供体匹配', count: 14, percent: '7%', color: 'border-[#815cff] text-[#815cff]' },
-  { stage: '4. FMT执行', count: 36, percent: '18%', color: 'border-[#23e6b1] text-[#23e6b1]' },
-  { stage: '5. 定植随访', count: 52, percent: '26%', color: 'border-[#ffb84d] text-[#ffb84d]' },
-  { stage: '6. 疗效评价', count: 48, percent: '25%', color: 'border-[#20cfff] text-[#eef4ff]' }
+  { stage: '1. 临床评估', count: 28, percent: '14%', color: 'border-[#397cff] text-info' },
+  { stage: '2. 菌群测序', count: 19, percent: '10%', color: 'border-[#20cfff] text-accent' },
+  { stage: '3. 供体匹配', count: 14, percent: '7%', color: 'border-[#815cff] text-violet' },
+  { stage: '4. FMT执行', count: 36, percent: '18%', color: 'border-[#23e6b1] text-ok' },
+  { stage: '5. 定植随访', count: 52, percent: '26%', color: 'border-[#ffb84d] text-warn' },
+  { stage: '6. 疗效评价', count: 48, percent: '25%', color: 'border-[#20cfff] text-ink' }
 ];
 
 export interface CohortBucket {

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { LucideIcon } from 'lucide-react';
+import { withAlpha } from '../../utils/color';
 
 /* ============================================================================
  * 工作台驾驶舱 · 体系运行面板的可视化原语
@@ -12,17 +13,17 @@ import type { LucideIcon } from 'lucide-react';
  *   #ffb84d 橙（警告） / #ff536c 红（严重） / #8996b8 灰（低强度）
  * ========================================================================== */
 
-export const OPS_PANEL = 'p-4 rounded-xl bg-[#101a33] border border-[#2b4170]/60 shadow-lg';
-export const OPS_INNER = 'p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/50';
+export const OPS_PANEL = 'p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg';
+export const OPS_INNER = 'p-2.5 rounded-lg bg-[#0c1429] border border-line/50';
 export const OPS_TRACK = 'bg-[#152347]';
 
 export const OPS_TONE: Record<string, string> = {
-  ok: '#23e6b1',
-  info: '#20cfff',
-  purple: '#815cff',
-  warn: '#ffb84d',
-  danger: '#ff536c',
-  muted: '#8996b8'
+  ok: 'var(--color-ok)',
+  info: 'var(--color-accent)',
+  purple: 'var(--color-violet)',
+  warn: 'var(--color-warn)',
+  danger: 'var(--color-danger)',
+  muted: 'var(--color-ink-muted)'
 };
 
 /* ---------------------------------------------------------------- 面板外壳 */
@@ -47,12 +48,12 @@ export const OpsPanel: React.FC<OpsPanelProps> = ({
   children
 }) => (
   <section className={`${OPS_PANEL} flex flex-col ${className}`}>
-    <header className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-3 border-b border-[#1e2f57]">
-      <h4 className="text-xs font-semibold text-[#eef4ff] flex items-center gap-1.5">
-        {Icon && <Icon className="w-3.5 h-3.5 text-[#20cfff]" />}
+    <header className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-3 border-b border-line-2">
+      <h4 className="text-xs font-semibold text-ink flex items-center gap-1.5">
+        {Icon && <Icon className="w-3.5 h-3.5 text-accent" />}
         {title}
       </h4>
-      {right ?? (hint ? <span className="text-[10px] text-[#8996b8]">{hint}</span> : null)}
+      {right ?? (hint ? <span className="text-[length:var(--fs-10)] text-ink-muted">{hint}</span> : null)}
     </header>
     <div className="flex-1 min-w-0">{children}</div>
   </section>
@@ -70,14 +71,14 @@ interface KpiTileProps {
 
 export const KpiTile: React.FC<KpiTileProps> = ({ label, value, unit, note, tone = 'info' }) => (
   <div className={`${OPS_INNER} min-w-0`}>
-    <span className="text-[10px] text-[#8996b8] block leading-none truncate">{label}</span>
+    <span className="text-[length:var(--fs-10)] text-ink-muted block leading-none truncate">{label}</span>
     <div className="mt-1.5 flex items-baseline gap-1 min-w-0">
       <span className="text-base font-bold font-mono leading-none" style={{ color: OPS_TONE[tone] }}>
         {value}
       </span>
-      {unit && <span className="text-[10px] text-[#8996b8]">{unit}</span>}
+      {unit && <span className="text-[length:var(--fs-10)] text-ink-muted">{unit}</span>}
     </div>
-    {note && <div className="mt-1 text-[10px] text-[#8996b8] leading-tight">{note}</div>}
+    {note && <div className="mt-1 text-[length:var(--fs-10)] text-ink-muted leading-tight">{note}</div>}
   </div>
 );
 
@@ -133,13 +134,13 @@ export const StackedBar: React.FC<StackedBarProps> = ({
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
         {segments.map(s => (
-          <span key={s.key} className="flex items-center gap-1 text-[10px] text-[#8996b8]">
+          <span key={s.key} className="flex items-center gap-1 text-[length:var(--fs-10)] text-ink-muted">
             <span
               className="w-1.5 h-1.5 rounded-sm shrink-0"
               style={{ background: s.color, opacity: s.count > 0 ? 1 : 0.35 }}
             />
             {labelOf ? labelOf(s.key) : s.key}
-            {showCount && <span className="font-mono text-[#eef4ff]">{s.count}</span>}
+            {showCount && <span className="font-mono text-ink">{s.count}</span>}
           </span>
         ))}
       </div>
@@ -177,9 +178,9 @@ export const RatioBar: React.FC<RatioBarProps> = ({
 
   return (
     <div className="min-w-0">
-      <div className="flex items-center justify-between gap-2 text-[11px] mb-1">
-        <span className="text-[#eef4ff] truncate">{label}</span>
-        <span className="font-mono text-[#8996b8] shrink-0">{right ?? value}</span>
+      <div className="flex items-center justify-between gap-2 text-[length:var(--fs-11)] mb-1">
+        <span className="text-ink truncate">{label}</span>
+        <span className="font-mono text-ink-muted shrink-0">{right ?? value}</span>
       </div>
       <div className={`relative w-full h-1.5 ${OPS_TRACK} rounded-full overflow-hidden`}>
         <div className="h-full rounded-full" style={{ width: `${pct}%`, background: fill }} />
@@ -211,7 +212,7 @@ export const DonutArc: React.FC<DonutArcProps> = ({
   thickness = 11,
   centerValue,
   centerLabel,
-  centerTone = '#eef4ff'
+  centerTone = 'var(--color-ink)'
 }) => {
   const total = segments.reduce((s, x) => s + x.count, 0);
   const r = (size - thickness) / 2;
@@ -257,7 +258,7 @@ export const DonutArc: React.FC<DonutArcProps> = ({
           {centerValue ?? total}
         </span>
         {centerLabel && (
-          <span className="text-[9px] text-[#8996b8] mt-1 leading-none">{centerLabel}</span>
+          <span className="text-[length:var(--fs-9)] text-ink-muted mt-1 leading-none">{centerLabel}</span>
         )}
       </div>
     </div>
@@ -299,12 +300,12 @@ export const TrendChart: React.FC<TrendChartProps> = ({ labels, series, height =
     <div className="min-w-0">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-1">
         {series.map(s => (
-          <span key={s.key} className="flex items-center gap-1 text-[10px] text-[#8996b8]">
+          <span key={s.key} className="flex items-center gap-1 text-[length:var(--fs-10)] text-ink-muted">
             <span className="w-2.5 h-0.5 rounded-full" style={{ background: s.color }} />
             {s.label}
           </span>
         ))}
-        <span className="ml-auto font-mono text-[10px] text-[#8996b8]">峰值 {max}</span>
+        <span className="ml-auto font-mono text-[length:var(--fs-10)] text-ink-muted">峰值 {max}</span>
       </div>
 
       <svg
@@ -321,7 +322,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ labels, series, height =
             x2={W - padX}
             y1={padTop + innerH * t}
             y2={padTop + innerH * t}
-            stroke="#1e2f57"
+            stroke="var(--color-line-2)"
             strokeWidth={0.5}
             vectorEffect="non-scaling-stroke"
           />
@@ -347,7 +348,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ labels, series, height =
         })}
       </svg>
 
-      <div className="mt-1 flex justify-between font-mono text-[9px] text-[#8996b8]">
+      <div className="mt-1 flex justify-between font-mono text-[length:var(--fs-9)] text-ink-muted">
         {labels.map((l, i) => (
           <span key={l} className={i % 2 === 0 || i === labels.length - 1 ? '' : 'invisible'}>
             {l}
@@ -369,11 +370,11 @@ interface PillProps {
 
 export const Pill: React.FC<PillProps> = ({ children, color, solid = false }) => (
   <span
-    className="px-1.5 py-0.5 rounded text-[10px] font-mono whitespace-nowrap"
+    className="px-1.5 py-0.5 rounded text-[length:var(--fs-10)] font-mono whitespace-nowrap"
     style={
       solid
-        ? { background: color, color: '#090d18', fontWeight: 700 }
-        : { background: `${color}22`, color, border: `1px solid ${color}55` }
+        ? { background: color, color: 'var(--color-on-bright)', fontWeight: 700 }
+        : { background: withAlpha(color, 13), color, border: `1px solid ${withAlpha(color, 33)}` }
     }
   >
     {children}
@@ -383,5 +384,5 @@ export const Pill: React.FC<PillProps> = ({ children, color, solid = false }) =>
 /* ------------------------------------------------------------ 面板内空状态 */
 
 export const OpsEmpty: React.FC<{ text: string }> = ({ text }) => (
-  <div className="py-4 text-center text-[10px] text-[#8996b8]">{text}</div>
+  <div className="py-4 text-center text-[length:var(--fs-10)] text-ink-muted">{text}</div>
 );

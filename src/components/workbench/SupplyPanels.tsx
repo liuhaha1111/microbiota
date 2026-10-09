@@ -30,7 +30,7 @@ export const DonorPoolPanel: React.FC = () => {
       title="供体池结构"
       icon={Boxes}
       right={
-        <span className="text-[10px] text-[#8996b8] font-mono">
+        <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">
           全库 {pool.total} 位 · 合格 {qualified} 位
         </span>
       }
@@ -40,7 +40,7 @@ export const DonorPoolPanel: React.FC = () => {
           segments={pool.byRating}
           centerValue={pool.total}
           centerLabel="在册供体"
-          centerTone="#20cfff"
+          centerTone="var(--color-accent)"
         />
         <div className="grid grid-cols-2 gap-2 flex-1 min-w-0">
           <KpiTile
@@ -73,21 +73,21 @@ export const DonorPoolPanel: React.FC = () => {
 
       <div className="mt-3 space-y-2.5">
         <div>
-          <div className="text-[10px] text-[#8996b8] mb-1.5">评级构成</div>
+          <div className="text-[length:var(--fs-10)] text-ink-muted mb-1.5">评级构成</div>
           <StackedBar segments={pool.byRating} />
         </div>
         <div>
-          <div className="text-[10px] text-[#8996b8] mb-1.5">供体类型</div>
+          <div className="text-[length:var(--fs-10)] text-ink-muted mb-1.5">供体类型</div>
           <StackedBar segments={pool.byType} labelOf={shortKey} />
         </div>
         <div>
-          <div className="text-[10px] text-[#8996b8] mb-1.5">筛查状态</div>
+          <div className="text-[length:var(--fs-10)] text-ink-muted mb-1.5">筛查状态</div>
           <StackedBar segments={pool.byScreening} labelOf={shortKey} />
         </div>
       </div>
 
-      <div className="mt-3 pt-2.5 border-t border-[#1e2f57]">
-        <div className="flex items-center gap-1.5 text-[10px] text-[#ffb84d] mb-2">
+      <div className="mt-3 pt-2.5 border-t border-line-2">
+        <div className="flex items-center gap-1.5 text-[length:var(--fs-10)] text-warn mb-2">
           <AlertTriangle className="w-3 h-3 shrink-0" />
           复筛到期提醒（60 天内）
         </div>
@@ -98,11 +98,11 @@ export const DonorPoolPanel: React.FC = () => {
             {pool.rescreenDue.map(d => (
               <div
                 key={d.code}
-                className={`${OPS_INNER} flex items-center justify-between gap-2 text-[11px]`}
+                className={`${OPS_INNER} flex items-center justify-between gap-2 text-[length:var(--fs-11)]`}
               >
-                <span className="font-mono text-[#eef4ff]">{d.code}</span>
-                <span className="text-[10px] text-[#8996b8]">{d.status}</span>
-                <Pill color={d.daysLeft <= 30 ? '#ff536c' : '#ffb84d'}>
+                <span className="font-mono text-ink">{d.code}</span>
+                <span className="text-[length:var(--fs-10)] text-ink-muted">{d.status}</span>
+                <Pill color={d.daysLeft <= 30 ? 'var(--color-danger)' : 'var(--color-warn)'}>
                   {d.daysLeft < 0 ? `已逾期 ${-d.daysLeft} 天` : `剩 ${d.daysLeft} 天`}
                 </Pill>
               </div>
@@ -124,7 +124,7 @@ export const BatchQualityPanel: React.FC = () => {
       title="菌液批次质控"
       icon={FlaskConical}
       right={
-        <span className="text-[10px] text-[#8996b8] font-mono">
+        <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">
           共 {batch.total} 批 · 可用 {batch.released} 批
         </span>
       }
@@ -134,7 +134,7 @@ export const BatchQualityPanel: React.FC = () => {
           segments={batch.byStatus}
           centerValue={batch.total}
           centerLabel="在库批次"
-          centerTone="#23e6b1"
+          centerTone="var(--color-ok)"
         />
         <div className="grid grid-cols-2 gap-2 flex-1 min-w-0">
           <KpiTile
@@ -163,16 +163,16 @@ export const BatchQualityPanel: React.FC = () => {
 
       <div className="mt-3 space-y-2.5">
         <div>
-          <div className="text-[10px] text-[#8996b8] mb-1.5">批次状态</div>
+          <div className="text-[length:var(--fs-10)] text-ink-muted mb-1.5">批次状态</div>
           <StackedBar segments={batch.byStatus} labelOf={shortKey} />
         </div>
         <div>
-          <div className="text-[10px] text-[#8996b8] mb-1.5">质量分级</div>
+          <div className="text-[length:var(--fs-10)] text-ink-muted mb-1.5">质量分级</div>
           <StackedBar segments={batch.byGrade} labelOf={shortKey} />
         </div>
       </div>
 
-      <p className="mt-3 pt-2.5 border-t border-[#1e2f57] text-[10px] text-[#8996b8] leading-relaxed">
+      <p className="mt-3 pt-2.5 border-t border-line-2 text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
         批次状态与分级全部取自菌库批次档案；活菌率低于 70% 的批次不得放行，
         已临期批次须在投放前重新核验活菌回收率。
       </p>
@@ -182,7 +182,14 @@ export const BatchQualityPanel: React.FC = () => {
 
 /* ========================== A4 供体筛查通过漏斗 ========================== */
 
-const FUNNEL_COLORS = ['#397cff', '#20cfff', '#815cff', '#ffb84d', '#23e6b1'];
+// 令牌化：原 #815cff 作 10px 文字在面板底上只有 4.03:1，不达标（同 CohortPanels.FLOW_COLORS）
+const FUNNEL_COLORS = [
+  'var(--color-info)',
+  'var(--color-accent)',
+  'var(--color-violet)',
+  'var(--color-warn)',
+  'var(--color-ok)'
+];
 
 export const DonorScreeningPanel: React.FC = () => {
   const head = DONOR_SCREENING_FUNNEL[0].count;
@@ -193,7 +200,7 @@ export const DonorScreeningPanel: React.FC = () => {
       title="供体筛查通过漏斗"
       icon={Filter}
       right={
-        <span className="text-[10px] text-[#8996b8] font-mono">
+        <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">
           总通过率 {((final / head) * 100).toFixed(1)}%
         </span>
       }
@@ -203,15 +210,15 @@ export const DonorScreeningPanel: React.FC = () => {
           const prev = i === 0 ? null : DONOR_SCREENING_FUNNEL[i - 1].count;
           const conv = prev ? (s.count / prev) * 100 : 100;
           const cumulative = (s.count / head) * 100;
-          const color = FUNNEL_COLORS[i] ?? '#20cfff';
+          const color = FUNNEL_COLORS[i] ?? 'var(--color-accent)';
 
           return (
             <div key={s.stage} className="min-w-0">
-              <div className="flex items-center justify-between gap-2 text-[11px] mb-1">
-                <span className="text-[#eef4ff] truncate">{s.stage}</span>
+              <div className="flex items-center justify-between gap-2 text-[length:var(--fs-11)] mb-1">
+                <span className="text-ink truncate">{s.stage}</span>
                 <span className="flex items-center gap-2 shrink-0">
-                  <span className="font-mono font-bold text-[#eef4ff]">{s.count}</span>
-                  <span className="text-[10px] font-mono" style={{ color }}>
+                  <span className="font-mono font-bold text-ink">{s.count}</span>
+                  <span className="text-[length:var(--fs-10)] font-mono" style={{ color }}>
                     {i === 0 ? '基准' : `环比 ${conv.toFixed(1)}%`}
                   </span>
                 </span>
@@ -227,7 +234,7 @@ export const DonorScreeningPanel: React.FC = () => {
         })}
       </div>
 
-      <p className="mt-3 pt-2.5 border-t border-[#1e2f57] text-[10px] text-[#8996b8] leading-relaxed">
+      <p className="mt-3 pt-2.5 border-t border-line-2 text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
         四道筛查逐级淘汰：耐药基因组筛查是最大卡点，{head} 名报名者最终仅 {final} 位入库。
         这是菌源安全的源头质控，不涉及任何受体个体。
       </p>

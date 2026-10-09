@@ -31,6 +31,7 @@ import {
   SimilarityResult,
   SimilarityWeights
 } from '../../types';
+import { withAlpha } from '../../utils/color';
 import { MicrobiomeKnowledgeGraph } from '../MicrobiomeKnowledgeGraph';
 import { describeOutcome } from '../../data/historicalSamples';
 import {
@@ -100,13 +101,13 @@ const Radar6: React.FC<{ values: number[]; labels: string[]; size?: number; colo
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {[0.25, 0.5, 0.75, 1].map(lv => (
-        <polygon key={lv} points={ring(lv)} fill="none" stroke="#1e2f57" strokeWidth="1" />
+        <polygon key={lv} points={ring(lv)} fill="none" stroke="var(--color-line-2)" strokeWidth="1" />
       ))}
       {angles.map((_, i) => {
         const p = pt(i, 1);
-        return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="#1e2f57" strokeWidth="1" />;
+        return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="var(--color-line-2)" strokeWidth="1" />;
       })}
-      <polygon points={valuePoly} fill={`${color}2e`} stroke={color} strokeWidth="1.6" />
+      <polygon points={valuePoly} fill={withAlpha(color, 18)} stroke={color} strokeWidth="1.6" />
       {values.map((v, i) => {
         const p = pt(i, Math.max(0.05, Math.min(1, v / 100)));
         return <circle key={i} cx={p.x} cy={p.y} r="2.4" fill={color} />;
@@ -114,7 +115,7 @@ const Radar6: React.FC<{ values: number[]; labels: string[]; size?: number; colo
       {labels.map((lb, i) => {
         const p = pt(i, 1.24);
         return (
-          <text key={lb} x={p.x} y={p.y} fill="#8996b8" fontSize="9" textAnchor="middle" dominantBaseline="middle">
+          <text key={lb} x={p.x} y={p.y} fill="var(--color-ink-muted)" fontSize="calc(9px * var(--fs-scale))" textAnchor="middle" dominantBaseline="middle">
             {lb}
           </text>
         );
@@ -180,26 +181,26 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
   };
 
   return (
-    <div className="rounded-xl bg-[#0b1226] border border-[#2b4170]/60 shadow-xl overflow-hidden flex flex-col">
+    <div className="rounded-xl bg-[#0b1226] border border-line/60 shadow-xl overflow-hidden flex flex-col">
       {/* 详情头部 */}
-      <div className="px-3.5 py-3 bg-[#101a33] border-b border-[#1e2f57]">
+      <div className="px-3.5 py-3 bg-[#101a33] border-b border-line-2">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
             <div
               className="w-11 h-11 rounded-xl flex items-center justify-center font-mono font-bold text-sm shrink-0"
-              style={{ background: `${color}1f`, border: `1px solid ${color}66`, color }}
+              style={{ background: withAlpha(color, 12), border: `1px solid ${withAlpha(color, 40)}`, color }}
             >
               {sample.id.replace('H-', '')}
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-sm font-bold text-[#eef4ff] font-mono">{sample.id}</h2>
-                <span className="text-[10px] text-[#8996b8] font-mono">{sample.anonymizedMrn}</span>
-                <span className="text-[10px] text-[#8996b8]">脱敏展示 · 仅保留病历编号</span>
-                <Lock className="w-3 h-3 text-[#8996b8]" />
+                <h2 className="text-sm font-bold text-ink font-mono">{sample.id}</h2>
+                <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">{sample.anonymizedMrn}</span>
+                <span className="text-[length:var(--fs-10)] text-ink-muted">脱敏展示 · 仅保留病历编号</span>
+                <Lock className="w-3 h-3 text-ink-muted" />
               </div>
-              <p className="text-[11px] text-[#eef4ff] mt-1 truncate">{sample.diagnosisLabel}</p>
-              <div className="flex items-center gap-2 mt-1 text-[10px] text-[#8996b8] flex-wrap">
+              <p className="text-[length:var(--fs-11)] text-ink mt-1 truncate">{sample.diagnosisLabel}</p>
+              <div className="flex items-center gap-2 mt-1 text-[length:var(--fs-10)] text-ink-muted flex-wrap">
                 <span>{sample.gender} · {sample.age} 岁 · BMI {sample.bmi}</span>
                 <span>·</span>
                 <span>{sample.diseaseActivityLabel}</span>
@@ -210,14 +211,14 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
           <div className="flex items-center gap-3">
             <div className="text-right">
               <OutcomeBadge outcome={sample.outcome} size="md" />
-              <div className="text-[10px] text-[#8996b8] mt-1 max-w-[220px]">{sample.outcomeLabel}</div>
+              <div className="text-[length:var(--fs-10)] text-ink-muted mt-1 max-w-[220px]">{sample.outcomeLabel}</div>
             </div>
             <button
               onClick={onToggleFavorite}
-              className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1.5 rounded-lg text-[length:var(--fs-11)] font-semibold border transition-all flex items-center gap-1 ${
                 favorited
-                  ? 'bg-[#ffb84d]/20 text-[#ffb84d] border-[#ffb84d]/50'
-                  : 'bg-[#0c1429] text-[#8996b8] border-[#2b4170]/60 hover:text-[#eef4ff]'
+                  ? 'bg-[#ffb84d]/20 text-warn border-[#ffb84d]/50'
+                  : 'bg-[#0c1429] text-ink-muted border-line/60 hover:text-ink'
               }`}
             >
               <Star className="w-3.5 h-3.5" fill={favorited ? '#ffb84d' : 'none'} />
@@ -229,7 +230,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
         {/* 结局不佳 / 不允许参考的强制提示 */}
         {badOutcome && (
           <div
-            className="mt-2.5 px-3 py-2 rounded-lg border text-[11px] font-semibold flex items-center gap-2"
+            className="mt-2.5 px-3 py-2 rounded-lg border text-[length:var(--fs-11)] font-semibold flex items-center gap-2"
             style={{ background: 'rgba(255,83,108,0.14)', borderColor: 'rgba(255,83,108,0.6)', color: UI.red }}
           >
             <ShieldAlert className="w-4 h-4 shrink-0" />
@@ -238,7 +239,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
         )}
         {!sample.allowClinicalReference && (
           <div
-            className="mt-2 px-3 py-2 rounded-lg border text-[11px] font-semibold flex items-center gap-2"
+            className="mt-2 px-3 py-2 rounded-lg border text-[length:var(--fs-11)] font-semibold flex items-center gap-2"
             style={{ background: 'rgba(255,184,77,0.12)', borderColor: 'rgba(255,184,77,0.55)', color: UI.amber }}
           >
             <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -248,19 +249,19 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
       </div>
 
       {/* Tab 导航 */}
-      <div className="flex items-center gap-1 px-3 py-2 bg-[#0c1429] border-b border-[#1e2f57] overflow-x-auto">
+      <div className="flex items-center gap-1 px-3 py-2 bg-[#0c1429] border-b border-line-2 overflow-x-auto">
         {TABS.map(t => {
           const active = tab === t.id;
           return (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`px-2.5 py-1.5 rounded-lg text-[11px] font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-1.5 rounded-lg text-[length:var(--fs-11)] font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
                 active
-                  ? 'bg-[#20cfff] text-[#090d18] font-bold shadow'
+                  ? 'bg-[#20cfff] text-on-bright font-bold shadow'
                   : t.core
-                  ? 'text-[#20cfff] bg-[#20cfff]/10 border border-[#20cfff]/30 hover:bg-[#20cfff]/20'
-                  : 'text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347]'
+                  ? 'text-accent bg-[#20cfff]/10 border border-[#20cfff]/30 hover:bg-[#20cfff]/20'
+                  : 'text-ink-muted hover:text-ink hover:bg-[#152347]'
               }`}
             >
               {t.icon}
@@ -276,8 +277,8 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
         {tab === 'baseline' && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <SectionCard title="基础信息" icon={<FileText className="w-3.5 h-3.5 text-[#20cfff]" />}>
-                <div className="space-y-1.5 text-[11px]">
+              <SectionCard title="基础信息" icon={<FileText className="w-3.5 h-3.5 text-accent" />}>
+                <div className="space-y-1.5 text-[length:var(--fs-11)]">
                   {[
                     ['脱敏病历编号', sample.anonymizedMrn],
                     ['性别 / 年龄', `${sample.gender} · ${sample.age} 岁`],
@@ -288,16 +289,16 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                     ['感染筛查', sample.infectionScreening],
                     ['数据完整度', `${sample.dataCompleteness}%`]
                   ].map(([k, v]) => (
-                    <div key={k} className="flex items-start justify-between gap-2 border-b border-[#1e2f57]/60 pb-1">
-                      <span className="text-[#8996b8] shrink-0">{k}</span>
-                      <span className="text-[#eef4ff] text-right">{v}</span>
+                    <div key={k} className="flex items-start justify-between gap-2 border-b border-line-2/60 pb-1">
+                      <span className="text-ink-muted shrink-0">{k}</span>
+                      <span className="text-ink text-right">{v}</span>
                     </div>
                   ))}
                 </div>
               </SectionCard>
 
-              <SectionCard title="关键检验指标" icon={<Activity className="w-3.5 h-3.5 text-[#20cfff]" />}
-                right={<span className="text-[10px] text-[#8996b8]">{compareMode ? '当前 vs 历史' : '历史样本实测'}</span>}
+              <SectionCard title="关键检验指标" icon={<Activity className="w-3.5 h-3.5 text-accent" />}
+                right={<span className="text-[length:var(--fs-10)] text-ink-muted">{compareMode ? '当前 vs 历史' : '历史样本实测'}</span>}
               >
                 <div className="space-y-2">
                   <PairBar label="CRP (mg/L)" currentValue={patientVector.crp} sampleValue={sample.clinicalMarkers.crp}
@@ -308,18 +309,18 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                     sampleValue={sample.clinicalMarkers.albumin} highlightDelta={compareMode} />
                   <PairBar label="BMI" currentValue={patientVector.bmi} sampleValue={sample.bmi}
                     highlightDelta={compareMode} format={v => v.toFixed(1)} />
-                  <div className="flex items-center justify-between text-[10px] text-[#8996b8] pt-1 border-t border-[#1e2f57]/60">
+                  <div className="flex items-center justify-between text-[length:var(--fs-10)] text-ink-muted pt-1 border-t border-line-2/60">
                     <span>ESR（历史）</span>
-                    <span className="font-mono text-[#eef4ff]">{sample.clinicalMarkers.esr} mm/h</span>
+                    <span className="font-mono text-ink">{sample.clinicalMarkers.esr} mm/h</span>
                   </div>
-                  <div className="flex items-center justify-between text-[10px] text-[#8996b8]">
+                  <div className="flex items-center justify-between text-[length:var(--fs-10)] text-ink-muted">
                     <span>前白蛋白（历史）</span>
-                    <span className="font-mono text-[#eef4ff]">{sample.clinicalMarkers.prealbumin} mg/L</span>
+                    <span className="font-mono text-ink">{sample.clinicalMarkers.prealbumin} mg/L</span>
                   </div>
                 </div>
               </SectionCard>
 
-              <SectionCard title="风险分层与身体状态" icon={<ShieldAlert className="w-3.5 h-3.5 text-[#ffb84d]" />}>
+              <SectionCard title="风险分层与身体状态" icon={<ShieldAlert className="w-3.5 h-3.5 text-warn" />}>
                 <div className="flex flex-wrap gap-1.5 mb-2.5">
                   <RiskFlag
                     dense
@@ -331,44 +332,44 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                   <RiskFlag dense text={sample.contraindicationNote}
                     tone={sample.contraindicationNote.includes('无') ? UI.green : UI.amber} />
                 </div>
-                <div className="space-y-1.5 text-[10px]">
+                <div className="space-y-1.5 text-[length:var(--fs-10)]">
                   <div>
-                    <span className="text-[#8996b8] block">免疫状态：</span>
-                    <span className="text-[#eef4ff]">{sample.immuneStatus}</span>
+                    <span className="text-ink-muted block">免疫状态：</span>
+                    <span className="text-ink">{sample.immuneStatus}</span>
                   </div>
                   <div>
-                    <span className="text-[#8996b8] block">过敏史：</span>
-                    <span className="text-[#eef4ff]">{sample.allergyNote}</span>
+                    <span className="text-ink-muted block">过敏史：</span>
+                    <span className="text-ink">{sample.allergyNote}</span>
                   </div>
                   <div>
-                    <span className="text-[#8996b8] block">合并症：</span>
-                    <span className="text-[#eef4ff]">{sample.comorbidities.join('、')}</span>
+                    <span className="text-ink-muted block">合并症：</span>
+                    <span className="text-ink">{sample.comorbidities.join('、')}</span>
                   </div>
                   <div>
-                    <span className="text-[#8996b8] block">手术史：</span>
-                    <span className="text-[#eef4ff]">{sample.surgicalHistory.join('、')}</span>
+                    <span className="text-ink-muted block">手术史：</span>
+                    <span className="text-ink">{sample.surgicalHistory.join('、')}</span>
                   </div>
                 </div>
               </SectionCard>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <SectionCard title="既往用药史（相似度临床维度输入）" icon={<Pill className="w-3.5 h-3.5 text-[#20cfff]" />}>
+              <SectionCard title="既往用药史（相似度临床维度输入）" icon={<Pill className="w-3.5 h-3.5 text-accent" />}>
                 <div className="space-y-1.5">
                   {sample.priorMedications.map(med => (
-                    <div key={med} className="p-2 rounded bg-[#0c1429] border border-[#2b4170]/40 text-[11px] text-[#eef4ff]">
+                    <div key={med} className="p-2 rounded bg-[#0c1429] border border-line/40 text-[length:var(--fs-11)] text-ink">
                       {med}
                     </div>
                   ))}
-                  <div className="text-[10px] text-[#8996b8] pt-1">
-                    免疫/生物制剂暴露项数：<span className="text-[#eef4ff] font-mono">{sample.priorMedications.filter(m => /英夫利西|阿达木|维得利珠|乌司奴|硫唑嘌呤|甲氨蝶呤|环孢素|泼尼松|激素|免疫抑制剂/.test(m)).length}</span> 项
-                    （当前患者 <span className="text-[#20cfff] font-mono">{patientVector.biologicExposure}</span> 项）
+                  <div className="text-[length:var(--fs-10)] text-ink-muted pt-1">
+                    免疫/生物制剂暴露项数：<span className="text-ink font-mono">{sample.priorMedications.filter(m => /英夫利西|阿达木|维得利珠|乌司奴|硫唑嘌呤|甲氨蝶呤|环孢素|泼尼松|激素|免疫抑制剂/.test(m)).length}</span> 项
+                    （当前患者 <span className="text-accent font-mono">{patientVector.biologicExposure}</span> 项）
                   </div>
                 </div>
               </SectionCard>
 
-              <SectionCard title="肠道微生态数字孪生快照" icon={<Sparkles className="w-3.5 h-3.5 text-[#815cff]" />}
-                right={<span className="text-[10px] text-[#8996b8]">治疗前 / 治疗后</span>}>
+              <SectionCard title="肠道微生态数字孪生快照" icon={<Sparkles className="w-3.5 h-3.5 text-violet" />}
+                right={<span className="text-[length:var(--fs-10)] text-ink-muted">治疗前 / 治疗后</span>}>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-2 rounded-lg bg-[#0c1429] border border-[#ff536c]/30">
                     <TwinSnapshotStrip snapshot={sample.microbiome.twin.pre} caption="治疗前快照" />
@@ -395,39 +396,39 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                 { label: '条件致病菌负荷', value: `${sample.microbiome.pathogenLoad}%`, hint: '越低越好', tone: sample.microbiome.pathogenLoad > 45 ? UI.red : UI.amber },
                 { label: 'FMT 适应性评分', value: `${sample.microbiome.fmtAdaptabilityScore}`, hint: '当初入库得分', tone: sample.microbiome.fmtAdaptabilityScore >= 80 ? UI.cyan : UI.amber }
               ].map(item => (
-                <div key={item.label} className="p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/50 text-center">
-                  <span className="text-[10px] text-[#8996b8] block">{item.label}</span>
+                <div key={item.label} className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50 text-center">
+                  <span className="text-[length:var(--fs-10)] text-ink-muted block">{item.label}</span>
                   <span className="font-mono font-bold text-base block my-0.5" style={{ color: item.tone }}>{item.value}</span>
-                  <span className="text-[9px] text-[#8996b8]">{item.hint}</span>
+                  <span className="text-[length:var(--fs-9)] text-ink-muted">{item.hint}</span>
                 </div>
               ))}
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/50 text-[11px] text-[#8996b8]">
-              <span className="text-[#20cfff] font-semibold">主导失衡特征：</span>
+            <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50 text-[length:var(--fs-11)] text-ink-muted">
+              <span className="text-accent font-semibold">主导失衡特征：</span>
               {sample.microbiome.dominantFeature}
             </div>
 
-            <div className="flex items-center justify-between p-1.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/50">
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-[#0c1429] border border-line/50">
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setNetworkView('ecological')}
-                  className={`px-2.5 py-1 rounded text-[11px] font-medium transition-all flex items-center gap-1 ${
-                    networkView === 'ecological' ? 'bg-[#20cfff] text-[#090d18] font-bold' : 'text-[#8996b8] hover:text-[#eef4ff]'
+                  className={`px-2.5 py-1 rounded text-[length:var(--fs-11)] font-medium transition-all flex items-center gap-1 ${
+                    networkView === 'ecological' ? 'bg-[#20cfff] text-on-bright font-bold' : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   <Dna className="w-3.5 h-3.5" /> 菌群生态网络
                 </button>
                 <button
                   onClick={() => setNetworkView('multidomain')}
-                  className={`px-2.5 py-1 rounded text-[11px] font-medium transition-all flex items-center gap-1 ${
-                    networkView === 'multidomain' ? 'bg-[#815cff] text-white font-bold' : 'text-[#8996b8] hover:text-[#eef4ff]'
+                  className={`px-2.5 py-1 rounded text-[length:var(--fs-11)] font-medium transition-all flex items-center gap-1 ${
+                    networkView === 'multidomain' ? 'bg-[#815cff] text-white font-bold' : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   <Network className="w-3.5 h-3.5" /> 全景知识图谱拓扑
                 </button>
               </div>
-              <span className="text-[10px] text-[#8996b8] pr-1">
+              <span className="text-[length:var(--fs-10)] text-ink-muted pr-1">
                 {networkView === 'ecological' ? '历史患者治疗前菌群网络' : '菌种-代谢-免疫-干预靶点拓扑'}
               </span>
             </div>
@@ -443,7 +444,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               />
             </div>
 
-            <SectionCard title="菌群功能通路对比（历史实测变化率）" icon={<Layers className="w-3.5 h-3.5 text-[#20cfff]" />}>
+            <SectionCard title="菌群功能通路对比（历史实测变化率）" icon={<Layers className="w-3.5 h-3.5 text-accent" />}>
               <div className="space-y-2.5">
                 {sample.microbiome.pathways.map(pw => {
                   const positive = pw.changePercentage > 0;
@@ -452,8 +453,8 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                   const tone = Math.abs(pw.changePercentage) < 5 ? UI.muted : good ? UI.green : UI.red;
                   return (
                     <div key={pw.id}>
-                      <div className="flex items-center justify-between text-[11px] mb-1">
-                        <span className="text-[#eef4ff]">{pw.name}</span>
+                      <div className="flex items-center justify-between text-[length:var(--fs-11)] mb-1">
+                        <span className="text-ink">{pw.name}</span>
                         <span className="font-mono font-bold flex items-center gap-0.5" style={{ color: tone }}>
                           {positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                           {positive ? '+' : ''}{pw.changePercentage}%
@@ -472,12 +473,12 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                           </>
                         )}
                       </div>
-                      <p className="text-[10px] text-[#8996b8] mt-0.5 leading-relaxed">{pw.mechanism}</p>
+                      <p className="text-[length:var(--fs-10)] text-ink-muted mt-0.5 leading-relaxed">{pw.mechanism}</p>
                     </div>
                   );
                 })}
               </div>
-              <div className="mt-3 pt-2.5 border-t border-[#1e2f57] text-[10px] text-[#8996b8] flex items-center justify-between">
+              <div className="mt-3 pt-2.5 border-t border-line-2 text-[length:var(--fs-10)] text-ink-muted flex items-center justify-between">
                 <span className="flex items-center gap-1">
                   <Info className="w-3 h-3" /> 正值为通路活性升高，负值为受抑；炎症 LPS 通路升高代表内毒素负荷加重
                 </span>
@@ -485,12 +486,12 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </div>
             </SectionCard>
 
-            <SectionCard title="优势与失衡菌群丰度表" icon={<Dna className="w-3.5 h-3.5 text-[#20cfff]" />}
-              right={<span className="text-[10px] text-[#8996b8]">mNGS 深度测序</span>}>
+            <SectionCard title="优势与失衡菌群丰度表" icon={<Dna className="w-3.5 h-3.5 text-accent" />}
+              right={<span className="text-[length:var(--fs-10)] text-ink-muted">mNGS 深度测序</span>}>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="text-[10px] text-[#8996b8] border-b border-[#1e2f57]">
+                    <tr className="text-[length:var(--fs-10)] text-ink-muted border-b border-line-2">
                       <th className="pb-1.5 font-medium">菌种</th>
                       <th className="pb-1.5 font-medium">生态分类</th>
                       <th className="pb-1.5 font-medium text-right">丰度</th>
@@ -498,12 +499,12 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                       <th className="pb-1.5 font-medium text-right">偏差</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#1e2f57]/50">
+                  <tbody className="divide-y divide-line-2/50">
                     {sample.microbiome.taxa.map(t => (
-                      <tr key={t.id} className="text-[10px]">
+                      <tr key={t.id} className="text-[length:var(--fs-10)]">
                         <td className="py-1.5">
-                          <span className="text-[#eef4ff] block">{t.chineseName}</span>
-                          <span className="font-mono text-[9px] text-[#8996b8]">{t.name}</span>
+                          <span className="text-ink block">{t.chineseName}</span>
+                          <span className="font-mono text-[length:var(--fs-9)] text-ink-muted">{t.name}</span>
                         </td>
                         <td className="py-1.5">
                           <Tag
@@ -511,9 +512,9 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                             color={t.category === 'beneficial' ? UI.green : t.category === 'pathogen' ? UI.red : t.category === 'opportunistic' ? UI.amber : UI.purple}
                           />
                         </td>
-                        <td className="py-1.5 text-right font-mono text-[#eef4ff]">{t.abundance}%</td>
-                        <td className="py-1.5 text-right font-mono text-[#8996b8]">{t.normalRange[0]}% - {t.normalRange[1]}%</td>
-                        <td className={`py-1.5 text-right font-mono font-bold ${t.relativeChange < 0 ? 'text-[#ff536c]' : 'text-[#ffb84d]'}`}>
+                        <td className="py-1.5 text-right font-mono text-ink">{t.abundance}%</td>
+                        <td className="py-1.5 text-right font-mono text-ink-muted">{t.normalRange[0]}% - {t.normalRange[1]}%</td>
+                        <td className={`py-1.5 text-right font-mono font-bold ${t.relativeChange < 0 ? 'text-danger' : 'text-warn'}`}>
                           {t.relativeChange > 0 ? `+${t.relativeChange}%` : `${t.relativeChange}%`}
                         </td>
                       </tr>
@@ -529,23 +530,23 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
         {tab === 'matching' && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <SectionCard title="历史配型综合得分" icon={<GitMerge className="w-3.5 h-3.5 text-[#20cfff]" />}>
+              <SectionCard title="历史配型综合得分" icon={<GitMerge className="w-3.5 h-3.5 text-accent" />}>
                 <div className="flex items-center gap-4">
                   <ScoreGauge value={sample.donorMatch.overallScore} size={92} color={UI.cyan} label="综合匹配" />
-                  <div className="text-[11px] space-y-1">
-                    <div className="text-[#8996b8]">
-                      供体编号：<span className="text-[#20cfff] font-mono font-bold">{sample.donorMatch.donorCode}</span>
+                  <div className="text-[length:var(--fs-11)] space-y-1">
+                    <div className="text-ink-muted">
+                      供体编号：<span className="text-accent font-mono font-bold">{sample.donorMatch.donorCode}</span>
                     </div>
-                    <div className="text-[#8996b8]">
-                      评级：<span className="text-[#23e6b1] font-bold">{sample.donorMatch.donorRating}</span>
+                    <div className="text-ink-muted">
+                      评级：<span className="text-ok font-bold">{sample.donorMatch.donorRating}</span>
                     </div>
-                    <div className="text-[#8996b8]">{sample.donorMatch.donorType}</div>
-                    <div className="text-[#8996b8] font-mono text-[10px]">配型日期 {sample.donorMatch.matchDate}</div>
+                    <div className="text-ink-muted">{sample.donorMatch.donorType}</div>
+                    <div className="text-ink-muted font-mono text-[length:var(--fs-10)]">配型日期 {sample.donorMatch.matchDate}</div>
                   </div>
                 </div>
               </SectionCard>
 
-              <SectionCard title="六维匹配雷达" icon={<GitMerge className="w-3.5 h-3.5 text-[#20cfff]" />} className="md:col-span-2">
+              <SectionCard title="六维匹配雷达" icon={<GitMerge className="w-3.5 h-3.5 text-accent" />} className="md:col-span-2">
                 <div className="flex items-center gap-4">
                   <Radar6
                     values={MATCH_DIMENSIONS.map(d => sample.donorMatch.dimensions[d.key])}
@@ -568,22 +569,22 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <SectionCard title="匹配优势" icon={<CheckCircle2 className="w-3.5 h-3.5 text-[#23e6b1]" />}>
+              <SectionCard title="匹配优势" icon={<CheckCircle2 className="w-3.5 h-3.5 text-ok" />}>
                 <div className="space-y-2">
                   {sample.donorMatch.advantages.map((a, i) => (
-                    <div key={i} className="p-2 rounded-lg bg-[#0c1429] border border-[#23e6b1]/30 text-[11px] text-[#eef4ff] flex items-start gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#23e6b1] shrink-0 mt-0.5" />
+                    <div key={i} className="p-2 rounded-lg bg-[#0c1429] border border-[#23e6b1]/30 text-[length:var(--fs-11)] text-ink flex items-start gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-ok shrink-0 mt-0.5" />
                       {a}
                     </div>
                   ))}
                 </div>
               </SectionCard>
 
-              <SectionCard title="潜在风险" icon={<AlertTriangle className="w-3.5 h-3.5 text-[#ffb84d]" />}>
+              <SectionCard title="潜在风险" icon={<AlertTriangle className="w-3.5 h-3.5 text-warn" />}>
                 <div className="space-y-2">
                   {sample.donorMatch.potentialRisks.map((r, i) => (
-                    <div key={i} className="p-2 rounded-lg bg-[#0c1429] border border-[#ffb84d]/35 text-[11px] text-[#eef4ff] flex items-start gap-2">
-                      <AlertTriangle className="w-3.5 h-3.5 text-[#ffb84d] shrink-0 mt-0.5" />
+                    <div key={i} className="p-2 rounded-lg bg-[#0c1429] border border-[#ffb84d]/35 text-[length:var(--fs-11)] text-ink flex items-start gap-2">
+                      <AlertTriangle className="w-3.5 h-3.5 text-warn shrink-0 mt-0.5" />
                       {r}
                     </div>
                   ))}
@@ -591,8 +592,8 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </SectionCard>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/50 text-[10px] text-[#8996b8] flex items-center gap-1.5">
-              <Info className="w-3.5 h-3.5 text-[#20cfff]" />
+            <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50 text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5">
+              <Info className="w-3.5 h-3.5 text-accent" />
               供受体匹配记录为历史样本当时的真实评估结果。当前患者的供体选择必须基于当前供体库存、菌液批次效期重新计算，不可沿用历史供体。
             </div>
           </>
@@ -603,21 +604,21 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
           <>
             {/* 版本选择 */}
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[10px] text-[#8996b8]">方案版本：</span>
+              <span className="text-[length:var(--fs-10)] text-ink-muted">方案版本：</span>
               {sample.protocolVersions.map((v, i) => (
                 <button
                   key={v.version}
                   onClick={() => setVersionIndex(i)}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold border transition-all ${
+                  className={`px-2.5 py-1 rounded-lg text-[length:var(--fs-11)] font-mono font-semibold border transition-all ${
                     versionIndex === i
-                      ? 'bg-[#20cfff] text-[#090d18] border-[#20cfff]'
-                      : 'bg-[#0c1429] text-[#8996b8] border-[#2b4170]/60 hover:text-[#eef4ff]'
+                      ? 'bg-[#20cfff] text-on-bright border-[#20cfff]'
+                      : 'bg-[#0c1429] text-ink-muted border-line/60 hover:text-ink'
                   }`}
                 >
                   {v.version}
                 </button>
               ))}
-              <span className="text-[10px] text-[#8996b8] ml-1">
+              <span className="text-[length:var(--fs-10)] text-ink-muted ml-1">
                 {activeVersion.author} · {activeVersion.date}
               </span>
             </div>
@@ -625,10 +626,10 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
             {/* PlanCard */}
             <SectionCard
               title={`历史精准移植方案样本 ${activeVersion.version}`}
-              icon={<ClipboardList className="w-3.5 h-3.5 text-[#20cfff]" />}
+              icon={<ClipboardList className="w-3.5 h-3.5 text-accent" />}
               right={
                 <span
-                  className="px-2 py-0.5 rounded text-[10px] font-bold border"
+                  className="px-2 py-0.5 rounded text-[length:var(--fs-10)] font-bold border"
                   style={
                     protocol.approvalStatus === '医生已签署'
                       ? { color: UI.green, background: 'rgba(35,230,177,0.14)', borderColor: 'rgba(35,230,177,0.45)' }
@@ -639,14 +640,14 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                 </span>
               }
             >
-              <p className="text-[11px] text-[#8996b8] mb-3 p-2 rounded bg-[#0c1429] border border-[#2b4170]/40">
-                <span className="text-[#20cfff] font-semibold">版本说明：</span>{activeVersion.summary}
+              <p className="text-[length:var(--fs-11)] text-ink-muted mb-3 p-2 rounded bg-[#0c1429] border border-line/40">
+                <span className="text-accent font-semibold">版本说明：</span>{activeVersion.summary}
               </p>
 
               {/* 移植路径 + 剂量频次疗程 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="p-3 rounded-lg bg-[#0c1429] border border-[#2b4170]/50">
-                  <span className="text-[10px] text-[#8996b8] block mb-1.5">移植路径</span>
+                <div className="p-3 rounded-lg bg-[#0c1429] border border-line/50">
+                  <span className="text-[length:var(--fs-10)] text-ink-muted block mb-1.5">移植路径</span>
                   <div className="flex items-center gap-2">
                     <div
                       className="w-9 h-9 rounded-lg flex items-center justify-center"
@@ -654,34 +655,34 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                     >
                       {routeIcon(protocol.administrationRoute)}
                     </div>
-                    <span className="text-xs font-bold text-[#eef4ff]">{protocol.administrationRoute}</span>
+                    <span className="text-xs font-bold text-ink">{protocol.administrationRoute}</span>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-[#0c1429] border border-[#2b4170]/50">
-                  <span className="text-[10px] text-[#8996b8] block mb-1.5">剂量 · 频次 · 疗程</span>
-                  <div className="space-y-1 text-[11px]">
+                <div className="p-3 rounded-lg bg-[#0c1429] border border-line/50">
+                  <span className="text-[length:var(--fs-10)] text-ink-muted block mb-1.5">剂量 · 频次 · 疗程</span>
+                  <div className="space-y-1 text-[length:var(--fs-11)]">
                     <div className="flex justify-between gap-2">
-                      <span className="text-[#8996b8]">单次剂量</span>
-                      <span className="text-[#eef4ff] text-right">{protocol.recommendedDose}</span>
+                      <span className="text-ink-muted">单次剂量</span>
+                      <span className="text-ink text-right">{protocol.recommendedDose}</span>
                     </div>
                     <div className="flex justify-between gap-2">
-                      <span className="text-[#8996b8]">给药频次</span>
-                      <span className="text-[#eef4ff] text-right">{protocol.frequency}</span>
+                      <span className="text-ink-muted">给药频次</span>
+                      <span className="text-ink text-right">{protocol.frequency}</span>
                     </div>
                     <div className="flex justify-between gap-2">
-                      <span className="text-[#8996b8]">疗程</span>
-                      <span className="text-[#20cfff] font-semibold text-right">{protocol.treatmentDuration}</span>
+                      <span className="text-ink-muted">疗程</span>
+                      <span className="text-accent font-semibold text-right">{protocol.treatmentDuration}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* 给药节奏 + 随访节点：给药次数直接取自方案文本，不按下标编造 */}
-              <div className="mt-3 p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/50">
-                <div className="flex items-center justify-between text-[10px] mb-1.5">
-                  <span className="text-[#8996b8]">给药节奏可视化</span>
-                  <span className="text-[#20cfff] font-mono">{doseCount} 个给药节点 · 该样本已全部完成</span>
+              <div className="mt-3 p-2.5 rounded-lg bg-[#0c1429] border border-line/50">
+                <div className="flex items-center justify-between text-[length:var(--fs-10)] mb-1.5">
+                  <span className="text-ink-muted">给药节奏可视化</span>
+                  <span className="text-accent font-mono">{doseCount} 个给药节点 · 该样本已全部完成</span>
                 </div>
                 <div className="flex items-center gap-[3px] flex-wrap">
                   {Array.from({ length: doseCount }).map((_, i) => (
@@ -693,11 +694,11 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                     />
                   ))}
                 </div>
-                <div className="mt-2 flex items-center gap-1.5 text-[9px] text-[#8996b8] flex-wrap">
-                  <span>疗程：<span className="text-[#eef4ff]">{protocol.treatmentDuration}</span></span>
-                  <span className="text-[#2b4170]">|</span>
+                <div className="mt-2 flex items-center gap-1.5 text-[length:var(--fs-9)] text-ink-muted flex-wrap">
+                  <span>疗程：<span className="text-ink">{protocol.treatmentDuration}</span></span>
+                  <span className="text-ink-subtle">|</span>
                   <span>随访覆盖 0 → {sample.followUpWeeks} 周</span>
-                  <span className="text-[#2b4170]">|</span>
+                  <span className="text-ink-subtle">|</span>
                   <span>{protocol.reviewMilestones.length} 个复评节点</span>
                 </div>
               </div>
@@ -705,24 +706,24 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               {/* 肠道准备 / 联合用药 / 营养干预 */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 mt-3">
                 {[
-                  { label: '肠道准备', value: protocol.bowelPreparation, icon: <Layers className="w-3.5 h-3.5 text-[#20cfff]" /> },
-                  { label: '预处理', value: protocol.preTreatment, icon: <Syringe className="w-3.5 h-3.5 text-[#815cff]" /> },
-                  { label: '联合用药', value: protocol.combinedTherapy, icon: <Pill className="w-3.5 h-3.5 text-[#ffb84d]" /> },
-                  { label: '营养干预', value: protocol.nutritionalIntervention, icon: <Activity className="w-3.5 h-3.5 text-[#23e6b1]" /> }
+                  { label: '肠道准备', value: protocol.bowelPreparation, icon: <Layers className="w-3.5 h-3.5 text-accent" /> },
+                  { label: '预处理', value: protocol.preTreatment, icon: <Syringe className="w-3.5 h-3.5 text-violet" /> },
+                  { label: '联合用药', value: protocol.combinedTherapy, icon: <Pill className="w-3.5 h-3.5 text-warn" /> },
+                  { label: '营养干预', value: protocol.nutritionalIntervention, icon: <Activity className="w-3.5 h-3.5 text-ok" /> }
                 ].map(item => (
-                  <div key={item.label} className="p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/50">
-                    <span className="text-[10px] text-[#8996b8] flex items-center gap-1.5 mb-1">
+                  <div key={item.label} className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50">
+                    <span className="text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5 mb-1">
                       {item.icon}
                       {item.label}
                     </span>
-                    <p className="text-[11px] text-[#eef4ff] leading-relaxed">{item.value}</p>
+                    <p className="text-[length:var(--fs-11)] text-ink leading-relaxed">{item.value}</p>
                   </div>
                 ))}
               </div>
 
               {/* 随访里程碑 */}
-              <div className="mt-3 p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/50">
-                <span className="text-[10px] text-[#8996b8] block mb-1.5">预设复评节点</span>
+              <div className="mt-3 p-2.5 rounded-lg bg-[#0c1429] border border-line/50">
+                <span className="text-[length:var(--fs-10)] text-ink-muted block mb-1.5">预设复评节点</span>
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {protocol.reviewMilestones.map(m => <Tag key={m} text={m} color={UI.blue} />)}
                 </div>
@@ -730,8 +731,8 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
             </SectionCard>
 
             {/* 版本演化时间线 */}
-            <SectionCard title="方案版本演化时间线" icon={<GitMerge className="w-3.5 h-3.5 text-[#20cfff]" />}
-              right={<span className="text-[10px] text-[#8996b8]">AI 初始 → 医生调整 → MDT 修订</span>}>
+            <SectionCard title="方案版本演化时间线" icon={<GitMerge className="w-3.5 h-3.5 text-accent" />}
+              right={<span className="text-[length:var(--fs-10)] text-ink-muted">AI 初始 → 医生调整 → MDT 修订</span>}>
               <div className="relative pl-5">
                 <div className="absolute left-[7px] top-1.5 bottom-1.5 w-px bg-[#2b4170]" />
                 {sample.protocolVersions.map((v, i) => (
@@ -744,17 +745,17 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                       }}
                     />
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-mono font-bold text-[11px] text-[#20cfff]">{v.version}</span>
-                      <span className="text-[10px] text-[#8996b8] font-mono">{v.date}</span>
-                      <span className="text-[10px] text-[#eef4ff]">{v.author}</span>
+                      <span className="font-mono font-bold text-[length:var(--fs-11)] text-accent">{v.version}</span>
+                      <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">{v.date}</span>
+                      <span className="text-[length:var(--fs-10)] text-ink">{v.author}</span>
                     </div>
-                    <p className="text-[11px] text-[#8996b8] mt-0.5">{v.summary}</p>
+                    <p className="text-[length:var(--fs-11)] text-ink-muted mt-0.5">{v.summary}</p>
                     {v.changes.length > 0 && (
                       <div className="mt-1.5 space-y-1">
                         {v.changes.map((c, ci) => (
                           <div
                             key={ci}
-                            className="text-[10px] px-2 py-1 rounded border-l-2 text-[#eef4ff]"
+                            className="text-[length:var(--fs-10)] px-2 py-1 rounded border-l-2 text-ink"
                             style={{ background: 'rgba(32,207,255,0.07)', borderColor: UI.cyan }}
                           >
                             {c}
@@ -770,8 +771,8 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
             {/* 风险门控状态 */}
             <SectionCard
               title="当初方案的风险门控执行状态"
-              icon={<ShieldAlert className="w-3.5 h-3.5 text-[#ffb84d]" />}
-              right={<span className="text-[10px] text-[#8996b8]">历史状态，不可继承至当前患者</span>}
+              icon={<ShieldAlert className="w-3.5 h-3.5 text-warn" />}
+              right={<span className="text-[length:var(--fs-10)] text-ink-muted">历史状态，不可继承至当前患者</span>}
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {sample.safetyGates.map(gate => {
@@ -780,23 +781,23 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                     <div
                       key={gate.id}
                       className="p-2 rounded-lg bg-[#0c1429] border flex items-start gap-2"
-                      style={{ borderColor: `${tone.color}55` }}
+                      style={{ borderColor: withAlpha(tone.color, 33) }}
                     >
                       <span className="shrink-0 mt-0.5" style={{ color: tone.color }}>{tone.icon}</span>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[11px] text-[#eef4ff]">{gate.name}</span>
-                          <span className="text-[9px] font-bold" style={{ color: tone.color }}>{tone.label}</span>
+                          <span className="text-[length:var(--fs-11)] text-ink">{gate.name}</span>
+                          <span className="text-[length:var(--fs-9)] font-bold" style={{ color: tone.color }}>{tone.label}</span>
                           {gate.mandatory && <Tag text="强制项" color={UI.muted} />}
                         </div>
-                        <p className="text-[10px] text-[#8996b8] mt-0.5 leading-relaxed">{gate.detail}</p>
+                        <p className="text-[length:var(--fs-10)] text-ink-muted mt-0.5 leading-relaxed">{gate.detail}</p>
                       </div>
                     </div>
                   );
                 })}
               </div>
               <div
-                className="mt-3 p-2.5 rounded-lg border text-[10px] leading-relaxed"
+                className="mt-3 p-2.5 rounded-lg border text-[length:var(--fs-10)] leading-relaxed"
                 style={{ background: 'rgba(255,184,77,0.09)', borderColor: 'rgba(255,184,77,0.35)', color: '#ffd9a3' }}
               >
                 参照该样本参数时，以上全部门控（感染排查、禁忌症、菌液有效期、知情同意、医师／MDT 审核）
@@ -804,8 +805,8 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </div>
             </SectionCard>
 
-            <div className="p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/50 text-[10px] text-[#8996b8] flex items-center gap-1.5">
-              <BookMarked className="w-3.5 h-3.5 text-[#20cfff]" />
+            <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50 text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5">
+              <BookMarked className="w-3.5 h-3.5 text-accent" />
               历史医生当时选择该方案的推荐理由，请见「MDT 纪要 & 医生备注」Tab —— 该部分对研判价值最高。
             </div>
           </>
@@ -821,16 +822,16 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                 { label: '终末供体定植率', value: `${sample.finalEngraftmentRate}%`, tone: sample.finalEngraftmentRate >= 60 ? UI.green : UI.amber },
                 { label: '不良事件', value: `${sample.adverseEvents.length} 例${sample.adverseEvents.some(a => a.isSAE) ? '（含 SAE）' : ''}`, tone: sample.adverseEvents.some(a => a.isSAE) ? UI.red : UI.muted }
               ].map(item => (
-                <div key={item.label} className="p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/50">
-                  <span className="text-[10px] text-[#8996b8] block">{item.label}</span>
-                  <span className="text-[11px] font-bold block mt-1 leading-tight" style={{ color: item.tone }}>{item.value}</span>
+                <div key={item.label} className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50">
+                  <span className="text-[length:var(--fs-10)] text-ink-muted block">{item.label}</span>
+                  <span className="text-[length:var(--fs-11)] font-bold block mt-1 leading-tight" style={{ color: item.tone }}>{item.value}</span>
                 </div>
               ))}
             </div>
 
             {/* 多轨道时间轴 */}
-            <SectionCard title="四轨并行疗效时间轴" icon={<Activity className="w-3.5 h-3.5 text-[#20cfff]" />}
-              right={<span className="text-[10px] text-[#8996b8]">菌群 / 炎症 / 症状 / 不良事件</span>}>
+            <SectionCard title="四轨并行疗效时间轴" icon={<Activity className="w-3.5 h-3.5 text-accent" />}
+              right={<span className="text-[length:var(--fs-10)] text-ink-muted">菌群 / 炎症 / 症状 / 不良事件</span>}>
               <div className="space-y-3">
                 {[
                   { label: '轨道一 · 菌群多样性 (Shannon)', values: points.map(p => p.shannonDiversity), color: UI.cyan, invert: false },
@@ -839,9 +840,9 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                   { label: '轨道四 · 临床症状评分 (Mayo)', values: points.map(p => p.mayoScore), color: UI.green, invert: true }
                 ].map(track => (
                   <div key={track.label}>
-                    <div className="flex items-center justify-between text-[10px] mb-1">
-                      <span className="text-[#8996b8]">{track.label}</span>
-                      <span className="font-mono text-[#eef4ff]">
+                    <div className="flex items-center justify-between text-[length:var(--fs-10)] mb-1">
+                      <span className="text-ink-muted">{track.label}</span>
+                      <span className="font-mono text-ink">
                         {track.values[0]} → {track.values[track.values.length - 1]}
                       </span>
                     </div>
@@ -851,10 +852,10 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </div>
 
               {/* 各节点明细 */}
-              <div className="mt-3 pt-3 border-t border-[#1e2f57] overflow-x-auto">
+              <div className="mt-3 pt-3 border-t border-line-2 overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="text-[10px] text-[#8996b8] border-b border-[#1e2f57]">
+                    <tr className="text-[length:var(--fs-10)] text-ink-muted border-b border-line-2">
                       <th className="pb-1.5 font-medium">随访节点</th>
                       <th className="pb-1.5 font-medium text-right">Shannon</th>
                       <th className="pb-1.5 font-medium text-right">定植率</th>
@@ -864,19 +865,19 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                       <th className="pb-1.5 font-medium text-right">缓解率</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#1e2f57]/50">
+                  <tbody className="divide-y divide-line-2/50">
                     {points.map(p => (
-                      <tr key={p.stage} className="text-[10px]">
+                      <tr key={p.stage} className="text-[length:var(--fs-10)]">
                         <td className="py-1.5">
-                          <span className="text-[#eef4ff]">{p.label}</span>
-                          <span className="text-[#8996b8] font-mono ml-1.5">{p.date}</span>
+                          <span className="text-ink">{p.label}</span>
+                          <span className="text-ink-muted font-mono ml-1.5">{p.date}</span>
                         </td>
-                        <td className="py-1.5 text-right font-mono text-[#20cfff]">{p.shannonDiversity.toFixed(2)}</td>
-                        <td className="py-1.5 text-right font-mono text-[#397cff]">{p.donorEngraftmentRate}%</td>
-                        <td className="py-1.5 text-right font-mono text-[#ffb84d]">{p.fecalCalprotectin}</td>
-                        <td className="py-1.5 text-right font-mono text-[#23e6b1]">{p.mayoScore}</td>
-                        <td className="py-1.5 text-right font-mono text-[#eef4ff]">{p.dominantBeneficialRatio}%</td>
-                        <td className="py-1.5 text-right font-mono text-[#eef4ff]">{p.symptomReliefPercentage}%</td>
+                        <td className="py-1.5 text-right font-mono text-accent">{p.shannonDiversity.toFixed(2)}</td>
+                        <td className="py-1.5 text-right font-mono text-info">{p.donorEngraftmentRate}%</td>
+                        <td className="py-1.5 text-right font-mono text-warn">{p.fecalCalprotectin}</td>
+                        <td className="py-1.5 text-right font-mono text-ok">{p.mayoScore}</td>
+                        <td className="py-1.5 text-right font-mono text-ink">{p.dominantBeneficialRatio}%</td>
+                        <td className="py-1.5 text-right font-mono text-ink">{p.symptomReliefPercentage}%</td>
                       </tr>
                     ))}
                   </tbody>
@@ -885,11 +886,11 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
             </SectionCard>
 
             {/* 执行记录 */}
-            <SectionCard title="FMT 治疗执行记录" icon={<Syringe className="w-3.5 h-3.5 text-[#20cfff]" />}>
+            <SectionCard title="FMT 治疗执行记录" icon={<Syringe className="w-3.5 h-3.5 text-accent" />}>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="text-[10px] text-[#8996b8] border-b border-[#1e2f57]">
+                    <tr className="text-[length:var(--fs-10)] text-ink-muted border-b border-line-2">
                       <th className="pb-1.5 font-medium">序次</th>
                       <th className="pb-1.5 font-medium">日期</th>
                       <th className="pb-1.5 font-medium">路径</th>
@@ -899,16 +900,16 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                       <th className="pb-1.5 font-medium">执行者</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#1e2f57]/50">
+                  <tbody className="divide-y divide-line-2/50">
                     {sample.executionRecords.map(r => (
-                      <tr key={r.seq} className="text-[10px]">
-                        <td className="py-1.5 font-mono text-[#eef4ff]">{r.seq}</td>
-                        <td className="py-1.5 font-mono text-[#8996b8]">{r.date}</td>
-                        <td className="py-1.5 text-[#eef4ff]">{r.route}</td>
-                        <td className="py-1.5 text-[#eef4ff]">{r.actualDose}</td>
-                        <td className="py-1.5 text-[#23e6b1]">{r.tolerance}</td>
-                        <td className="py-1.5 text-[#8996b8]">{r.immediateAE}</td>
-                        <td className="py-1.5 text-[#8996b8]">{r.operator}</td>
+                      <tr key={r.seq} className="text-[length:var(--fs-10)]">
+                        <td className="py-1.5 font-mono text-ink">{r.seq}</td>
+                        <td className="py-1.5 font-mono text-ink-muted">{r.date}</td>
+                        <td className="py-1.5 text-ink">{r.route}</td>
+                        <td className="py-1.5 text-ink">{r.actualDose}</td>
+                        <td className="py-1.5 text-ok">{r.tolerance}</td>
+                        <td className="py-1.5 text-ink-muted">{r.immediateAE}</td>
+                        <td className="py-1.5 text-ink-muted">{r.operator}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -919,31 +920,31 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
             {/* 不良事件 */}
             <SectionCard
               title="不良事件记录"
-              icon={<AlertTriangle className="w-3.5 h-3.5 text-[#ffb84d]" />}
+              icon={<AlertTriangle className="w-3.5 h-3.5 text-warn" />}
               right={
-                <span className="text-[10px] font-bold" style={{ color: sample.adverseEvents.some(a => a.isSAE) ? UI.red : UI.green }}>
+                <span className="text-[length:var(--fs-10)] font-bold" style={{ color: sample.adverseEvents.some(a => a.isSAE) ? UI.red : UI.green }}>
                   SAE：{sample.adverseEvents.filter(a => a.isSAE).length} 例
                 </span>
               }
             >
               {sample.adverseEvents.length === 0 ? (
-                <p className="text-[11px] text-[#8996b8]">该样本全程未记录不良事件。</p>
+                <p className="text-[length:var(--fs-11)] text-ink-muted">该样本全程未记录不良事件。</p>
               ) : (
                 <div className="space-y-2">
                   {sample.adverseEvents.map(ae => {
                     const tone = ae.severity === '严重(SAE)' ? UI.red : ae.severity === '中度' ? UI.amber : UI.muted;
                     return (
-                      <div key={ae.id} className="p-2.5 rounded-lg bg-[#0c1429] border flex items-start gap-2" style={{ borderColor: `${tone}55` }}>
+                      <div key={ae.id} className="p-2.5 rounded-lg bg-[#0c1429] border flex items-start gap-2" style={{ borderColor: withAlpha(tone, 33) }}>
                         <span className="shrink-0 mt-0.5" style={{ color: tone }}><AlertTriangle className="w-3.5 h-3.5" /></span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-[11px] font-semibold text-[#eef4ff]">{ae.type}</span>
+                            <span className="text-[length:var(--fs-11)] font-semibold text-ink">{ae.type}</span>
                             <Tag text={ae.severity} color={tone} />
                             {ae.isSAE && <Tag text="SAE" color={UI.red} />}
-                            <span className="text-[10px] text-[#8996b8] font-mono">{ae.timing}</span>
+                            <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">{ae.timing}</span>
                           </div>
-                          <p className="text-[10px] text-[#8996b8] mt-1 leading-relaxed">
-                            <span className="text-[#eef4ff]">处理：</span>{ae.handling}
+                          <p className="text-[length:var(--fs-10)] text-ink-muted mt-1 leading-relaxed">
+                            <span className="text-ink">处理：</span>{ae.handling}
                           </p>
                         </div>
                       </div>
@@ -960,14 +961,14 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
           <>
             <SectionCard
               title="MDT 讨论纪要（关键决策理由）"
-              icon={<Users className="w-3.5 h-3.5 text-[#20cfff]" />}
+              icon={<Users className="w-3.5 h-3.5 text-accent" />}
               right={<Tag text={sample.mdtDiscussed ? 'MDT 病例' : '非 MDT 病例'} color={sample.mdtDiscussed ? UI.cyan : UI.muted} />}
             >
               <div className="space-y-2">
                 {sample.mdtNotes.map((note, i) => (
                   <div
                     key={i}
-                    className="p-2.5 rounded-lg bg-[#0c1429] border-l-2 border border-[#2b4170]/40 text-[11px] text-[#eef4ff] leading-relaxed"
+                    className="p-2.5 rounded-lg bg-[#0c1429] border-l-2 border border-line/40 text-[length:var(--fs-11)] text-ink leading-relaxed"
                     style={{ borderLeftColor: UI.cyan }}
                   >
                     {note}
@@ -976,12 +977,12 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </div>
             </SectionCard>
 
-            <SectionCard title="历史接诊医生备注" icon={<Stethoscope className="w-3.5 h-3.5 text-[#23e6b1]" />}>
+            <SectionCard title="历史接诊医生备注" icon={<Stethoscope className="w-3.5 h-3.5 text-ok" />}>
               <div className="space-y-2">
                 {sample.physicianNotes.map((note, i) => (
                   <div
                     key={i}
-                    className="p-2.5 rounded-lg bg-[#0c1429] border-l-2 border border-[#2b4170]/40 text-[11px] text-[#eef4ff] leading-relaxed"
+                    className="p-2.5 rounded-lg bg-[#0c1429] border-l-2 border border-line/40 text-[length:var(--fs-11)] text-ink leading-relaxed"
                     style={{ borderLeftColor: UI.green }}
                   >
                     {note}
@@ -990,10 +991,10 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </div>
             </SectionCard>
 
-            <SectionCard title="最终临床结局与案例标签" icon={<BookMarked className="w-3.5 h-3.5 text-[#20cfff]" />}>
+            <SectionCard title="最终临床结局与案例标签" icon={<BookMarked className="w-3.5 h-3.5 text-accent" />}>
               <div className="flex items-center gap-2 flex-wrap mb-3">
                 <OutcomeBadge outcome={sample.outcome} size="md" />
-                <span className="text-[11px] text-[#8996b8]">{sample.outcomeLabel}</span>
+                <span className="text-[length:var(--fs-11)] text-ink-muted">{sample.outcomeLabel}</span>
               </div>
               <div className="flex items-center gap-1.5 flex-wrap">
                 {sample.caseTags.map(t => <Tag key={t} text={t} color={UI.purple} />)}
@@ -1007,7 +1008,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                   size={96}
                   color={color}
                 />
-                <div className="text-[10px] text-[#8996b8] leading-relaxed">
+                <div className="text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
                   该样本与当前患者综合相似度 <span className="font-mono font-bold" style={{ color }}>{similarity.overall.toFixed(1)}%</span>。
                   请结合本页 MDT 与医生备注中的决策理由，判断其经验是否可迁移至当前患者。
                 </div>
@@ -1018,18 +1019,18 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
       </div>
 
       {/* D 区：参考复用操作 */}
-      <div className="px-3.5 py-3 bg-[#101a33] border-t border-[#1e2f57] flex flex-wrap items-center justify-between gap-2">
-        <div className="text-[10px] text-[#8996b8] flex items-center gap-1.5">
+      <div className="px-3.5 py-3 bg-[#101a33] border-t border-line-2 flex flex-wrap items-center justify-between gap-2">
+        <div className="text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5">
           <Lock className="w-3 h-3" />
           历史样本只读 · 仅可标记为参考，不可直接应用
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={onToggleFavorite}
-            className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-[length:var(--fs-11)] font-semibold border transition-all flex items-center gap-1.5 ${
               favorited
-                ? 'bg-[#ffb84d]/20 text-[#ffb84d] border-[#ffb84d]/50'
-                : 'bg-[#0c1429] text-[#8996b8] border-[#2b4170]/60 hover:text-[#eef4ff]'
+                ? 'bg-[#ffb84d]/20 text-warn border-[#ffb84d]/50'
+                : 'bg-[#0c1429] text-ink-muted border-line/60 hover:text-ink'
             }`}
           >
             <Star className="w-3.5 h-3.5" fill={favorited ? '#ffb84d' : 'none'} />
@@ -1037,7 +1038,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
           </button>
           <button
             onClick={onRequestCopy}
-            className="px-3.5 py-1.5 rounded-lg bg-[#20cfff] text-[#090d18] text-[11px] font-bold hover:brightness-110 shadow-[0_0_12px_rgba(32,207,255,0.3)] transition-all flex items-center gap-1.5"
+            className="px-3.5 py-1.5 rounded-lg bg-[#20cfff] text-on-bright text-[length:var(--fs-11)] font-bold hover:brightness-110 shadow-[0_0_12px_rgba(32,207,255,0.3)] transition-all flex items-center gap-1.5"
           >
             <ClipboardList className="w-3.5 h-3.5" />
             标记为当前患者参考对象

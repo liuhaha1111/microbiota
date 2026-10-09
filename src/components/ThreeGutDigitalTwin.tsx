@@ -1528,14 +1528,14 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
   };
 
   return (
-    <div id="three-gut-container-card" className={`relative rounded-xl border border-[#1e2f57] bg-[#0c1429] overflow-hidden select-none ${className}`}>
+    <div id="three-gut-container-card" className={`relative rounded-xl border border-line-2 bg-[#0c1429] overflow-hidden select-none ${className}`}>
       {/* Top Header Bar: Anatomical Title & View Controls */}
       <div id="three-gut-header-bar" ref={headerBarRef} className="absolute top-3 left-3 right-3 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
         {/* Left: Anatomical Digital Twin Brand & Pin Toggle */}
-        <div className="flex items-center gap-2 p-1.5 rounded-lg bg-[#091127]/90 border border-[#2b4170]/70 backdrop-blur-md pointer-events-auto shadow-lg">
+        <div className="flex items-center gap-2 p-1.5 rounded-lg bg-[#091127]/90 border border-line/70 backdrop-blur-md pointer-events-auto shadow-lg">
           <div className="flex items-center gap-1.5 px-2 py-0.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#20cfff] shadow-[0_0_8px_#20cfff] animate-pulse"></span>
-            <span className="text-xs font-bold text-[#eef4ff] tracking-wide">
+            <span className="text-xs font-bold text-ink tracking-wide">
               大肠解剖结构 · 3D高精孪生
             </span>
           </div>
@@ -1547,7 +1547,7 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
             onClick={() => setShowPinBadges(!showPinBadges)}
             title={showPinBadges ? '隐藏部位指示标签' : '显示部位指示标签'}
             className={`px-2 py-1 rounded text-xs transition-colors flex items-center gap-1 font-medium ${
-              showPinBadges ? 'bg-[#20cfff]/20 text-[#20cfff]' : 'text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347]'
+              showPinBadges ? 'bg-[#20cfff]/20 text-accent' : 'text-ink-muted hover:text-ink hover:bg-[#152347]'
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
@@ -1559,7 +1559,7 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
             onClick={() => setShowAnatomyCard(!showAnatomyCard)}
             title={showAnatomyCard ? '收起部位详解卡' : '展开部位详解卡'}
             className={`px-2 py-1 rounded text-xs transition-colors flex items-center gap-1 font-medium ${
-              showAnatomyCard ? 'bg-[#20cfff]/20 text-[#20cfff]' : 'text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347]'
+              showAnatomyCard ? 'bg-[#20cfff]/20 text-accent' : 'text-ink-muted hover:text-ink hover:bg-[#152347]'
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
@@ -1568,15 +1568,15 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
         </div>
 
         {/* Right: State Switcher & Tools */}
-        <div className="flex items-center gap-1.5 p-1 rounded-lg bg-[#091127]/90 border border-[#2b4170]/70 backdrop-blur-md pointer-events-auto shadow-lg">
+        <div className="flex items-center gap-1.5 p-1 rounded-lg bg-[#091127]/90 border border-line/70 backdrop-blur-md pointer-events-auto shadow-lg">
           {/* Dysbiosis / Reconstruction State */}
           <button
             id="state-btn-dysbiosis"
             onClick={() => setCurrentMode('dysbiosis')}
             className={`px-2 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
               currentMode === 'dysbiosis'
-                ? 'bg-[#ff536c]/20 text-[#ff536c] border border-[#ff536c]/50 shadow-[0_0_10px_rgba(255,83,108,0.25)]'
-                : 'text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347]'
+                ? 'bg-[#ff536c]/20 text-danger border border-[#ff536c]/50 shadow-[0_0_10px_rgba(255,83,108,0.25)]'
+                : 'text-ink-muted hover:text-ink hover:bg-[#152347]'
             }`}
           >
             <AlertTriangle className="w-3.5 h-3.5" />
@@ -1587,8 +1587,8 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
             onClick={() => setCurrentMode('reconstruction')}
             className={`px-2 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
               currentMode === 'reconstruction'
-                ? 'bg-[#20cfff]/20 text-[#20cfff] border border-[#20cfff]/50 shadow-[0_0_10px_rgba(32,207,255,0.25)]'
-                : 'text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347]'
+                ? 'bg-[#20cfff]/20 text-accent border border-[#20cfff]/50 shadow-[0_0_10px_rgba(32,207,255,0.25)]'
+                : 'text-ink-muted hover:text-ink hover:bg-[#152347]'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
@@ -1605,7 +1605,7 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
             className={`px-2 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
               ghostMode
                 ? 'bg-[#815cff]/20 text-[#b592ff] border border-[#815cff]/50'
-                : 'text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347]'
+                : 'text-ink-muted hover:text-ink hover:bg-[#152347]'
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
@@ -1619,7 +1619,7 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
             onClick={() => setAutoRotate(!autoRotate)}
             title={autoRotate ? '暂停旋转' : '自动缓慢旋转'}
             className={`p-1.5 rounded text-xs transition-colors ${
-              autoRotate ? 'text-[#20cfff] bg-[#20cfff]/20' : 'text-[#8996b8] hover:text-[#eef4ff]'
+              autoRotate ? 'text-accent bg-[#20cfff]/20' : 'text-ink-muted hover:text-ink'
             }`}
           >
             {autoRotate ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -1628,7 +1628,7 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
             id="reset-view-btn"
             onClick={resetView}
             title="重置为正面标准解剖图"
-            className="p-1.5 rounded text-xs text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347] transition-colors"
+            className="p-1.5 rounded text-xs text-ink-muted hover:text-ink hover:bg-[#152347] transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
@@ -1679,11 +1679,14 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
                   ref={(el) => { pinPillElementsRef.current[seg.id] = el; }}
                   onClick={() => handleSelectSegment(seg.id)}
                   title={`${seg.name} · ${seg.latinName}`}
-                  className={`group absolute left-0 top-0 flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold whitespace-nowrap border backdrop-blur-sm pointer-events-auto transition-shadow duration-150 ${
+                  className={`group absolute left-0 top-0 flex items-center gap-1 px-2 py-0.5 rounded-full text-[length:var(--fs-11)] font-semibold whitespace-nowrap border backdrop-blur-sm pointer-events-auto transition-shadow duration-150 ${
                     isActive ? 'ring-2 ring-white/50' : 'hover:brightness-125'
                   }`}
                   style={{
-                    color: isActive ? onColor : seg.hexColor,
+                    // 未激活时不能直接用 seg.hexColor：肛管 #991b1b / 阑尾 #d90429 /
+                    // 直肠 #e11d48 三个深红压在 rgba(9,17,39,.88) 上只有 2.2–4.0:1，
+                    // 实测不可读。glowHex 本就是同色系的亮变体，用它可达 4.9–5.1:1。
+                    color: isActive ? onColor : seg.glowHex,
                     background: isActive ? seg.hexColor : 'rgba(9,17,39,0.88)',
                     borderColor: isActive ? seg.hexColor : `${seg.hexColor}80`,
                     boxShadow: isActive ? `0 0 14px ${seg.hexColor}99` : '0 2px 10px rgba(0,0,0,0.4)'
@@ -1704,9 +1707,9 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
       {/* Floating Hover Indicator on 3D Canvas */}
       {hoveredSegment && (
         <div 
-          className="absolute bottom-16 left-1/2 -translate-x-1/2 pointer-events-none z-30 px-3 py-1 rounded-full bg-[#091127]/95 border border-[#20cfff] text-xs text-[#eef4ff] shadow-2xl backdrop-blur-md flex items-center gap-2"
+          className="absolute bottom-16 left-1/2 -translate-x-1/2 pointer-events-none z-30 px-3 py-1 rounded-full bg-[#091127]/95 border border-[#20cfff] text-xs text-ink shadow-2xl backdrop-blur-md flex items-center gap-2"
         >
-          <Crosshair className="w-3.5 h-3.5 text-[#20cfff]" />
+          <Crosshair className="w-3.5 h-3.5 text-accent" />
           <span>点击着色: <strong>{hoveredSegment.name}</strong></span>
         </div>
       )}
@@ -1716,10 +1719,10 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
         <div 
           id="segment-anatomy-card"
           ref={anatomyCardRef}
-          className="absolute top-14 right-3 z-20 w-84 max-w-[calc(100%-24px)] max-h-[calc(100%-165px)] overflow-y-auto rounded-xl bg-[#091127]/95 border border-[#2b4170] shadow-2xl backdrop-blur-md p-3.5 text-xs animate-in fade-in duration-200"
+          className="absolute top-14 right-3 z-20 w-84 max-w-[calc(100%-24px)] max-h-[calc(100%-165px)] overflow-y-auto rounded-xl bg-[#091127]/95 border border-line shadow-2xl backdrop-blur-md p-3.5 text-xs animate-in fade-in duration-200"
         >
           {/* Card Header */}
-          <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#1e2f57]">
+          <div className="flex items-center justify-between pb-2 mb-2 border-b border-line-2">
             <div className="flex items-center gap-2">
               {activeSegmentConfig ? (
                 <span 
@@ -1733,10 +1736,10 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
                 <span className="w-3.5 h-3.5 rounded-full bg-[#20cfff] shadow-[0_0_8px_#20cfff]" />
               )}
               <div>
-                <h4 className="font-bold text-[#eef4ff] text-sm flex items-center gap-1.5">
+                <h4 className="font-bold text-ink text-sm flex items-center gap-1.5">
                   {activeSegmentConfig ? activeSegmentConfig.name : '全结肠多段病理全景'}
                   {activeSegmentConfig && (
-                    <span className="text-[10px] text-[#8996b8] font-normal italic">
+                    <span className="text-[length:var(--fs-10)] text-ink-muted font-normal italic">
                       {activeSegmentConfig.latinName}
                     </span>
                   )}
@@ -1745,21 +1748,21 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
             </div>
 
             <div className="flex items-center gap-1.5">
-              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+              <span className={`px-2 py-0.5 rounded text-[length:var(--fs-10)] font-bold ${
                 patientNote.tagColor === 'red' 
-                  ? 'bg-[#ff536c]/20 text-[#ff536c] border border-[#ff536c]/40' 
+                  ? 'bg-[#ff536c]/20 text-danger border border-[#ff536c]/40' 
                   : patientNote.tagColor === 'amber'
                   ? 'bg-[#fbbf24]/20 text-[#fbbf24] border border-[#fbbf24]/40'
                   : patientNote.tagColor === 'emerald'
-                  ? 'bg-[#23e6b1]/20 text-[#23e6b1] border border-[#23e6b1]/40'
-                  : 'bg-[#20cfff]/20 text-[#20cfff] border border-[#20cfff]/40'
+                  ? 'bg-[#23e6b1]/20 text-ok border border-[#23e6b1]/40'
+                  : 'bg-[#20cfff]/20 text-accent border border-[#20cfff]/40'
               }`}>
                 {patientNote.statusTag}
               </span>
 
               <button
                 onClick={() => setShowAnatomyCard(false)}
-                className="text-[#8996b8] hover:text-[#eef4ff] p-1 rounded hover:bg-[#152347]"
+                className="text-ink-muted hover:text-ink p-1 rounded hover:bg-[#152347]"
                 title="关闭说明卡"
               >
                 <X className="w-3.5 h-3.5" />
@@ -1768,20 +1771,20 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
           </div>
 
           {/* Card Body: Dynamic patient-tailored clinical explanation */}
-          <div className="space-y-2.5 text-[11px]">
+          <div className="space-y-2.5 text-[length:var(--fs-11)]">
             {/* Patient Context Banner */}
             {patient && (
-              <div className="p-2 rounded bg-[#0e1935] border border-[#2b4170]/60 flex items-center justify-between">
+              <div className="p-2 rounded bg-[#0e1935] border border-line/60 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-[#8996b8]">当前受体病例:</span>
-                  <div className="font-bold text-[#eef4ff] text-xs flex items-center gap-1.5">
+                  <span className="text-[length:var(--fs-10)] text-ink-muted">当前受体病例:</span>
+                  <div className="font-bold text-ink text-xs flex items-center gap-1.5">
                     {patient.name}
-                    <span className="text-[10px] font-normal text-[#20cfff]">
+                    <span className="text-[length:var(--fs-10)] font-normal text-accent">
                       ({patient.primaryDiagnosis.split('(')[0].trim()})
                     </span>
                   </div>
                 </div>
-                <span className="text-[10px] text-[#8996b8] bg-[#152347] px-1.5 py-0.5 rounded">
+                <span className="text-[length:var(--fs-10)] text-ink-muted bg-[#152347] px-1.5 py-0.5 rounded">
                   {patient.currentPhase}
                 </span>
               </div>
@@ -1795,12 +1798,12 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
                 : 'bg-[#0c2019] border-[#23e6b1]/40'
             }`}>
               <span className={`font-semibold flex items-center gap-1 ${
-                currentMode === 'dysbiosis' ? 'text-[#ff536c]' : 'text-[#23e6b1]'
+                currentMode === 'dysbiosis' ? 'text-danger' : 'text-ok'
               }`}>
                 <Eye className="w-3 h-3" />
                 {currentMode === 'dysbiosis' ? '呈现：治疗前微生态失衡态' : '呈现：FMT 后微生态重构稳态'}
               </span>
-              <span className="text-[10px] text-[#8996b8] font-mono">
+              <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">
                 {currentMode === 'dysbiosis'
                   ? (reconStats ? `基线 ${reconStats.baseline.date}` : '基线')
                   : (reconStats ? `${reconStats.point.date}` : '随访')}
@@ -1810,10 +1813,10 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
             {/* 重构态实测：用随访末段的真实指标，替代原先写死的展示值 */}
             {currentMode === 'reconstruction' && reconStats && (
               <div className="p-2.5 rounded bg-[#0c2019] border border-[#23e6b1]/40 text-[#bff3e2]">
-                <span className="text-[10px] font-bold block mb-1 text-[#23e6b1]">
+                <span className="text-[length:var(--fs-10)] font-bold block mb-1 text-ok">
                   重构稳态实测 ({reconStats.point.label}):
                 </span>
-                <p className="leading-relaxed text-[11px] text-[#eef4ff]">
+                <p className="leading-relaxed text-[length:var(--fs-11)] text-ink">
                   供体菌定植率 {reconStats.engraftment}%，Shannon 多样性 {reconStats.shannon.toFixed(2)}
                   （基线 {reconStats.baseline.shannonDiversity.toFixed(2)}），粪便钙卫蛋白 {reconStats.fecalCalprotectin} μg/g
                   （基线 {reconStats.baseline.fecalCalprotectin} μg/g），SCFA 合成 {reconStats.scfa}/100，
@@ -1826,38 +1829,38 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
             <div className={`p-2.5 rounded border ${
               patientNote.isLesionZone 
                 ? 'bg-[#210e19] border-[#ff536c]/40 text-[#ffcad4]'
-                : 'bg-[#0f1d3a] border-[#20cfff]/40 text-[#cad5e8]'
+                : 'bg-[#0f1d3a] border-[#20cfff]/40 text-ink-2'
             }`}>
-              <span className={`text-[10px] font-bold block mb-1 flex items-center gap-1 ${
-                patientNote.isLesionZone ? 'text-[#ff536c]' : 'text-[#20cfff]'
+              <span className={`text-[length:var(--fs-10)] font-bold block mb-1 flex items-center gap-1 ${
+                patientNote.isLesionZone ? 'text-danger' : 'text-accent'
               }`}>
                 {patientNote.isLesionZone ? <AlertTriangle className="w-3 h-3" /> : <Target className="w-3 h-3" />}
                 {currentMode === 'dysbiosis' ? '针对当前受体的病理与浸润评估:' : '基线病理与浸润评估（重构前对照）:'}
               </span>
-              <p className="text-[#eef4ff] leading-relaxed text-[11px]">
+              <p className="text-ink leading-relaxed text-[length:var(--fs-11)]">
                 {patientNote.clinicalNote}
               </p>
             </div>
 
             {/* FMT Targeted Delivery Note */}
-            <div className="p-2 rounded bg-[#0b162f] border border-[#2b4170]/50">
-              <span className="text-[10px] font-semibold text-[#23e6b1] block mb-0.5 flex items-center gap-1">
+            <div className="p-2 rounded bg-[#0b162f] border border-line/50">
+              <span className="text-[length:var(--fs-10)] font-semibold text-ok block mb-0.5 flex items-center gap-1">
                 <Sparkles className="w-3 h-3" /> FMT 临床靶向与操作建议:
               </span>
-              <p className="text-[#cad5e8] leading-relaxed text-[11px]">
+              <p className="text-ink-2 leading-relaxed text-[length:var(--fs-11)]">
                 {patientNote.fmtDeliveryTarget}
               </p>
             </div>
 
             {/* Universal Anatomical & Microbial Baseline */}
             {activeSegmentConfig && (
-              <div className="pt-1.5 border-t border-[#1e2f57]/80 text-[#8996b8] space-y-1">
-                <p className="text-[10px] leading-relaxed">
-                  <strong className="text-[#cad5e8]">解剖特征: </strong>
+              <div className="pt-1.5 border-t border-line-2/80 text-ink-muted space-y-1">
+                <p className="text-[length:var(--fs-10)] leading-relaxed">
+                  <strong className="text-ink-2">解剖特征: </strong>
                   {activeSegmentConfig.anatomyDesc}
                 </p>
-                <p className="text-[10px] leading-relaxed">
-                  <strong className="text-[#20cfff]">微生态基准: </strong>
+                <p className="text-[length:var(--fs-10)] leading-relaxed">
+                  <strong className="text-accent">微生态基准: </strong>
                   {activeSegmentConfig.microbiomeDesc}
                 </p>
               </div>
@@ -1870,7 +1873,7 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
       <div 
         id="colon-segment-tabs-bar"
         ref={legendBarRef}
-        className="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-[#091127]/95 border border-[#2b4170]/80 backdrop-blur-md shadow-2xl max-w-[calc(100%-240px)]"
+        className="absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-[#091127]/95 border border-line/80 backdrop-blur-md shadow-2xl max-w-[calc(100%-240px)]"
       >
         {/* All Panorama Button */}
         <button
@@ -1878,8 +1881,8 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
           onClick={() => handleSelectSegment('all')}
           className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
             activeSegmentId === 'all'
-              ? 'bg-gradient-to-r from-[#20cfff] to-[#3a86ff] text-[#090d18] font-bold shadow-[0_0_12px_rgba(32,207,255,0.4)] scale-105'
-              : 'text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347]'
+              ? 'bg-gradient-to-r from-[#20cfff] to-[#3a86ff] text-on-bright font-bold shadow-[0_0_12px_rgba(32,207,255,0.4)] scale-105'
+              : 'text-ink-muted hover:text-ink hover:bg-[#152347]'
           }`}
         >
           <Sparkles className="w-3.5 h-3.5" />
@@ -1898,10 +1901,13 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
               onClick={() => handleSelectSegment(seg.id)}
               className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
                 isActive
-                  ? 'text-[#090d18] font-bold shadow-lg scale-105 ring-1 ring-white/50'
-                  : 'text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347]'
+                  ? 'font-bold shadow-lg scale-105 ring-1 ring-white/50'
+                  : 'text-ink-muted hover:text-ink hover:bg-[#152347]'
               }`}
               style={{
+                // 激活态文字色由部位色反推，不能用固定的深色：底色是部位色本身，
+                // 肛管 #991b1b 这类深红配 #090d18 只有 2.3:1，等于看不见。
+                color: isActive ? readableOn(seg.hexColor) : undefined,
                 backgroundColor: isActive ? seg.hexColor : undefined,
                 boxShadow: isActive ? `0 0 16px ${seg.hexColor}cc` : undefined,
               }}
@@ -1919,17 +1925,17 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
         })}
 
         <div className="h-4 w-[1px] bg-[#1e2f57]"></div>
-        <span className="px-1.5 text-[10px] text-[#8996b8] hidden lg:inline">
+        <span className="px-1.5 text-[length:var(--fs-10)] text-ink-muted hidden lg:inline">
           点击标签为对应部位着色
         </span>
       </div>
 
       {/* Bottom Right: Collapsible Live Microbiome Digital Twin HUD Stats */}
-      <div id="gut-hud-stats" className="absolute bottom-3 right-3 z-10 rounded-lg bg-[#091127]/95 border border-[#2b4170]/70 backdrop-blur-md text-xs shadow-2xl pointer-events-auto transition-all">
+      <div id="gut-hud-stats" className="absolute bottom-3 right-3 z-10 rounded-lg bg-[#091127]/95 border border-line/70 backdrop-blur-md text-xs shadow-2xl pointer-events-auto transition-all">
         {isHudCollapsed ? (
           <button
             onClick={() => setIsHudCollapsed(false)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-[#20cfff] hover:text-[#eef4ff] font-medium"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-accent hover:text-ink font-medium"
           >
             <Activity className="w-3.5 h-3.5" />
             <span>实时生理参数</span>
@@ -1937,27 +1943,27 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
           </button>
         ) : (
           <div className="p-3 min-w-[210px]">
-            <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-[#1e2f57]">
+            <div className="flex items-center justify-between pb-1.5 mb-2 border-b border-line-2">
               <div>
-                <span className="font-semibold text-[#eef4ff] flex items-center gap-1.5 text-xs">
-                  <Activity className="w-3.5 h-3.5 text-[#20cfff]" />
+                <span className="font-semibold text-ink flex items-center gap-1.5 text-xs">
+                  <Activity className="w-3.5 h-3.5 text-accent" />
                   微生态孪生参数
                 </span>
                 {patient && (
-                  <span className="text-[10px] text-[#8996b8] block">
-                    受体: <span className="text-[#eef4ff] font-medium">{patient.name}</span> ({patient.primaryDiagnosis.split(' ')[0]})
+                  <span className="text-[length:var(--fs-10)] text-ink-muted block">
+                    受体: <span className="text-ink font-medium">{patient.name}</span> ({patient.primaryDiagnosis.split(' ')[0]})
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-1.5">
-                <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                  currentMode === 'dysbiosis' ? 'bg-[#ff536c]/20 text-[#ff536c]' : 'bg-[#23e6b1]/20 text-[#23e6b1]'
+                <span className={`px-1.5 py-0.5 rounded text-[length:var(--fs-10)] font-bold ${
+                  currentMode === 'dysbiosis' ? 'bg-[#ff536c]/20 text-danger' : 'bg-[#23e6b1]/20 text-ok'
                 }`}>
                   {currentMode === 'dysbiosis' ? '失衡态' : '重构稳态'}
                 </span>
                 <button
                   onClick={() => setIsHudCollapsed(true)}
-                  className="text-[#8996b8] hover:text-[#eef4ff] p-0.5 rounded hover:bg-[#152347]"
+                  className="text-ink-muted hover:text-ink p-0.5 rounded hover:bg-[#152347]"
                   title="收起参数面板"
                 >
                   <ChevronDown className="w-3.5 h-3.5" />
@@ -1965,49 +1971,49 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
               </div>
             </div>
 
-            <div className="space-y-1.5 text-[11px]">
-              <div className="flex justify-between items-center text-[#8996b8]">
+            <div className="space-y-1.5 text-[length:var(--fs-11)]">
+              <div className="flex justify-between items-center text-ink-muted">
                 <span>多样性指数 (Shannon):</span>
-                <span className="font-mono font-bold text-[#eef4ff]">
+                <span className="font-mono font-bold text-ink">
                   {currentMode === 'dysbiosis'
                     ? `${(patient?.microbiomeSummary?.shannonDiversity ?? 2.15).toFixed(2)} ↓`
                     : reconStats ? `${reconStats.shannon.toFixed(2)} ↑` : '—'}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-[#8996b8]">
+              <div className="flex justify-between items-center text-ink-muted">
                 <span>失衡度评分 (Dysbiosis):</span>
-                <span className={`font-mono font-bold ${currentMode === 'dysbiosis' ? 'text-[#ff536c]' : 'text-[#23e6b1]'}`}>
+                <span className={`font-mono font-bold ${currentMode === 'dysbiosis' ? 'text-danger' : 'text-ok'}`}>
                   {currentMode === 'dysbiosis'
                     ? `${patient?.adaptability?.dysbiosisScore ?? 72} / 100`
                     : reconStats ? `${reconStats.dysbiosisScore} / 100` : '—'}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-[#8996b8]">
+              <div className="flex justify-between items-center text-ink-muted">
                 <span>供体菌定植率 (Engraftment):</span>
-                <span className="font-mono font-bold text-[#20cfff]">
+                <span className="font-mono font-bold text-accent">
                   {currentMode === 'dysbiosis'
                     ? (patient?.currentPhase === '随访监测期' ? '78.0%' : '0.0%')
                     : reconStats ? `${reconStats.engraftment}%` : '—'}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-[#8996b8]">
+              <div className="flex justify-between items-center text-ink-muted">
                 <span>黏膜炎症负荷 (FC):</span>
-                <span className={`font-mono font-bold ${currentMode === 'dysbiosis' ? 'text-[#ff536c]' : 'text-[#23e6b1]'}`}>
+                <span className={`font-mono font-bold ${currentMode === 'dysbiosis' ? 'text-danger' : 'text-ok'}`}>
                   {currentMode === 'dysbiosis'
                     ? `${patient?.clinicalMarkers?.fecalCalprotectin?.value ?? 632} μg/g`
                     : reconStats ? `${reconStats.fecalCalprotectin} μg/g` : '—'}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-[#8996b8]">
+              <div className="flex justify-between items-center text-ink-muted">
                 <span>SCFA 合成能力:</span>
-                <span className={`font-mono font-bold ${currentMode === 'dysbiosis' ? 'text-[#ffb84d]' : 'text-[#23e6b1]'}`}>
+                <span className={`font-mono font-bold ${currentMode === 'dysbiosis' ? 'text-warn' : 'text-ok'}`}>
                   {currentMode === 'dysbiosis'
                     ? (reconStats ? `${reconStats.baseline.scfaSynthesisScore} / 100` : '—')
                     : reconStats ? `${reconStats.scfa} / 100` : '—'}
                 </span>
               </div>
               {reconStats && (
-                <div className="pt-1 mt-0.5 border-t border-[#1e2f57]/70 flex justify-between items-center text-[10px] text-[#8996b8]">
+                <div className="pt-1 mt-0.5 border-t border-line-2/70 flex justify-between items-center text-[length:var(--fs-10)] text-ink-muted">
                   <span>{currentMode === 'dysbiosis' ? '基线采集' : '随访节点'}</span>
                   <span className="font-mono">
                     {currentMode === 'dysbiosis' ? reconStats.baseline.date : `${reconStats.point.date} · ${reconStats.point.label}`}
@@ -2017,7 +2023,7 @@ export const ThreeGutDigitalTwin: React.FC<ThreeGutDigitalTwinProps> = ({
             </div>
 
             {/* Microbe Legend */}
-            <div className="mt-2.5 pt-2 border-t border-[#1e2f57]/80 flex items-center justify-between text-[10px] text-[#8996b8]">
+            <div className="mt-2.5 pt-2 border-t border-line-2/80 flex items-center justify-between text-[length:var(--fs-10)] text-ink-muted">
               <span className="flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-[#20cfff]"></span> 有益菌
               </span>

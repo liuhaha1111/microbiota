@@ -102,10 +102,10 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
               <span
                 className={`px-2.5 py-0.5 rounded-md border font-semibold text-xs flex items-center gap-1 ${
                   clinicalResponse.tone === 'ok'
-                    ? 'bg-[#23e6b1]/15 text-[#23e6b1] border-[#23e6b1]/30'
+                    ? 'bg-[#23e6b1]/15 text-ok border-[#23e6b1]/30'
                     : clinicalResponse.tone === 'warn'
-                    ? 'bg-[#ffb84d]/15 text-[#ffb84d] border-[#ffb84d]/30'
-                    : 'bg-[#ff536c]/15 text-[#ff536c] border-[#ff536c]/30'
+                    ? 'bg-[#ffb84d]/15 text-warn border-[#ffb84d]/30'
+                    : 'bg-[#ff536c]/15 text-danger border-[#ff536c]/30'
                 }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" /> {clinicalResponse.label}
@@ -155,25 +155,25 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
                   isSelected
                     ? 'bg-[#152347] border-[#20cfff] shadow-[0_0_12px_rgba(32,207,255,0.3)]'
                     : isPast
-                    ? 'bg-[#0c1429] border-[#2b4170]/70 hover:bg-[#101a33]'
-                    : 'bg-[#080d1c] border-[#1e2f57]/40 opacity-70 hover:opacity-100'
+                    ? 'bg-[#0c1429] border-line/70 hover:bg-[#101a33]'
+                    : 'bg-[#080d1c] border-line-2/40 opacity-70 hover:opacity-100'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-bold text-[#eef4ff] text-xs">{pt.label}</span>
+                    <span className="font-bold text-ink text-xs">{pt.label}</span>
                     <span
                       className={`w-2 h-2 rounded-full ${
                         isSelected ? 'bg-[#20cfff]' : isPast ? 'bg-[#23e6b1]' : 'bg-[#8996b8]'
                       }`}
                     />
                   </div>
-                  <span className="text-[10px] text-[#8996b8] font-mono">{pt.date}</span>
+                  <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">{pt.date}</span>
                 </div>
 
-                <div className="mt-2 pt-1.5 border-t border-[#1e2f57]/80 flex justify-between items-baseline text-[10px]">
-                  <span className="text-[#8996b8]">定植率:</span>
-                  <span className="font-mono font-bold text-[#20cfff]">{pt.donorEngraftmentRate}%</span>
+                <div className="mt-2 pt-1.5 border-t border-line-2/80 flex justify-between items-baseline text-[length:var(--fs-10)]">
+                  <span className="text-ink-muted">定植率:</span>
+                  <span className="font-mono font-bold text-accent">{pt.donorEngraftmentRate}%</span>
                 </div>
               </div>
             );
@@ -188,17 +188,17 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
         icon={Activity}
         hint="菌群多样性 · 供体菌定植率 · 炎症负荷 · 临床症状评分"
         right={
-          <span className="text-[10px] text-[#8996b8] font-mono">
+          <span className="text-[length:var(--fs-10)] text-ink-muted font-mono">
             对比基线 {baselinePoint.label}
           </span>
         }
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* 轨道一：Shannon Diversity */}
-          <div className="p-3.5 rounded-xl bg-[#0c1429] border border-[#2b4170]/60">
-            <div className="flex justify-between items-center text-[#8996b8] text-xs mb-1">
+          <div className="p-3.5 rounded-xl bg-[#0c1429] border border-line/60">
+            <div className="flex justify-between items-center text-ink-muted text-xs mb-1">
               <span>轨道一: 菌群多样性 (Shannon)</span>
-              <span className="text-[10px] text-[#23e6b1] flex items-center gap-0.5">
+              <span className="text-[length:var(--fs-10)] text-ok flex items-center gap-0.5">
                 <TrendingUp className="w-3 h-3" /> +
                 {Math.max(
                   0,
@@ -212,10 +212,10 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
               </span>
             </div>
             <div className="flex items-baseline justify-between mt-1">
-              <span className="text-2xl font-bold font-mono text-[#eef4ff]">
+              <span className="text-2xl font-bold font-mono text-ink">
                 {activePoint.shannonDiversity.toFixed(2)}
               </span>
-              <span className="text-xs text-[#8996b8]">
+              <span className="text-xs text-ink-muted">
                 基线: {baselinePoint.shannonDiversity.toFixed(2)} ➔ 目标: 4.5+
               </span>
             </div>
@@ -228,18 +228,18 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
           </div>
 
           {/* 轨道二：Donor Engraftment Rate */}
-          <div className="p-3.5 rounded-xl bg-[#0c1429] border border-[#2b4170]/60">
-            <div className="flex justify-between items-center text-[#8996b8] text-xs mb-1">
+          <div className="p-3.5 rounded-xl bg-[#0c1429] border border-line/60">
+            <div className="flex justify-between items-center text-ink-muted text-xs mb-1">
               <span>轨道二: 供体菌定植率 (Engraftment)</span>
-              <span className="text-[10px] text-[#20cfff]">
+              <span className="text-[length:var(--fs-10)] text-accent">
                 供体 {patient.recommendedDonorCode || 'D-0102'}
               </span>
             </div>
             <div className="flex items-baseline justify-between mt-1">
-              <span className="text-2xl font-bold font-mono text-[#20cfff]">
+              <span className="text-2xl font-bold font-mono text-accent">
                 {activePoint.donorEngraftmentRate}%
               </span>
-              <span className="text-xs text-[#23e6b1]">
+              <span className="text-xs text-ok">
                 {activePoint.donorEngraftmentRate > 60
                   ? '稳态高效定植'
                   : activePoint.donorEngraftmentRate > 20
@@ -256,10 +256,10 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
           </div>
 
           {/* 轨道三：Fecal Calprotectin */}
-          <div className="p-3.5 rounded-xl bg-[#0c1429] border border-[#2b4170]/60">
-            <div className="flex justify-between items-center text-[#8996b8] text-xs mb-1">
+          <div className="p-3.5 rounded-xl bg-[#0c1429] border border-line/60">
+            <div className="flex justify-between items-center text-ink-muted text-xs mb-1">
               <span>轨道三: 粪便钙卫蛋白 (FC)</span>
-              <span className="text-[10px] text-[#23e6b1] flex items-center gap-0.5">
+              <span className="text-[length:var(--fs-10)] text-ok flex items-center gap-0.5">
                 <TrendingDown className="w-3 h-3" />{' '}
                 {baselinePoint.fecalCalprotectin > activePoint.fecalCalprotectin
                   ? `-${Math.round(
@@ -271,11 +271,11 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
               </span>
             </div>
             <div className="flex items-baseline justify-between mt-1">
-              <span className="text-2xl font-bold font-mono text-[#ffb84d]">
+              <span className="text-2xl font-bold font-mono text-warn">
                 {activePoint.fecalCalprotectin}{' '}
-                <span className="text-xs text-[#8996b8] font-normal">μg/g</span>
+                <span className="text-xs text-ink-muted font-normal">μg/g</span>
               </span>
-              <span className="text-xs text-[#8996b8]">基线: {baselinePoint.fecalCalprotectin} μg/g</span>
+              <span className="text-xs text-ink-muted">基线: {baselinePoint.fecalCalprotectin} μg/g</span>
             </div>
             <div className="w-full h-1.5 rounded-full bg-[#0c1429] mt-2 overflow-hidden">
               <div
@@ -293,10 +293,10 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
           </div>
 
           {/* 轨道四：Clinical Score */}
-          <div className="p-3.5 rounded-xl bg-[#0c1429] border border-[#2b4170]/60">
-            <div className="flex justify-between items-center text-[#8996b8] text-xs mb-1">
+          <div className="p-3.5 rounded-xl bg-[#0c1429] border border-line/60">
+            <div className="flex justify-between items-center text-ink-muted text-xs mb-1">
               <span>轨道四: 临床症状评分 (Mayo/CDAI)</span>
-              <span className="text-[10px] text-[#23e6b1]">
+              <span className="text-[length:var(--fs-10)] text-ok">
                 {activePoint.mayoScore <= 2
                   ? '深度临床缓解'
                   : activePoint.mayoScore <= 5
@@ -305,10 +305,10 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
               </span>
             </div>
             <div className="flex items-baseline justify-between mt-1">
-              <span className="text-2xl font-bold font-mono text-[#23e6b1]">
-                {activePoint.mayoScore} <span className="text-xs text-[#8996b8] font-normal">/ 12分</span>
+              <span className="text-2xl font-bold font-mono text-ok">
+                {activePoint.mayoScore} <span className="text-xs text-ink-muted font-normal">/ 12分</span>
               </span>
-              <span className="text-xs text-[#23e6b1]">基线: {baselinePoint.mayoScore} 分</span>
+              <span className="text-xs text-ok">基线: {baselinePoint.mayoScore} 分</span>
             </div>
             <div className="w-full h-1.5 rounded-full bg-[#0c1429] mt-2 overflow-hidden">
               <div
@@ -330,22 +330,22 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
         <div className="space-y-3">
           {stageRows.map(({ pt, raw, share }, idx) => (
             <div key={idx} className="space-y-1">
-              <div className="flex justify-between items-center text-[11px] text-[#8996b8]">
+              <div className="flex justify-between items-center text-[length:var(--fs-11)] text-ink-muted">
                 <span
                   className={`font-medium ${
-                    idx === selectedStageIndex ? 'text-[#20cfff] font-bold' : 'text-[#eef4ff]'
+                    idx === selectedStageIndex ? 'text-accent font-bold' : 'text-ink'
                   }`}
                 >
                   {pt.label}
                 </span>
-                <span className="font-mono text-[10px]">
+                <span className="font-mono text-[length:var(--fs-10)]">
                   有益菌 {raw.beneficial}% · 定植 {raw.engraftment}% · 缓解 {raw.relief}% · FC{' '}
                   {pt.fecalCalprotectin} μg/g
                 </span>
               </div>
 
               {/* Multi-segment stacked bar */}
-              <div className="w-full h-3 rounded bg-[#0c1429] flex overflow-hidden border border-[#1e2f57]/50">
+              <div className="w-full h-3 rounded bg-[#0c1429] flex overflow-hidden border border-line-2/50">
                 <div
                   className="h-full bg-[#20cfff] transition-all"
                   style={{ width: `${share.beneficial}%` }}
@@ -371,7 +371,7 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
           ))}
         </div>
 
-        <div className="mt-4 pt-2.5 border-t border-[#1e2f57] flex flex-wrap items-center gap-x-6 gap-y-2 text-[10px] text-[#8996b8]">
+        <div className="mt-4 pt-2.5 border-t border-line-2 flex flex-wrap items-center gap-x-6 gap-y-2 text-[length:var(--fs-10)] text-ink-muted">
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded bg-[#20cfff]" /> 有益菌占比
           </span>
@@ -396,28 +396,28 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
         defaultOpen={false}
       >
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <div className="p-2.5 rounded bg-[#0c1429] border border-[#2b4170]/40 text-center">
-            <span className="text-[#8996b8] text-[10px] block">SCFA短链脂肪酸合成</span>
-            <span className="font-mono font-bold text-sm text-[#23e6b1] block my-1">+160%</span>
-            <span className="text-[10px] text-[#8996b8]">结肠上皮供能恢复</span>
+          <div className="p-2.5 rounded bg-[#0c1429] border border-line/40 text-center">
+            <span className="text-ink-muted text-[length:var(--fs-10)] block">SCFA短链脂肪酸合成</span>
+            <span className="font-mono font-bold text-sm text-ok block my-1">+160%</span>
+            <span className="text-[length:var(--fs-10)] text-ink-muted">结肠上皮供能恢复</span>
           </div>
 
-          <div className="p-2.5 rounded bg-[#0c1429] border border-[#2b4170]/40 text-center">
-            <span className="text-[#8996b8] text-[10px] block">次级胆汁酸生成</span>
-            <span className="font-mono font-bold text-sm text-[#23e6b1] block my-1">+138%</span>
-            <span className="text-[10px] text-[#8996b8]">定植抗力重建</span>
+          <div className="p-2.5 rounded bg-[#0c1429] border border-line/40 text-center">
+            <span className="text-ink-muted text-[length:var(--fs-10)] block">次级胆汁酸生成</span>
+            <span className="font-mono font-bold text-sm text-ok block my-1">+138%</span>
+            <span className="text-[length:var(--fs-10)] text-ink-muted">定植抗力重建</span>
           </div>
 
-          <div className="p-2.5 rounded bg-[#0c1429] border border-[#2b4170]/40 text-center">
-            <span className="text-[#8996b8] text-[10px] block">黏膜物理屏障</span>
-            <span className="font-mono font-bold text-sm text-[#23e6b1] block my-1">+114%</span>
-            <span className="text-[10px] text-[#8996b8]">Claudin-1紧密连接</span>
+          <div className="p-2.5 rounded bg-[#0c1429] border border-line/40 text-center">
+            <span className="text-ink-muted text-[length:var(--fs-10)] block">黏膜物理屏障</span>
+            <span className="font-mono font-bold text-sm text-ok block my-1">+114%</span>
+            <span className="text-[length:var(--fs-10)] text-ink-muted">Claudin-1紧密连接</span>
           </div>
 
           <div className="p-2.5 rounded bg-[#241121]/40 border border-[#ff536c]/40 text-center">
-            <span className="text-[#ff536c] text-[10px] block font-semibold">炎症相关LPS通路</span>
-            <span className="font-mono font-bold text-sm text-[#ff536c] block my-1">-72%</span>
-            <span className="text-[10px] text-[#ff536c]">内毒素负荷消退</span>
+            <span className="text-danger text-[length:var(--fs-10)] block font-semibold">炎症相关LPS通路</span>
+            <span className="font-mono font-bold text-sm text-danger block my-1">-72%</span>
+            <span className="text-[length:var(--fs-10)] text-danger">内毒素负荷消退</span>
           </div>
         </div>
       </CollapsibleSection>
@@ -430,8 +430,8 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
         hint="基于定植率、FC 变化与排便频率自动推演下一步干预路径"
         right={
           <span
-            className={`px-2 py-0.5 rounded font-bold text-[10px] ${
-              isSteadyState ? 'bg-[#23e6b1]/20 text-[#23e6b1]' : 'bg-[#ffb84d]/20 text-[#ffb84d]'
+            className={`px-2 py-0.5 rounded font-bold text-[length:var(--fs-10)] ${
+              isSteadyState ? 'bg-[#23e6b1]/20 text-ok' : 'bg-[#ffb84d]/20 text-warn'
             }`}
           >
             {isSteadyState ? '稳态达标' : '仍在疗程内'}
@@ -444,27 +444,27 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
             className={`p-3 rounded-lg border ${
               isSteadyState
                 ? 'bg-[#0c1e38] border-[#20cfff] shadow-[0_0_12px_rgba(32,207,255,0.2)]'
-                : 'bg-[#0c1429] border-[#2b4170]/40'
+                : 'bg-[#0c1429] border-line/40'
             }`}
           >
             <div
               className={`flex items-center justify-between font-bold text-xs mb-1 ${
-                isSteadyState ? 'text-[#20cfff]' : 'text-[#8996b8]'
+                isSteadyState ? 'text-accent' : 'text-ink-muted'
               }`}
             >
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className={`w-4 h-4 ${isSteadyState ? 'text-[#23e6b1]' : 'text-[#8996b8]'}`} />
+                <CheckCircle2 className={`w-4 h-4 ${isSteadyState ? 'text-ok' : 'text-ink-muted'}`} />
                 决策建议 A：维持定期随访与益生元巩固
               </span>
               <span
-                className={`text-[10px] px-1.5 py-0.2 rounded ${
-                  isSteadyState ? 'bg-[#20cfff]/20 text-[#20cfff]' : 'bg-[#152347] text-[#8996b8]'
+                className={`text-[length:var(--fs-10)] px-1.5 py-0.2 rounded ${
+                  isSteadyState ? 'bg-[#20cfff]/20 text-accent' : 'bg-[#152347] text-ink-muted'
                 }`}
               >
                 {isSteadyState ? '推荐' : '待达标后启用'}
               </span>
             </div>
-            <p className={`text-[11px] leading-relaxed ${isSteadyState ? 'text-[#eef4ff]' : 'text-[#8996b8]'}`}>
+            <p className={`text-[length:var(--fs-11)] leading-relaxed ${isSteadyState ? 'text-ink' : 'text-ink-muted'}`}>
               患者 {patient.name} 当前所选时段 ({activePoint.label})，定植率达到{' '}
               {activePoint.donorEngraftmentRate}%，FC 为 {activePoint.fecalCalprotectin} μg/g (基线{' '}
               {baselinePoint.fecalCalprotectin} μg/g)，多样性指数{' '}
@@ -476,23 +476,23 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
           </div>
 
           {/* Option 2: Booster FMT trigger rules */}
-          <div className="p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/40 opacity-80">
-            <div className="flex items-center justify-between text-[#8996b8] font-semibold text-[11px] mb-0.5">
+          <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40 opacity-80">
+            <div className="flex items-center justify-between text-ink-muted font-semibold text-[length:var(--fs-11)] mb-0.5">
               <span>决策触发 B：追加单剂强化 FMT 规则门槛</span>
-              <span className="text-[10px] text-[#8996b8]">未触发</span>
+              <span className="text-[length:var(--fs-10)] text-ink-muted">未触发</span>
             </div>
-            <p className="text-[10px] text-[#8996b8]">
+            <p className="text-[length:var(--fs-10)] text-ink-muted">
               触发条件：随访期定植率连续2次下降 &gt;15%，或 FC 再次反弹超过 250 μg/g。
             </p>
           </div>
 
           {/* Option 3: Non-microbial exploration */}
-          <div className="p-2.5 rounded-lg bg-[#0c1429] border border-[#2b4170]/40 opacity-80">
-            <div className="flex items-center justify-between text-[#8996b8] font-semibold text-[11px] mb-0.5">
+          <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40 opacity-80">
+            <div className="flex items-center justify-between text-ink-muted font-semibold text-[length:var(--fs-11)] mb-0.5">
               <span>决策提示 C：排查非菌群驱动因素</span>
-              <span className="text-[10px] text-[#8996b8]">未触发</span>
+              <span className="text-[length:var(--fs-10)] text-ink-muted">未触发</span>
             </div>
-            <p className="text-[10px] text-[#8996b8]">
+            <p className="text-[length:var(--fs-10)] text-ink-muted">
               若菌群重构达标但腹痛无缓解，提示评估肠易激内脏敏感或纤维狭窄等非微生态因素。
             </p>
           </div>
@@ -504,26 +504,26 @@ export const EfficacyReconstructionTracker: React.FC<EfficacyReconstructionTrack
         id="efficacy-safety"
         title="不良事件与患者耐受性记录 (Safety Log)"
         icon={ShieldCheck}
-        right={<span className="text-[#23e6b1] text-[10px] font-bold">无严重不良事件 (SAE: 0)</span>}
+        right={<span className="text-ok text-[length:var(--fs-10)] font-bold">无严重不良事件 (SAE: 0)</span>}
         defaultOpen={false}
       >
-        <div className="space-y-1.5 text-[11px]">
-          <div className="p-2 rounded bg-[#0c1429] border border-[#2b4170]/40 flex justify-between items-center">
+        <div className="space-y-1.5 text-[length:var(--fs-11)]">
+          <div className="p-2 rounded bg-[#0c1429] border border-line/40 flex justify-between items-center">
             <div>
-              <span className="font-medium text-[#eef4ff]">轻微腹胀 (排气增多)</span>
-              <span className="text-[10px] text-[#8996b8] block">FMT #1 次日出现，持续18小时自行消退</span>
+              <span className="font-medium text-ink">轻微腹胀 (排气增多)</span>
+              <span className="text-[length:var(--fs-10)] text-ink-muted block">FMT #1 次日出现，持续18小时自行消退</span>
             </div>
-            <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#23e6b1]/15 text-[#23e6b1]">
+            <span className="px-1.5 py-0.5 rounded text-[length:var(--fs-10)] bg-[#23e6b1]/15 text-ok">
               轻度 / 已缓解
             </span>
           </div>
 
-          <div className="p-2 rounded bg-[#0c1429] border border-[#2b4170]/40 flex justify-between items-center">
+          <div className="p-2 rounded bg-[#0c1429] border border-line/40 flex justify-between items-center">
             <div>
-              <span className="font-medium text-[#eef4ff]">一过性低热 (37.4°C)</span>
-              <span className="text-[10px] text-[#8996b8] block">多饮水后正常，血培养阴性</span>
+              <span className="font-medium text-ink">一过性低热 (37.4°C)</span>
+              <span className="text-[length:var(--fs-10)] text-ink-muted block">多饮水后正常，血培养阴性</span>
             </div>
-            <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#23e6b1]/15 text-[#23e6b1]">
+            <span className="px-1.5 py-0.5 rounded text-[length:var(--fs-10)] bg-[#23e6b1]/15 text-ok">
               轻度 / 已恢复
             </span>
           </div>

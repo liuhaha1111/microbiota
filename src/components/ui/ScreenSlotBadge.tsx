@@ -15,7 +15,7 @@ interface ScreenSlotBadgeProps {
 export const ScreenSlotBadge: React.FC<ScreenSlotBadgeProps> = ({ slot }) => (
   <span
     id={`screen-slot-badge-${slot}`}
-    className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#20cfff] text-[#090d18]"
+    className="px-2 py-0.5 rounded text-[length:var(--fs-10)] font-mono font-bold bg-[#20cfff] text-on-bright"
   >
     屏 {slot}
   </span>

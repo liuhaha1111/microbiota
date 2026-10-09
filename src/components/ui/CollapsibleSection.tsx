@@ -45,16 +45,16 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   return (
     <section
       id={id}
-      className={`rounded-xl bg-[#101a33] border border-[#2b4170]/60 shadow-lg scroll-mt-32 ${className}`}
+      className={`rounded-xl bg-[#101a33] border border-line/60 shadow-lg scroll-mt-32 ${className}`}
     >
-      <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-b border-[#1e2f57]">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-b border-line-2">
         <div className="flex items-center gap-2 min-w-0">
           {collapsible && (
             <button
               type="button"
               onClick={() => setOpen(v => !v)}
               aria-expanded={isOpen}
-              className="p-1 -ml-1 rounded text-[#8996b8] hover:text-[#eef4ff] hover:bg-[#152347] transition-all"
+              className="p-1 -ml-1 rounded text-ink-muted hover:text-ink hover:bg-[#152347] transition-all"
               title={isOpen ? '收起分节' : '展开分节'}
             >
               <ChevronDown
@@ -62,11 +62,11 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
               />
             </button>
           )}
-          <h3 className="text-xs font-semibold text-[#eef4ff] flex items-center gap-1.5 truncate">
-            {Icon && <Icon className="w-3.5 h-3.5 text-[#20cfff] shrink-0" />}
+          <h3 className="text-xs font-semibold text-ink flex items-center gap-1.5 truncate">
+            {Icon && <Icon className="w-3.5 h-3.5 text-accent shrink-0" />}
             {title}
           </h3>
-          {hint && <span className="text-[10px] text-[#8996b8] truncate">{hint}</span>}
+          {hint && <span className="text-[length:var(--fs-10)] text-ink-muted truncate">{hint}</span>}
         </div>
         {right && <div className="shrink-0">{right}</div>}
       </div>

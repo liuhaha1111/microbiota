@@ -344,7 +344,7 @@ export function scoreSingle(
 
 /** 相似度分档配色（沿用平台规范） */
 export function similarityTone(overall: number): { color: string; label: string } {
-  if (overall >= 80) return { color: '#20cfff', label: '高度相似' };
-  if (overall >= 60) return { color: '#397cff', label: '中度相似' };
-  return { color: '#8996b8', label: '低度相似' };
+  if (overall >= 80) return { color: 'var(--color-accent)', label: '高度相似' };
+  if (overall >= 60) return { color: 'var(--color-info)', label: '中度相似' };
+  return { color: 'var(--color-ink-muted)', label: '低度相似' };
 }
