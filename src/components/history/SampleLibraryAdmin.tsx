@@ -58,14 +58,14 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
             { label: '典型案例标记', value: typicalCount, tone: UI.purple },
             { label: '已屏蔽', value: blockedCount, tone: UI.red }
           ].map(item => (
-            <div key={item.label} className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50 text-center">
+            <div key={item.label} className="p-3.5 rounded-lg bg-surface-2 border border-line/50 text-center">
               <span className="text-[length:var(--fs-10)] text-ink-muted block">{item.label}</span>
               <span className="font-mono font-bold text-lg block mt-0.5" style={{ color: item.tone }}>{item.value}</span>
             </div>
           ))}
         </div>
 
-        <div className="mt-3 p-2.5 rounded-lg bg-[#0c1429] border border-line/50 text-[length:var(--fs-10)] text-ink-muted leading-relaxed space-y-1">
+        <div className="mt-3 p-3.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-10)] text-ink-muted leading-relaxed space-y-1">
           <p className="flex items-start gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-ok shrink-0 mt-0.5" />
             <span><strong className="text-ink">入库规则：</strong>只有完整走完 FMT 诊疗闭环（评估 → 菌群画像 → 供受体匹配 → 方案 → 执行 → 随访结局 → 不良事件）且数据完整度 = 100% 的病例方可入库；中途脱落、数据不全的病例禁止入库。</span>
@@ -85,7 +85,7 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
             return (
               <div
                 key={s.id}
-                className="p-3 rounded-lg bg-[#0c1429] border"
+                className="p-3 rounded-lg bg-surface-2 border"
                 style={{ borderColor: blocked ? 'rgba(255,83,108,0.45)' : 'rgba(43,65,112,0.55)' }}
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
@@ -113,8 +113,8 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
                       disabled={s.dataCompleteness < 100 && blocked}
                       className={`px-2 py-1 rounded text-[length:var(--fs-10)] font-semibold border transition-all flex items-center gap-1 ${
                         blocked
-                          ? 'bg-[#23e6b1]/15 text-ok border-[#23e6b1]/45 hover:bg-[#23e6b1]/25'
-                          : 'bg-[#0f1830] text-ink-muted border-line/60 hover:text-danger hover:border-[#ff536c]/45'
+                          ? 'bg-ok/15 text-ok border-ok/45 hover:bg-ok/25'
+                          : 'bg-surface-2 text-ink-muted border-line/60 hover:text-danger hover:border-danger/45'
                       } ${s.dataCompleteness < 100 && blocked ? 'opacity-40 cursor-not-allowed' : ''}`}
                       title={s.dataCompleteness < 100 ? '数据不全的病例禁止入库' : ''}
                     >
@@ -126,8 +126,8 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
                       onClick={() => onChange(s.id, { typicalCase: !e.typical })}
                       className={`px-2 py-1 rounded text-[length:var(--fs-10)] font-semibold border transition-all flex items-center gap-1 ${
                         e.typical
-                          ? 'bg-[#20cfff]/15 text-accent border-[#20cfff]/45'
-                          : 'bg-[#0f1830] text-ink-muted border-line/60 hover:text-accent'
+                          ? 'bg-accent/15 text-accent border-accent/45'
+                          : 'bg-surface-2 text-ink-muted border-line/60 hover:text-accent'
                       }`}
                     >
                       <Star className="w-3 h-3" fill={e.typical ? UI.cyan : 'none'} />
@@ -138,8 +138,8 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
                       onClick={() => onChange(s.id, { allowClinicalReference: !e.allowRef })}
                       className={`px-2 py-1 rounded text-[length:var(--fs-10)] font-semibold border transition-all flex items-center gap-1 ${
                         e.allowRef
-                          ? 'bg-[#23e6b1]/15 text-ok border-[#23e6b1]/45'
-                          : 'bg-[#ff536c]/15 text-danger border-[#ff536c]/45'
+                          ? 'bg-ok/15 text-ok border-ok/45'
+                          : 'bg-danger/15 text-danger border-danger/45'
                       }`}
                     >
                       {e.allowRef ? '允许临床参考' : '仅作风险借鉴'}
@@ -161,7 +161,7 @@ export const SampleLibraryAdmin: React.FC<SampleLibraryAdminProps> = ({ samples,
                           })
                         }
                         className={`px-1.5 py-0.5 rounded text-[length:var(--fs-9)] border transition-all ${
-                          on ? 'text-violet border-[#815cff]/60 bg-[#815cff]/12' : 'text-ink-muted border-line/50 hover:text-ink'
+                          on ? 'text-violet border-violet/60 bg-violet/12' : 'text-ink-muted border-line/50 hover:text-ink'
                         }`}
                       >
                         {on ? '✓ ' : '+ '}

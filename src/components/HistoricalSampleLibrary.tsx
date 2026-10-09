@@ -264,11 +264,11 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
         badges={
           <>
             <ScreenSlotBadge slot={5} />
-            <span className="text-xs px-2 py-0.5 rounded bg-[#151f3d] text-ink-muted border border-line/40 font-mono">
+            <span className="text-xs px-2 py-0.5 rounded bg-tint-info text-ink-muted border border-line/40 font-mono">
               {patient.gender} · {patient.age}岁 · {patientVector.diagnosisCategory}
             </span>
             {markedRefId && (
-              <span className="text-xs px-2 py-0.5 rounded font-medium bg-[#23e6b1]/15 text-ok border border-[#23e6b1]/40 font-mono flex items-center gap-1">
+              <span className="text-xs px-2 py-0.5 rounded font-medium bg-ok/15 text-ok border border-ok/40 font-mono flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3" /> 参考标记 {markedRefId}
               </span>
             )}
@@ -314,7 +314,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                     key={sample.id}
                     onClick={() => setSelectedId(sample.id)}
                     className={`shrink-0 px-2.5 py-2 rounded-lg border text-left transition-all ${
-                      active ? 'bg-[#152347]' : 'bg-[#0c1429] hover:bg-[#101a33]'
+                      active ? 'bg-track' : 'bg-surface-2 hover:bg-surface'
                     }`}
                     style={{ borderColor: active ? color : 'rgba(43,65,112,0.6)', minWidth: 148 }}
                   >
@@ -355,11 +355,11 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
               icon={<Users className="w-3.5 h-3.5 text-accent" />}
               right={<Tag text={queryMode === 'patient' ? '带入当前患者' : '手动设定'} color={queryMode === 'patient' ? UI.cyan : UI.amber} />}
             >
-              <div className="flex items-center gap-1.5 mb-2.5 p-1 rounded-lg bg-[#0c1429] border border-line/50">
+              <div className="flex items-center gap-1.5 mb-2.5 p-1 rounded-lg bg-surface-2 border border-line/50">
                 <button
                   onClick={() => setQueryMode('patient')}
                   className={`flex-1 px-2 py-1 rounded text-[length:var(--fs-10)] font-semibold transition-all ${
-                    queryMode === 'patient' ? 'bg-[#20cfff] text-on-bright' : 'text-ink-muted hover:text-ink'
+                    queryMode === 'patient' ? 'bg-accent text-on-bright' : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   当前患者
@@ -367,16 +367,16 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                 <button
                   onClick={() => setQueryMode('manual')}
                   className={`flex-1 px-2 py-1 rounded text-[length:var(--fs-10)] font-semibold transition-all ${
-                    queryMode === 'manual' ? 'bg-[#ffb84d] text-on-bright' : 'text-ink-muted hover:text-ink'
+                    queryMode === 'manual' ? 'bg-warn text-on-bright' : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   手动设定
                 </button>
               </div>
 
-              <div className="p-2.5 rounded-lg bg-[#0c1429] border border-[#20cfff]/30">
+              <div className="p-2.5 rounded-lg bg-surface-2 border border-accent/30">
                 <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-lg bg-[#20cfff]/15 border border-[#20cfff]/40 flex items-center justify-center text-accent font-bold text-sm shrink-0">
+                  <div className="w-9 h-9 rounded-lg bg-accent/15 border border-accent/40 flex items-center justify-center text-accent font-bold text-sm shrink-0">
                     {patient.name.slice(0, 1)}
                   </div>
                   <div className="min-w-0">
@@ -407,7 +407,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
 
               {queryMode === 'manual' && (
                 <div className="mt-2.5 space-y-2.5 history-fade-in">
-                  <div className="p-2 rounded-lg bg-[#0c1429] border border-[#ffb84d]/35 text-[length:var(--fs-10)] text-[#ffd9a3] leading-relaxed">
+                  <div className="p-2 rounded-lg bg-surface-2 border border-warn/35 text-[length:var(--fs-10)] text-warn leading-relaxed">
                     手动设定以当前患者档案为底，仅改写下列关键项，其余维度仍沿用当前患者真实数据。
                   </div>
 
@@ -420,7 +420,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                           onClick={() => setManual(m => ({ ...m, category: c.key }))}
                           className={`px-1.5 py-0.5 rounded text-[length:var(--fs-10)] border transition-all ${
                             manual.category === c.key
-                              ? 'text-accent border-[#20cfff]/60 bg-[#20cfff]/12'
+                              ? 'text-accent border-accent/60 bg-accent/12'
                               : 'text-ink-muted border-line/50 hover:text-ink'
                           }`}
                         >
@@ -447,7 +447,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                         step={item.step}
                         value={manual[item.key]}
                         onChange={e => setManual(m => ({ ...m, [item.key]: Number(e.target.value) }))}
-                        className="w-full accent-[#20cfff]"
+                        className="w-full accent-accent"
                       />
                     </div>
                   ))}
@@ -456,8 +456,8 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                     onClick={() => setManual(m => ({ ...m, immunosuppressed: !m.immunosuppressed }))}
                     className={`w-full px-2 py-1.5 rounded text-[length:var(--fs-10)] font-semibold border transition-all ${
                       manual.immunosuppressed
-                        ? 'text-danger border-[#ff536c]/50 bg-[#ff536c]/12'
-                        : 'text-ok border-[#23e6b1]/50 bg-[#23e6b1]/12'
+                        ? 'text-danger border-danger/50 bg-danger/12'
+                        : 'text-ok border-ok/50 bg-ok/12'
                     }`}
                   >
                     {manual.immunosuppressed ? '宿主存在免疫抑制' : '宿主免疫正常'}
@@ -508,7 +508,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                 ))}
               </div>
 
-              <div className="mt-2.5 p-2 rounded-lg bg-[#0c1429] border border-line/40 text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
+              <div className="mt-2.5 p-2 rounded-lg bg-surface-2 border border-line/40 text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
                 当前检索优先侧重
                 <span className="text-accent font-semibold mx-1">
                   {w.microbiome >= w.clinical && w.microbiome >= w.physical
@@ -559,7 +559,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                           key={r}
                           onClick={() => setRouteFilter(prev => toggleIn(prev, r))}
                           className={`px-1.5 py-0.5 rounded text-[length:var(--fs-10)] border transition-all ${
-                            on ? 'text-violet border-[#815cff]/60 bg-[#815cff]/12' : 'text-ink-muted border-line/50 hover:text-ink'
+                            on ? 'text-violet border-violet/60 bg-violet/12' : 'text-ink-muted border-line/50 hover:text-ink'
                           }`}
                         >
                           {on ? '✓ ' : ''}{r}
@@ -579,7 +579,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                           key={c.key}
                           onClick={() => setCategoryFilter(prev => toggleIn(prev, c.key))}
                           className={`px-1.5 py-0.5 rounded text-[length:var(--fs-10)] border transition-all ${
-                            on ? 'text-accent border-[#20cfff]/60 bg-[#20cfff]/12' : 'text-ink-muted border-line/50 hover:text-ink'
+                            on ? 'text-accent border-accent/60 bg-accent/12' : 'text-ink-muted border-line/50 hover:text-ink'
                           }`}
                         >
                           {on ? '✓ ' : ''}{c.label}
@@ -592,7 +592,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                 <button
                   onClick={() => setMdtOnly(v => !v)}
                   className={`w-full px-2 py-1.5 rounded text-[length:var(--fs-10)] font-semibold border transition-all flex items-center justify-center gap-1.5 ${
-                    mdtOnly ? 'text-accent border-[#20cfff]/55 bg-[#20cfff]/12' : 'text-ink-muted border-line/50 hover:text-ink'
+                    mdtOnly ? 'text-accent border-accent/55 bg-accent/12' : 'text-ink-muted border-line/50 hover:text-ink'
                   }`}
                 >
                   <Users className="w-3 h-3" />
@@ -602,7 +602,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                 <div className="flex items-center gap-1.5 pt-1">
                   <button
                     onClick={runSearch}
-                    className="flex-1 px-2 py-2 rounded-lg bg-[#20cfff] text-on-bright text-[length:var(--fs-11)] font-bold hover:brightness-110 shadow-[0_0_12px_rgba(32,207,255,0.3)] transition-all flex items-center justify-center gap-1.5"
+                    className="flex-1 px-2 py-2 rounded-lg bg-accent text-on-bright text-[length:var(--fs-11)] font-bold hover:brightness-110 shadow-[0_0_12px_rgba(32,207,255,0.3)] transition-all flex items-center justify-center gap-1.5"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                     执行相似样本检索
@@ -610,7 +610,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                   <button
                     onClick={resetFilters}
                     title="重置全部条件"
-                    className="px-2 py-2 rounded-lg bg-[#0c1429] border border-line/60 text-ink-muted hover:text-ink transition-all"
+                    className="px-2 py-2 rounded-lg bg-surface-2 border border-line/60 text-ink-muted hover:text-ink transition-all"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                   </button>
@@ -648,7 +648,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                     {Array.from({ length: 14 }).map((_, i) => (
                       <span
                         key={i}
-                        className="history-particle w-1 rounded-full bg-[#20cfff]"
+                        className="history-particle w-1 rounded-full bg-accent"
                         style={{
                           height: `${10 + ((i * 7) % 26)}px`,
                           animationDelay: `${i * 0.09}s`
@@ -681,7 +681,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                       </span>
                       <button
                         onClick={resetFilters}
-                        className="mt-1 px-3 py-1.5 rounded-lg bg-[#20cfff]/15 border border-[#20cfff]/45 text-accent text-[length:var(--fs-10)] font-semibold"
+                        className="mt-1 px-3 py-1.5 rounded-lg bg-accent/15 border border-accent/45 text-accent text-[length:var(--fs-10)] font-semibold"
                       >
                         重置筛选条件
                       </button>
@@ -689,7 +689,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                   )}
 
                   {favorites.length > 0 && (
-                    <div className="mt-2 p-2.5 rounded-lg bg-[#0c1429] border border-[#ffb84d]/35">
+                    <div className="mt-2 p-2.5 rounded-lg bg-surface-2 border border-warn/35">
                       <span className="text-[length:var(--fs-10)] text-warn font-semibold block mb-1.5">
                         我的收藏案例夹（{favorites.length}）
                       </span>
@@ -698,7 +698,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                           <button
                             key={id}
                             onClick={() => setSelectedId(id)}
-                            className="px-1.5 py-0.5 rounded text-[length:var(--fs-10)] font-mono border border-[#ffb84d]/45 text-warn hover:bg-[#ffb84d]/12 transition-all"
+                            className="px-1.5 py-0.5 rounded text-[length:var(--fs-10)] font-mono border border-warn/45 text-warn hover:bg-warn/12 transition-all"
                           >
                             {id}
                           </button>
@@ -735,7 +735,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
                 />
               </div>
             ) : (
-              <div className="rounded-xl bg-[#101a33] border border-line/60 p-8 flex flex-col items-center justify-center gap-2 min-h-[420px]">
+              <div className="rounded-xl bg-surface border border-line/60 p-8 flex flex-col items-center justify-center gap-2 min-h-[420px]">
                 <FlaskConical className="w-8 h-8 text-ink-subtle" />
                 <span className="text-xs text-ink-muted">请从左侧召回结果中选择一条历史样本</span>
               </div>
@@ -762,7 +762,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
 
       {/* 轻提示 */}
       {toast && (
-        <div className="fixed bottom-12 right-5 z-50 max-w-md px-3.5 py-2.5 rounded-xl bg-[#101a33] border border-[#23e6b1]/50 shadow-2xl history-fade-in">
+        <div className="fixed bottom-12 right-5 z-50 max-w-md px-3.5 py-2.5 rounded-xl bg-surface border border-ok/50 shadow-2xl history-fade-in">
           <div className="flex items-start gap-2">
             <CheckCircle2 className="w-4 h-4 text-ok shrink-0 mt-0.5" />
             <p className="text-[length:var(--fs-11)] text-ink leading-relaxed flex-1">{toast}</p>
@@ -780,7 +780,7 @@ export const HistoricalSampleLibrary: React.FC<HistoricalSampleLibraryProps> = (
       )}
 
       {/* 底部数据流说明 */}
-      <div className="p-3 rounded-xl bg-[#0c1429] border border-line/50 text-[length:var(--fs-10)] text-ink-muted leading-relaxed flex items-start gap-2">
+      <div className="p-3 rounded-xl bg-surface-2 border border-line/50 text-[length:var(--fs-10)] text-ink-muted leading-relaxed flex items-start gap-2">
         <Layers className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
         <div>
           <span className="text-ink font-semibold">数据流：</span>

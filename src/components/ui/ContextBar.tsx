@@ -61,10 +61,10 @@ export const ContextBar: React.FC<ContextBarProps> = ({
   return (
     <div
       id="module-context-bar"
-      className={`${sticky ? 'sticky top-0 z-20' : ''} px-4 py-3 rounded-xl border shadow-xl backdrop-blur-sm ${
+      className={`${sticky ? 'sticky top-0 z-20' : ''} px-5 py-4 rounded-xl border shadow-xl backdrop-blur-sm ${
         isDanger
-          ? 'bg-[#1a0f1c]/95 border-[#ff536c]/50'
-          : 'bg-[#0d1730]/95 border-line/60'
+          ? 'bg-tint-danger/95 border-danger/50'
+          : 'bg-surface-2/95 border-line/60'
       }`}
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -72,13 +72,13 @@ export const ContextBar: React.FC<ContextBarProps> = ({
         <div className="flex items-center gap-3 min-w-0">
           {Icon && (
             <div
-              className={`w-10 h-10 shrink-0 rounded-xl flex items-center justify-center border ${
+              className={`w-12 h-12 shrink-0 rounded-xl flex items-center justify-center border ${
                 isDanger
-                  ? 'bg-[#ff536c]/15 border-[#ff536c]/40 text-danger'
-                  : 'bg-[#20cfff]/12 border-[#20cfff]/35 text-accent'
+                  ? 'bg-danger/15 border-danger/40 text-danger'
+                  : 'bg-accent/12 border-accent/35 text-accent'
               }`}
             >
-              <Icon className={`w-5 h-5 ${isDanger ? 'animate-pulse' : ''}`} />
+              <Icon className={`w-6 h-6 ${isDanger ? 'animate-pulse' : ''}`} />
             </div>
           )}
           <div className="min-w-0">

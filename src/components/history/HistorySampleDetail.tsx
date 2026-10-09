@@ -181,9 +181,9 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
   };
 
   return (
-    <div className="rounded-xl bg-[#0b1226] border border-line/60 shadow-xl overflow-hidden flex flex-col">
+    <div className="rounded-xl bg-surface-2 border border-line/60 shadow-xl overflow-hidden flex flex-col">
       {/* 详情头部 */}
-      <div className="px-3.5 py-3 bg-[#101a33] border-b border-line-2">
+      <div className="px-3.5 py-3 bg-surface border-b border-line-2">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
             <div
@@ -217,11 +217,11 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               onClick={onToggleFavorite}
               className={`px-2.5 py-1.5 rounded-lg text-[length:var(--fs-11)] font-semibold border transition-all flex items-center gap-1 ${
                 favorited
-                  ? 'bg-[#ffb84d]/20 text-warn border-[#ffb84d]/50'
-                  : 'bg-[#0c1429] text-ink-muted border-line/60 hover:text-ink'
+                  ? 'bg-warn/20 text-warn border-warn/50'
+                  : 'bg-surface-2 text-ink-muted border-line/60 hover:text-ink'
               }`}
             >
-              <Star className="w-3.5 h-3.5" fill={favorited ? '#ffb84d' : 'none'} />
+              <Star className="w-3.5 h-3.5" fill={favorited ? 'var(--color-warn)' : 'none'} />
               {favorited ? '已收藏' : '收藏案例'}
             </button>
           </div>
@@ -249,7 +249,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
       </div>
 
       {/* Tab 导航 */}
-      <div className="flex items-center gap-1 px-3 py-2 bg-[#0c1429] border-b border-line-2 overflow-x-auto">
+      <div className="flex items-center gap-1 px-3 py-2 bg-surface-2 border-b border-line-2 overflow-x-auto">
         {TABS.map(t => {
           const active = tab === t.id;
           return (
@@ -258,10 +258,10 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               onClick={() => setTab(t.id)}
               className={`px-2.5 py-1.5 rounded-lg text-[length:var(--fs-11)] font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
                 active
-                  ? 'bg-[#20cfff] text-on-bright font-bold shadow'
+                  ? 'bg-accent text-on-bright font-bold shadow'
                   : t.core
-                  ? 'text-accent bg-[#20cfff]/10 border border-[#20cfff]/30 hover:bg-[#20cfff]/20'
-                  : 'text-ink-muted hover:text-ink hover:bg-[#152347]'
+                  ? 'text-accent bg-accent/10 border border-accent/30 hover:bg-accent/20'
+                  : 'text-ink-muted hover:text-ink hover:bg-track'
               }`}
             >
               {t.icon}
@@ -357,7 +357,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               <SectionCard title="既往用药史（相似度临床维度输入）" icon={<Pill className="w-3.5 h-3.5 text-accent" />}>
                 <div className="space-y-1.5">
                   {sample.priorMedications.map(med => (
-                    <div key={med} className="p-2 rounded bg-[#0c1429] border border-line/40 text-[length:var(--fs-11)] text-ink">
+                    <div key={med} className="p-2 rounded bg-surface-2 border border-line/40 text-[length:var(--fs-11)] text-ink">
                       {med}
                     </div>
                   ))}
@@ -371,10 +371,10 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               <SectionCard title="肠道微生态数字孪生快照" icon={<Sparkles className="w-3.5 h-3.5 text-violet" />}
                 right={<span className="text-[length:var(--fs-10)] text-ink-muted">治疗前 / 治疗后</span>}>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="p-2 rounded-lg bg-[#0c1429] border border-[#ff536c]/30">
+                  <div className="p-2 rounded-lg bg-surface-2 border border-danger/30">
                     <TwinSnapshotStrip snapshot={sample.microbiome.twin.pre} caption="治疗前快照" />
                   </div>
-                  <div className="p-2 rounded-lg bg-[#0c1429] border border-[#23e6b1]/30">
+                  <div className="p-2 rounded-lg bg-surface-2 border border-ok/30">
                     <TwinSnapshotStrip snapshot={sample.microbiome.twin.post} caption="治疗后快照" />
                   </div>
                 </div>
@@ -396,7 +396,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                 { label: '条件致病菌负荷', value: `${sample.microbiome.pathogenLoad}%`, hint: '越低越好', tone: sample.microbiome.pathogenLoad > 45 ? UI.red : UI.amber },
                 { label: 'FMT 适应性评分', value: `${sample.microbiome.fmtAdaptabilityScore}`, hint: '当初入库得分', tone: sample.microbiome.fmtAdaptabilityScore >= 80 ? UI.cyan : UI.amber }
               ].map(item => (
-                <div key={item.label} className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50 text-center">
+                <div key={item.label} className="p-3.5 rounded-lg bg-surface-2 border border-line/50 text-center">
                   <span className="text-[length:var(--fs-10)] text-ink-muted block">{item.label}</span>
                   <span className="font-mono font-bold text-base block my-0.5" style={{ color: item.tone }}>{item.value}</span>
                   <span className="text-[length:var(--fs-9)] text-ink-muted">{item.hint}</span>
@@ -404,17 +404,17 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               ))}
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50 text-[length:var(--fs-11)] text-ink-muted">
+            <div className="p-3.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-11)] text-ink-muted">
               <span className="text-accent font-semibold">主导失衡特征：</span>
               {sample.microbiome.dominantFeature}
             </div>
 
-            <div className="flex items-center justify-between p-1.5 rounded-lg bg-[#0c1429] border border-line/50">
+            <div className="flex items-center justify-between p-1.5 rounded-lg bg-surface-2 border border-line/50">
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setNetworkView('ecological')}
                   className={`px-2.5 py-1 rounded text-[length:var(--fs-11)] font-medium transition-all flex items-center gap-1 ${
-                    networkView === 'ecological' ? 'bg-[#20cfff] text-on-bright font-bold' : 'text-ink-muted hover:text-ink'
+                    networkView === 'ecological' ? 'bg-accent text-on-bright font-bold' : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   <Dna className="w-3.5 h-3.5" /> 菌群生态网络
@@ -422,7 +422,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                 <button
                   onClick={() => setNetworkView('multidomain')}
                   className={`px-2.5 py-1 rounded text-[length:var(--fs-11)] font-medium transition-all flex items-center gap-1 ${
-                    networkView === 'multidomain' ? 'bg-[#815cff] text-white font-bold' : 'text-ink-muted hover:text-ink'
+                    networkView === 'multidomain' ? 'bg-violet text-on-bright font-bold' : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   <Network className="w-3.5 h-3.5" /> 全景知识图谱拓扑
@@ -460,7 +460,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                           {positive ? '+' : ''}{pw.changePercentage}%
                         </span>
                       </div>
-                      <div className="h-2 rounded-full bg-[#091127] overflow-hidden flex">
+                      <div className="h-2 rounded-full bg-track overflow-hidden flex">
                         {positive ? (
                           <>
                             <div className="w-1/2" />
@@ -572,7 +572,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               <SectionCard title="匹配优势" icon={<CheckCircle2 className="w-3.5 h-3.5 text-ok" />}>
                 <div className="space-y-2">
                   {sample.donorMatch.advantages.map((a, i) => (
-                    <div key={i} className="p-2 rounded-lg bg-[#0c1429] border border-[#23e6b1]/30 text-[length:var(--fs-11)] text-ink flex items-start gap-2">
+                    <div key={i} className="p-2 rounded-lg bg-surface-2 border border-ok/30 text-[length:var(--fs-11)] text-ink flex items-start gap-2">
                       <CheckCircle2 className="w-3.5 h-3.5 text-ok shrink-0 mt-0.5" />
                       {a}
                     </div>
@@ -583,7 +583,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               <SectionCard title="潜在风险" icon={<AlertTriangle className="w-3.5 h-3.5 text-warn" />}>
                 <div className="space-y-2">
                   {sample.donorMatch.potentialRisks.map((r, i) => (
-                    <div key={i} className="p-2 rounded-lg bg-[#0c1429] border border-[#ffb84d]/35 text-[length:var(--fs-11)] text-ink flex items-start gap-2">
+                    <div key={i} className="p-2 rounded-lg bg-surface-2 border border-warn/35 text-[length:var(--fs-11)] text-ink flex items-start gap-2">
                       <AlertTriangle className="w-3.5 h-3.5 text-warn shrink-0 mt-0.5" />
                       {r}
                     </div>
@@ -592,7 +592,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </SectionCard>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50 text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5">
+            <div className="p-3.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5">
               <Info className="w-3.5 h-3.5 text-accent" />
               供受体匹配记录为历史样本当时的真实评估结果。当前患者的供体选择必须基于当前供体库存、菌液批次效期重新计算，不可沿用历史供体。
             </div>
@@ -611,8 +611,8 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                   onClick={() => setVersionIndex(i)}
                   className={`px-2.5 py-1 rounded-lg text-[length:var(--fs-11)] font-mono font-semibold border transition-all ${
                     versionIndex === i
-                      ? 'bg-[#20cfff] text-on-bright border-[#20cfff]'
-                      : 'bg-[#0c1429] text-ink-muted border-line/60 hover:text-ink'
+                      ? 'bg-accent text-on-bright border-accent'
+                      : 'bg-surface-2 text-ink-muted border-line/60 hover:text-ink'
                   }`}
                 >
                   {v.version}
@@ -640,13 +640,13 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                 </span>
               }
             >
-              <p className="text-[length:var(--fs-11)] text-ink-muted mb-3 p-2 rounded bg-[#0c1429] border border-line/40">
+              <p className="text-[length:var(--fs-11)] text-ink-muted mb-3 p-2 rounded bg-surface-2 border border-line/40">
                 <span className="text-accent font-semibold">版本说明：</span>{activeVersion.summary}
               </p>
 
               {/* 移植路径 + 剂量频次疗程 */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="p-3 rounded-lg bg-[#0c1429] border border-line/50">
+                <div className="p-3 rounded-lg bg-surface-2 border border-line/50">
                   <span className="text-[length:var(--fs-10)] text-ink-muted block mb-1.5">移植路径</span>
                   <div className="flex items-center gap-2">
                     <div
@@ -659,7 +659,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-[#0c1429] border border-line/50">
+                <div className="p-3 rounded-lg bg-surface-2 border border-line/50">
                   <span className="text-[length:var(--fs-10)] text-ink-muted block mb-1.5">剂量 · 频次 · 疗程</span>
                   <div className="space-y-1 text-[length:var(--fs-11)]">
                     <div className="flex justify-between gap-2">
@@ -679,7 +679,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </div>
 
               {/* 给药节奏 + 随访节点：给药次数直接取自方案文本，不按下标编造 */}
-              <div className="mt-3 p-2.5 rounded-lg bg-[#0c1429] border border-line/50">
+              <div className="mt-3 p-3.5 rounded-lg bg-surface-2 border border-line/50">
                 <div className="flex items-center justify-between text-[length:var(--fs-10)] mb-1.5">
                   <span className="text-ink-muted">给药节奏可视化</span>
                   <span className="text-accent font-mono">{doseCount} 个给药节点 · 该样本已全部完成</span>
@@ -711,7 +711,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                   { label: '联合用药', value: protocol.combinedTherapy, icon: <Pill className="w-3.5 h-3.5 text-warn" /> },
                   { label: '营养干预', value: protocol.nutritionalIntervention, icon: <Activity className="w-3.5 h-3.5 text-ok" /> }
                 ].map(item => (
-                  <div key={item.label} className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50">
+                  <div key={item.label} className="p-3.5 rounded-lg bg-surface-2 border border-line/50">
                     <span className="text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5 mb-1">
                       {item.icon}
                       {item.label}
@@ -722,7 +722,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </div>
 
               {/* 随访里程碑 */}
-              <div className="mt-3 p-2.5 rounded-lg bg-[#0c1429] border border-line/50">
+              <div className="mt-3 p-3.5 rounded-lg bg-surface-2 border border-line/50">
                 <span className="text-[length:var(--fs-10)] text-ink-muted block mb-1.5">预设复评节点</span>
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {protocol.reviewMilestones.map(m => <Tag key={m} text={m} color={UI.blue} />)}
@@ -734,14 +734,14 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
             <SectionCard title="方案版本演化时间线" icon={<GitMerge className="w-3.5 h-3.5 text-accent" />}
               right={<span className="text-[length:var(--fs-10)] text-ink-muted">AI 初始 → 医生调整 → MDT 修订</span>}>
               <div className="relative pl-5">
-                <div className="absolute left-[7px] top-1.5 bottom-1.5 w-px bg-[#2b4170]" />
+                <div className="absolute left-[7px] top-1.5 bottom-1.5 w-px bg-line" />
                 {sample.protocolVersions.map((v, i) => (
                   <div key={v.version} className="relative pb-3 last:pb-0">
                     <div
                       className="absolute -left-[18px] top-1 w-3 h-3 rounded-full border-2"
                       style={{
-                        background: i === versionIndex ? UI.cyan : '#0b1226',
-                        borderColor: i === versionIndex ? UI.cyan : '#2b4170'
+                        background: i === versionIndex ? UI.cyan : 'var(--color-surface-2)',
+                        borderColor: i === versionIndex ? UI.cyan : 'var(--color-line)'
                       }}
                     />
                     <div className="flex items-center gap-2 flex-wrap">
@@ -780,7 +780,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                   return (
                     <div
                       key={gate.id}
-                      className="p-2 rounded-lg bg-[#0c1429] border flex items-start gap-2"
+                      className="p-2 rounded-lg bg-surface-2 border flex items-start gap-2"
                       style={{ borderColor: withAlpha(tone.color, 33) }}
                     >
                       <span className="shrink-0 mt-0.5" style={{ color: tone.color }}>{tone.icon}</span>
@@ -798,14 +798,14 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
               </div>
               <div
                 className="mt-3 p-2.5 rounded-lg border text-[length:var(--fs-10)] leading-relaxed"
-                style={{ background: 'rgba(255,184,77,0.09)', borderColor: 'rgba(255,184,77,0.35)', color: '#ffd9a3' }}
+                style={{ background: 'var(--color-tint-warn)', borderColor: withAlpha('var(--color-warn)', 35), color: 'var(--color-warn)' }}
               >
                 参照该样本参数时，以上全部门控（感染排查、禁忌症、菌液有效期、知情同意、医师／MDT 审核）
                 <strong className="font-bold">必须针对当前患者重新逐项执行</strong>，不得沿用历史样本的通过状态。
               </div>
             </SectionCard>
 
-            <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50 text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5">
+            <div className="p-3.5 rounded-lg bg-surface-2 border border-line/50 text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5">
               <BookMarked className="w-3.5 h-3.5 text-accent" />
               历史医生当时选择该方案的推荐理由，请见「MDT 纪要 & 医生备注」Tab —— 该部分对研判价值最高。
             </div>
@@ -822,7 +822,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                 { label: '终末供体定植率', value: `${sample.finalEngraftmentRate}%`, tone: sample.finalEngraftmentRate >= 60 ? UI.green : UI.amber },
                 { label: '不良事件', value: `${sample.adverseEvents.length} 例${sample.adverseEvents.some(a => a.isSAE) ? '（含 SAE）' : ''}`, tone: sample.adverseEvents.some(a => a.isSAE) ? UI.red : UI.muted }
               ].map(item => (
-                <div key={item.label} className="p-2.5 rounded-lg bg-[#0c1429] border border-line/50">
+                <div key={item.label} className="p-3.5 rounded-lg bg-surface-2 border border-line/50">
                   <span className="text-[length:var(--fs-10)] text-ink-muted block">{item.label}</span>
                   <span className="text-[length:var(--fs-11)] font-bold block mt-1 leading-tight" style={{ color: item.tone }}>{item.value}</span>
                 </div>
@@ -934,7 +934,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                   {sample.adverseEvents.map(ae => {
                     const tone = ae.severity === '严重(SAE)' ? UI.red : ae.severity === '中度' ? UI.amber : UI.muted;
                     return (
-                      <div key={ae.id} className="p-2.5 rounded-lg bg-[#0c1429] border flex items-start gap-2" style={{ borderColor: withAlpha(tone, 33) }}>
+                      <div key={ae.id} className="p-2.5 rounded-lg bg-surface-2 border flex items-start gap-2" style={{ borderColor: withAlpha(tone, 33) }}>
                         <span className="shrink-0 mt-0.5" style={{ color: tone }}><AlertTriangle className="w-3.5 h-3.5" /></span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -968,7 +968,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                 {sample.mdtNotes.map((note, i) => (
                   <div
                     key={i}
-                    className="p-2.5 rounded-lg bg-[#0c1429] border-l-2 border border-line/40 text-[length:var(--fs-11)] text-ink leading-relaxed"
+                    className="p-2.5 rounded-lg bg-surface-2 border-l-2 border border-line/40 text-[length:var(--fs-11)] text-ink leading-relaxed"
                     style={{ borderLeftColor: UI.cyan }}
                   >
                     {note}
@@ -982,7 +982,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
                 {sample.physicianNotes.map((note, i) => (
                   <div
                     key={i}
-                    className="p-2.5 rounded-lg bg-[#0c1429] border-l-2 border border-line/40 text-[length:var(--fs-11)] text-ink leading-relaxed"
+                    className="p-2.5 rounded-lg bg-surface-2 border-l-2 border border-line/40 text-[length:var(--fs-11)] text-ink leading-relaxed"
                     style={{ borderLeftColor: UI.green }}
                   >
                     {note}
@@ -1019,7 +1019,7 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
       </div>
 
       {/* D 区：参考复用操作 */}
-      <div className="px-3.5 py-3 bg-[#101a33] border-t border-line-2 flex flex-wrap items-center justify-between gap-2">
+      <div className="px-3.5 py-3 bg-surface border-t border-line-2 flex flex-wrap items-center justify-between gap-2">
         <div className="text-[length:var(--fs-10)] text-ink-muted flex items-center gap-1.5">
           <Lock className="w-3 h-3" />
           历史样本只读 · 仅可标记为参考，不可直接应用
@@ -1029,16 +1029,16 @@ export const HistorySampleDetail: React.FC<HistorySampleDetailProps> = ({
             onClick={onToggleFavorite}
             className={`px-3 py-1.5 rounded-lg text-[length:var(--fs-11)] font-semibold border transition-all flex items-center gap-1.5 ${
               favorited
-                ? 'bg-[#ffb84d]/20 text-warn border-[#ffb84d]/50'
-                : 'bg-[#0c1429] text-ink-muted border-line/60 hover:text-ink'
+                ? 'bg-warn/20 text-warn border-warn/50'
+                : 'bg-surface-2 text-ink-muted border-line/60 hover:text-ink'
             }`}
           >
-            <Star className="w-3.5 h-3.5" fill={favorited ? '#ffb84d' : 'none'} />
+            <Star className="w-3.5 h-3.5" fill={favorited ? 'var(--color-warn)' : 'none'} />
             {favorited ? '已收藏为本案例参考' : '收藏为本案例参考'}
           </button>
           <button
             onClick={onRequestCopy}
-            className="px-3.5 py-1.5 rounded-lg bg-[#20cfff] text-on-bright text-[length:var(--fs-11)] font-bold hover:brightness-110 shadow-[0_0_12px_rgba(32,207,255,0.3)] transition-all flex items-center gap-1.5"
+            className="px-3.5 py-1.5 rounded-lg bg-accent text-on-bright text-[length:var(--fs-11)] font-bold hover:brightness-110 shadow-[0_0_12px_rgba(32,207,255,0.3)] transition-all flex items-center gap-1.5"
           >
             <ClipboardList className="w-3.5 h-3.5" />
             标记为当前患者参考对象

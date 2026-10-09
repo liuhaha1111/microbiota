@@ -64,7 +64,7 @@ export const SimilarityScoreCard: React.FC<SimilarityScoreCardProps> = ({
                     {value.toFixed(1)}%
                   </span>
                 </div>
-                <div className="h-1.5 rounded-full bg-[#091127] overflow-hidden">
+                <div className="h-1.5 rounded-full bg-track overflow-hidden">
                   <div
                     className="h-full rounded-full"
                     style={{ width: `${value}%`, background: dimColor, transition: 'width 400ms ease' }}
@@ -78,7 +78,7 @@ export const SimilarityScoreCard: React.FC<SimilarityScoreCardProps> = ({
 
       {/* 相似点 / 差异点 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3.5">
-        <div className="p-2.5 rounded-lg border border-[#23e6b1]/35 bg-[#0c1429]">
+        <div className="p-2.5 rounded-lg border border-ok/35 bg-surface-2">
           <h4 className="text-[length:var(--fs-11)] font-semibold text-ok flex items-center gap-1.5 mb-2">
             <CheckCircle2 className="w-3.5 h-3.5" />
             相似点（{similarity.matchedPoints.length}）
@@ -98,7 +98,7 @@ export const SimilarityScoreCard: React.FC<SimilarityScoreCardProps> = ({
         </div>
 
         <div
-          className="p-2.5 rounded-lg border bg-[#0c1429]"
+          className="p-2.5 rounded-lg border bg-surface-2"
           style={{ borderColor: similarity.diffPoints.length ? 'rgba(255,184,77,0.4)' : 'rgba(43,65,112,0.5)' }}
         >
           <h4 className="text-[length:var(--fs-11)] font-semibold text-warn flex items-center gap-1.5 mb-2">
@@ -121,7 +121,7 @@ export const SimilarityScoreCard: React.FC<SimilarityScoreCardProps> = ({
       </div>
 
       {/* 差异小结：防止医生只看到相似度、忽略两个患者的本质不同 */}
-      <div className="mt-3 p-2.5 rounded-lg bg-[#0c1429] border border-line/50">
+      <div className="mt-3 p-3.5 rounded-lg bg-surface-2 border border-line/50">
         <h4 className="text-[length:var(--fs-11)] font-semibold text-ink mb-1.5">可视化差异小结</h4>
         <p className="text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
           <span className="text-ok">主要相似点：</span>

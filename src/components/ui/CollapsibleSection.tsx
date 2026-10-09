@@ -45,7 +45,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   return (
     <section
       id={id}
-      className={`rounded-xl bg-[#101a33] border border-line/60 shadow-lg scroll-mt-32 ${className}`}
+      className={`rounded-xl bg-surface border border-line/60 shadow-lg scroll-mt-32 ${className}`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-b border-line-2">
         <div className="flex items-center gap-2 min-w-0">
@@ -54,7 +54,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
               type="button"
               onClick={() => setOpen(v => !v)}
               aria-expanded={isOpen}
-              className="p-1 -ml-1 rounded text-ink-muted hover:text-ink hover:bg-[#152347] transition-all"
+              className="p-1 -ml-1 rounded text-ink-muted hover:text-ink hover:bg-track transition-all"
               title={isOpen ? '收起分节' : '展开分节'}
             >
               <ChevronDown
@@ -71,7 +71,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
         {right && <div className="shrink-0">{right}</div>}
       </div>
 
-      {isOpen && <div className="p-4">{children}</div>}
+      {isOpen && <div className="p-5">{children}</div>}
     </section>
   );
 };

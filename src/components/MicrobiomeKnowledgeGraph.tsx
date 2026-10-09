@@ -932,25 +932,25 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
   return (
     <div
       id="microbiome-knowledge-graph-wrapper"
-      className={`relative rounded-xl border border-line-2 bg-[#0c1429] flex flex-col overflow-hidden transition-all duration-300 ${
+      className={`relative rounded-xl border border-line-2 bg-surface-2 flex flex-col overflow-hidden transition-all duration-300 ${
         isFullscreen ? 'fixed inset-0 z-50 rounded-none border-0 h-screen w-screen' : className
       }`}
       style={{ minHeight: compact ? '460px' : '560px' }}
     >
       {/* 1. Top Header & Primary Toolbar */}
-      <div id="graph-toolbar" className="shrink-0 p-3 border-b border-line-2 flex flex-wrap items-center justify-between gap-3 bg-[#091127]/95 backdrop-blur-md z-10">
+      <div id="graph-toolbar" className="shrink-0 p-3 border-b border-line-2 flex flex-wrap items-center justify-between gap-3 bg-chrome/95 backdrop-blur-md z-10">
         <div className="flex items-center gap-2.5">
-          <div className="p-1.5 rounded-lg bg-[#20cfff]/15 text-accent">
+          <div className="p-1.5 rounded-lg bg-accent/15 text-accent">
             <Network className="w-4 h-4" />
           </div>
           <div>
             <h3 className="text-sm font-semibold text-ink flex items-center gap-2">
               {isEco ? '微生态菌群相互作用网络' : '全景微生态-代谢-免疫知识图谱'}
-              <span className="text-[length:var(--fs-10)] px-1.5 py-0.5 rounded bg-[#20cfff]/20 text-accent font-mono">
+              <span className="text-[length:var(--fs-10)] px-1.5 py-0.5 rounded bg-accent/20 text-accent font-mono">
                 {isEco ? 'Ecological Network' : 'Knowledge Graph'}
               </span>
               {isFullscreen && (
-                <span className="text-[length:var(--fs-10)] px-1.5 py-0.5 rounded bg-[#23e6b1]/20 text-ok font-medium">
+                <span className="text-[length:var(--fs-10)] px-1.5 py-0.5 rounded bg-ok/20 text-ok font-medium">
                   全屏工作台
                 </span>
               )}
@@ -966,7 +966,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
         {/* Action Controls & Mode Switcher */}
         <div className="flex items-center gap-2">
           {/* Mode Switch Button */}
-          <div className="flex items-center p-0.5 rounded-lg bg-[#101a33] border border-line/60 text-xs">
+          <div className="flex items-center p-0.5 rounded-lg bg-surface border border-line/60 text-xs">
             <button
               id="graph-mode-ecological"
               onClick={() => {
@@ -975,7 +975,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
               }}
               className={`px-2.5 py-1 rounded-md transition-all ${
                 graphMode === 'ecological'
-                  ? 'bg-[#20cfff] text-on-bright font-semibold shadow-sm'
+                  ? 'bg-accent text-on-bright font-semibold shadow-sm'
                   : 'text-ink-muted hover:text-ink'
               }`}
             >
@@ -989,7 +989,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
               }}
               className={`px-2.5 py-1 rounded-md transition-all ${
                 graphMode === 'multidomain'
-                  ? 'bg-[#815cff] text-white font-semibold shadow-sm'
+                  ? 'bg-violet text-on-bright font-semibold shadow-sm'
                   : 'text-ink-muted hover:text-ink'
               }`}
             >
@@ -999,14 +999,14 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
 
           {/* 密度切换：只在全景图谱下出现 */}
           {!isEco && (
-            <div className="flex items-center p-0.5 rounded-lg bg-[#101a33] border border-line/60 text-xs">
+            <div className="flex items-center p-0.5 rounded-lg bg-surface border border-line/60 text-xs">
               <button
                 id="graph-density-core"
                 onClick={() => setDensity('core')}
                 title="只渲染知识主干实体，节点更大、标签不重叠"
                 className={`px-2 py-1 rounded-md transition-all flex items-center gap-1 ${
                   density === 'core'
-                    ? 'bg-[#23e6b1]/20 text-ok font-semibold'
+                    ? 'bg-ok/20 text-ok font-semibold'
                     : 'text-ink-muted hover:text-ink'
                 }`}
               >
@@ -1019,7 +1019,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                 title="展开适应症外延与补充知识实体"
                 className={`px-2 py-1 rounded-md transition-all flex items-center gap-1 ${
                   density === 'extended'
-                    ? 'bg-[#815cff]/20 text-violet font-semibold'
+                    ? 'bg-violet/20 text-violet font-semibold'
                     : 'text-ink-muted hover:text-ink'
                 }`}
               >
@@ -1029,10 +1029,10 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
           )}
 
           {/* Zoom & Auto-Fit Toolbar */}
-          <div className="flex items-center gap-0.5 bg-[#101a33] border border-line/60 p-0.5 rounded-lg text-ink-muted">
+          <div className="flex items-center gap-0.5 bg-surface border border-line/60 p-0.5 rounded-lg text-ink-muted">
             <button
               onClick={() => setReplayNonce(n => n + 1)}
-              className="p-1 hover:text-ok hover:bg-[#152347] rounded flex items-center gap-1 text-[length:var(--fs-11)] px-1.5"
+              className="p-1 hover:text-ok hover:bg-track rounded flex items-center gap-1 text-[length:var(--fs-11)] px-1.5"
               title="重播拓扑入场动效"
             >
               <Play className="w-3.5 h-3.5 text-ok" />
@@ -1040,7 +1040,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
             </button>
             <button
               onClick={autoFitView}
-              className="p-1 hover:text-accent hover:bg-[#152347] rounded flex items-center gap-1 text-[length:var(--fs-11)] px-1.5"
+              className="p-1 hover:text-accent hover:bg-track rounded flex items-center gap-1 text-[length:var(--fs-11)] px-1.5"
               title="自适应全局视野 (防遮挡最佳视角)"
             >
               <Scan className="w-3.5 h-3.5 text-accent" />
@@ -1048,21 +1048,21 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
             </button>
             <button
               onClick={() => setZoomLevel(z => Math.min(2.5, z + 0.15))}
-              className="p-1 hover:text-ink hover:bg-[#152347] rounded"
+              className="p-1 hover:text-ink hover:bg-track rounded"
               title="放大视野"
             >
               <ZoomIn className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => setZoomLevel(z => Math.max(0.4, z - 0.15))}
-              className="p-1 hover:text-ink hover:bg-[#152347] rounded"
+              className="p-1 hover:text-ink hover:bg-track rounded"
               title="缩小视野"
             >
               <ZoomOut className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={resetView}
-              className="p-1 hover:text-ink hover:bg-[#152347] rounded"
+              className="p-1 hover:text-ink hover:bg-track rounded"
               title="复位默认缩放"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -1074,8 +1074,8 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
             onClick={() => setIsFullscreen(!isFullscreen)}
             className={`p-1.5 rounded-lg border transition-all ${
               isFullscreen
-                ? 'bg-[#20cfff] text-on-bright border-[#20cfff]'
-                : 'bg-[#101a33] border-line/60 text-ink-muted hover:text-ink hover:bg-[#152347]'
+                ? 'bg-accent text-on-bright border-accent'
+                : 'bg-surface border-line/60 text-ink-muted hover:text-ink hover:bg-track'
             }`}
             title={isFullscreen ? '退出全屏' : '全屏展开知识拓扑 (消除一切遮挡)'}
           >
@@ -1085,7 +1085,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
       </div>
 
       {/* 2. Sub-bar: Search & Multi-category Filters */}
-      <div className="shrink-0 px-3 py-2 border-b border-line-2/80 flex flex-wrap items-center justify-between gap-2 bg-[#0a1329]/80 text-xs z-10">
+      <div className="shrink-0 px-3 py-2 border-b border-line-2/80 flex flex-wrap items-center justify-between gap-2 bg-canvas/80 text-xs z-10">
         <div className="flex items-center gap-2 flex-1 max-w-sm">
           <div className="relative w-full">
             <Search className="w-3.5 h-3.5 text-ink-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
@@ -1094,7 +1094,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
               placeholder={isEco ? '搜索菌种 (如: Akkermansia, 普氏栖粪杆菌...)' : '搜索知识靶点 (如: 丁酸, UC, LPS, FMT...)'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-7 py-1 rounded-md bg-[#101a33] border border-line/70 text-ink placeholder-[#8996b8]/60 text-xs focus:outline-none focus:border-[#20cfff]"
+              className="w-full pl-8 pr-7 py-1 rounded-md bg-surface border border-line/70 text-ink placeholder-[#8996b8]/60 text-xs focus:outline-none focus:border-accent"
             />
             {searchQuery && (
               <button
@@ -1113,7 +1113,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
             onClick={() => setSelectedFilter('all')}
             className={`px-2 py-0.5 rounded text-[length:var(--fs-11)] font-medium transition-all shrink-0 ${
               selectedFilter === 'all'
-                ? 'bg-[#20cfff]/20 text-accent border border-[#20cfff]/40'
+                ? 'bg-accent/20 text-accent border border-accent/40'
                 : 'text-ink-muted hover:text-ink'
             }`}
           >
@@ -1149,7 +1149,9 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
         style={{ minHeight: compact ? '400px' : '500px' }}
       >
         {/* SVG Graph Viewport */}
-        <div ref={svgContainerRef} className="flex-1 relative w-full h-full min-h-0 overflow-hidden">
+        {/* viewport-dark：图谱画布保持深色（节点光晕、连线发光都是为深底调的）。
+            只包住 SVG 视口，工具栏与右侧详情面板仍在作用域外，跟随浅色主题。 */}
+        <div ref={svgContainerRef} className="viewport-dark flex-1 relative w-full h-full min-h-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <svg
               ref={svgRef}
@@ -1581,7 +1583,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
 
           {/* Bottom Floating Hint (Collapsible & Non-blocking) */}
           {showHint && (
-            <div className="absolute bottom-3 left-3 pointer-events-auto text-[length:var(--fs-11)] text-ink-muted flex items-center gap-1.5 bg-[#091127]/90 px-2.5 py-1.5 rounded-lg border border-line/60 backdrop-blur-md shadow-lg z-10 max-w-[calc(100%-24px)]">
+            <div className="absolute bottom-3 left-3 pointer-events-auto text-[length:var(--fs-11)] text-ink-muted flex items-center gap-1.5 bg-chrome/90 px-2.5 py-1.5 rounded-lg border border-line/60 backdrop-blur-md shadow-lg z-10 max-w-[calc(100%-24px)]">
               <Info className="w-3.5 h-3.5 text-accent shrink-0" />
               <span>点击任一节点：脉冲会沿相互作用一层层向外传播，同时展开生物学机制；拖拽可改拓扑，滚轮缩放</span>
               <button
@@ -1599,7 +1601,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
             <button
               onClick={() => setIsDrawerCollapsed(false)}
               id="expand-inspector-pill"
-              className="absolute top-3 right-3 z-20 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#091127]/95 border border-[#20cfff]/50 shadow-[0_0_15px_rgba(32,207,255,0.25)] text-xs text-ink hover:bg-[#152347] transition-all backdrop-blur-md"
+              className="absolute top-3 right-3 z-20 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-chrome/95 border border-accent/50 shadow-[0_0_15px_rgba(32,207,255,0.25)] text-xs text-ink hover:bg-track transition-all backdrop-blur-md"
             >
               <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: selectedNode.color }} />
               <span>
@@ -1616,7 +1618,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
         {selectedNode && !isDrawerCollapsed && (
           <div
             id="node-inspector-drawer"
-            className="w-80 md:w-84 shrink-0 border-l border-line-2 bg-[#091127]/95 backdrop-blur-md p-4 flex flex-col justify-between overflow-y-auto text-xs shadow-2xl z-20 transition-all duration-200"
+            className="w-80 md:w-84 shrink-0 border-l border-line-2 bg-chrome/95 backdrop-blur-md p-4 flex flex-col justify-between overflow-y-auto text-xs shadow-2xl z-20 transition-all duration-200"
           >
             <div>
               {/* Header with Close and Collapse actions */}
@@ -1635,14 +1637,14 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => setIsDrawerCollapsed(true)}
-                    className="text-ink-muted hover:text-accent p-1 rounded hover:bg-[#152347]"
+                    className="text-ink-muted hover:text-accent p-1 rounded hover:bg-track"
                     title="收起侧栏以完整展现拓扑网络"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setSelectedNode(null)}
-                    className="text-ink-muted hover:text-danger p-1 rounded hover:bg-[#152347]"
+                    className="text-ink-muted hover:text-danger p-1 rounded hover:bg-track"
                     title="取消选中"
                   >
                     <X className="w-4 h-4" />
@@ -1654,7 +1656,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
               {selectedNode.type === 'microbe' && selectedNode.raw?.abundance !== undefined ? (
                 <div className="space-y-3">
                   {/* Abundance Card */}
-                  <div className="p-2.5 rounded-lg bg-[#101a33] border border-line/60">
+                  <div className="p-2.5 rounded-lg bg-surface border border-line/60">
                     <div className="flex justify-between items-center text-ink-muted mb-1">
                       <span>患者当前丰度:</span>
                       <span className="font-mono font-bold text-sm text-ink">{selectedNode.raw.abundance}%</span>
@@ -1689,7 +1691,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                     <h5 className="font-semibold text-accent mb-1 flex items-center gap-1">
                       <Sparkles className="w-3.5 h-3.5" /> 临床病理与稳态机制
                     </h5>
-                    <p className="text-ink leading-relaxed text-[length:var(--fs-11)] bg-[#101a33]/60 p-2 rounded border border-line/40">
+                    <p className="text-ink leading-relaxed text-[length:var(--fs-11)] bg-surface/60 p-2 rounded border border-line/40">
                       {selectedNode.raw.clinicalRelevance}
                     </p>
                   </div>
@@ -1700,7 +1702,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                       <h5 className="font-semibold text-ink-muted mb-1">主要产生代谢物:</h5>
                       <div className="flex flex-wrap gap-1">
                         {selectedNode.raw.primaryMetabolites.map((m: string, i: number) => (
-                          <span key={i} className="px-2 py-0.5 rounded bg-[#20cfff]/15 text-accent text-[length:var(--fs-10)] font-medium">
+                          <span key={i} className="px-2 py-0.5 rounded bg-accent/15 text-accent text-[length:var(--fs-10)] font-medium">
                             {m}
                           </span>
                         ))}
@@ -1709,7 +1711,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                   )}
 
                   {/* FMT Therapeutic Role */}
-                  <div className="p-2.5 rounded-lg bg-[#0c1f3d] border border-[#20cfff]/40 text-[length:var(--fs-11)]">
+                  <div className="p-2.5 rounded-lg bg-surface-2 border border-accent/40 text-[length:var(--fs-11)]">
                     <span className="font-semibold text-accent block mb-1">FMT 定植与治疗目标:</span>
                     <p className="text-ink">{selectedNode.raw.therapeuticTarget}</p>
                     <div className="mt-2 flex items-center justify-between text-[length:var(--fs-10)] text-ink-muted">
@@ -1721,7 +1723,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
               ) : (
                 /* Multi-domain Knowledge Node Detail */
                 <div className="space-y-3">
-                  <div className="p-2.5 rounded-lg bg-[#101a33] border border-line/60">
+                  <div className="p-2.5 rounded-lg bg-surface border border-line/60">
                     <span className="text-ink-muted text-[length:var(--fs-10)] block mb-1">实体分类:</span>
                     <span className="font-semibold text-ink text-sm">
                       {selectedNode.raw?.categoryLabel || selectedNode.subName || selectedNode.type}
@@ -1730,7 +1732,7 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
 
                   <div>
                     <h5 className="font-semibold text-accent mb-1">生物医学机制描述:</h5>
-                    <p className="text-ink leading-relaxed text-[length:var(--fs-11)] bg-[#101a33]/60 p-2 rounded border border-line/40">
+                    <p className="text-ink leading-relaxed text-[length:var(--fs-11)] bg-surface/60 p-2 rounded border border-line/40">
                       {selectedNode.raw?.description || '微生态多组学知识图谱实体。'}
                     </p>
                   </div>
@@ -1747,14 +1749,14 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
                           return (
                             <div
                               key={i}
-                              className="p-1.5 rounded bg-[#101a33] border border-line-2 flex items-center justify-between text-[length:var(--fs-11)] gap-2"
+                              className="p-1.5 rounded bg-surface border border-line-2 flex items-center justify-between text-[length:var(--fs-11)] gap-2"
                             >
                               <span className="text-ink font-medium truncate">{otherNode?.name || otherId}</span>
                               <span
                                 className={`text-[length:var(--fs-10)] font-mono px-1.5 py-0.5 rounded shrink-0 ${
                                   isAntag
-                                    ? 'text-danger bg-[#ff536c]/15 border border-[#ff536c]/30'
-                                    : 'text-accent bg-[#20cfff]/15 border border-[#20cfff]/30'
+                                    ? 'text-danger bg-danger/15 border border-danger/30'
+                                    : 'text-accent bg-accent/15 border border-accent/30'
                                 }`}
                               >
                                 {l.relation.length > 12 ? l.relation.slice(0, 12) + '..' : l.relation}
@@ -1772,13 +1774,13 @@ export const MicrobiomeKnowledgeGraph: React.FC<MicrobiomeKnowledgeGraphProps> =
             <div className="mt-4 pt-3 border-t border-line-2 flex gap-2">
               <button
                 onClick={() => setSearchQuery(selectedNode.name)}
-                className="flex-1 py-1.5 rounded-lg bg-[#20cfff]/20 text-accent hover:bg-[#20cfff]/30 border border-[#20cfff]/50 text-center font-medium transition-all text-xs"
+                className="flex-1 py-1.5 rounded-lg bg-accent/20 text-accent hover:bg-accent/30 border border-accent/50 text-center font-medium transition-all text-xs"
               >
                 高亮全连接
               </button>
               <button
                 onClick={() => setIsDrawerCollapsed(true)}
-                className="px-3 py-1.5 rounded-lg bg-[#152347] text-ink-muted hover:text-ink text-xs transition-all"
+                className="px-3 py-1.5 rounded-lg bg-track text-ink-muted hover:text-ink text-xs transition-all"
                 title="折叠以最大化拓扑视图"
               >
                 收起

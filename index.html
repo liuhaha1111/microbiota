@@ -1,14 +1,23 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MicroFMT 菌群移植精准诊疗平台 - Precision Microbiota Transplantation</title>
     <meta name="description" content="面向菌群移植（FMT）的精准医疗临床科研一体化平台，融合3D微生态数字孪生、知识图谱与供受体智能匹配" />
+    <!-- 与 --color-canvas 对齐：移动端浏览器外框/状态栏跟随浅色底，避免顶部压一条深色带 -->
+    <meta name="theme-color" content="#eef2f8" />
     <meta property="og:title" content="MicroFMT 菌群移植精准诊疗平台 - Precision Microbiota Transplantation" />
     <meta property="og:description" content="面向菌群移植（FMT）的精准医疗临床科研一体化平台，融合3D微生态数字孪生、知识图谱与供受体智能匹配" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+    <!--
+      变体标记：多屏启动器（tools/multiscreen）用它判断某个端口上跑的到底是哪一版。
+      深色版没有这个 meta，所以「没有 = 深色版」也是有效判据。
+      改动此值必须同步 tools/multiscreen/Start-MicroFMT-MultiScreen.ps1 的
+      $VARIANT 常量，否则启动器会误判成「另一版在占用端口」。
+    -->
+    <meta name="microfmt-variant" content="light" />
   </head>
   <body>
     <div id="root"></div>

@@ -2,8 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   applyDisplayMode,
   loadDisplayMode,
+  nextBackground,
   saveDisplayMode,
   type DisplayMode,
+  type DisplayToggleKey,
 } from '../utils/displayMode';
 
 /**
@@ -21,9 +23,15 @@ export function useDisplayMode() {
     saveDisplayMode(mode);
   }, [mode]);
 
-  const toggle = useCallback((key: keyof DisplayMode) => {
+  /** 整体开关（高对比 / 大字号）。 */
+  const toggle = useCallback((key: DisplayToggleKey) => {
     setMode((prev) => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
-  return { mode, toggle };
+  /** 背景是多选一，不是开关 —— 单独给一个动作，避免把 keyof 用成字符串下标。 */
+  const cycleBackground = useCallback(() => {
+    setMode((prev) => ({ ...prev, background: nextBackground(prev.background) }));
+  }, []);
+
+  return { mode, toggle, cycleBackground };
 }

@@ -91,7 +91,7 @@ export const AnchorNav: React.FC<AnchorNavProps> = ({
   return (
     <nav
       id="module-anchor-nav"
-      className="flex flex-wrap items-center justify-between gap-3 px-3 py-2 rounded-xl bg-[#0c1429] border border-line/60 text-xs"
+      className="flex flex-wrap items-center justify-between gap-3 px-3 py-2 rounded-xl bg-surface-2 border border-line/60 text-xs"
     >
       <div className="flex flex-wrap items-center gap-1">
         {items.map(item => {
@@ -103,8 +103,8 @@ export const AnchorNav: React.FC<AnchorNavProps> = ({
               onClick={() => go(item.id)}
               className={`px-2.5 py-1.5 rounded-lg font-medium transition-all ${
                 isActive
-                  ? 'bg-[#152347] text-accent border border-[#20cfff]/40 font-bold'
-                  : 'text-ink-muted hover:text-ink hover:bg-[#152347] border border-transparent'
+                  ? 'bg-track text-accent border border-accent/40 font-bold'
+                  : 'text-ink-muted hover:text-ink hover:bg-track border border-transparent'
               }`}
             >
               {item.label}

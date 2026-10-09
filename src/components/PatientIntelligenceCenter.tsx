@@ -68,17 +68,17 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
         badges={
           <>
             <ScreenSlotBadge slot={2} />
-            <span className="text-xs px-2 py-0.5 rounded bg-[#151f3d] text-ink-muted border border-line/40 font-mono">
+            <span className="text-xs px-2 py-0.5 rounded bg-tint-info text-ink-muted border border-line/40 font-mono">
               {patient.gender} · {patient.age}岁 · {patient.mrn}
             </span>
-            <span className="text-xs px-2 py-0.5 rounded font-medium bg-[#20cfff]/15 text-accent border border-[#20cfff]/40">
+            <span className="text-xs px-2 py-0.5 rounded font-medium bg-accent/15 text-accent border border-accent/40">
               {patient.currentPhase}
             </span>
             <span
               className={`text-xs px-2 py-0.5 rounded font-medium ${
                 patient.riskLevel === 'high'
-                  ? 'bg-[#ff536c]/20 text-danger border border-[#ff536c]/40'
-                  : 'bg-[#ffb84d]/20 text-warn border border-[#ffb84d]/40'
+                  ? 'bg-danger/20 text-danger border border-danger/40'
+                  : 'bg-warn/20 text-warn border border-warn/40'
               }`}
             >
               {patient.riskLevel === 'high' ? '高危重症' : '中度活动期'}
@@ -104,7 +104,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
       {activeTab === 'clinical' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* 重点临床检验指标 */}
-          <div className="lg:col-span-5 p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg">
+          <div className="lg:col-span-5 p-5 rounded-xl bg-surface border border-line/60 shadow-lg">
             <h3 className="text-xs font-semibold text-ink pb-2 mb-3 border-b border-line-2 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <Activity className="w-3.5 h-3.5 text-accent" /> 重点临床检验指标
@@ -113,7 +113,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
             </h3>
 
             <div className="space-y-2.5">
-              <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40 flex items-center justify-between text-xs">
+              <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40 flex items-center justify-between text-xs">
                 <div>
                   <span className="text-ink-muted text-[length:var(--fs-11)] block">C-反应蛋白 (CRP)</span>
                   <span className="text-[length:var(--fs-10)] text-ink-muted">参考: &lt;5.0 mg/L</span>
@@ -127,7 +127,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-lg bg-[#241121] border border-[#ff536c]/40 flex items-center justify-between text-xs">
+              <div className="p-2.5 rounded-lg bg-tint-danger border border-danger/40 flex items-center justify-between text-xs">
                 <div>
                   <span className="text-danger font-semibold text-[length:var(--fs-11)] block">粪便钙卫蛋白 (FC)</span>
                   <span className="text-[length:var(--fs-10)] text-ink-muted">肠黏膜活动性溃疡核心指标</span>
@@ -141,7 +141,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40 flex items-center justify-between text-xs">
+              <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40 flex items-center justify-between text-xs">
                 <div>
                   <span className="text-ink-muted text-[length:var(--fs-11)] block">血沉 (ESR)</span>
                   <span className="text-[length:var(--fs-10)] text-ink-muted">参考: 0-15 mm/h</span>
@@ -156,12 +156,12 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
-                <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40 text-xs">
+                <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40 text-xs">
                   <span className="text-ink-muted text-[length:var(--fs-10)] block">血清白蛋白</span>
                   <span className="font-mono font-bold text-sm text-warn">{markers.albumin.value} g/L</span>
                   <span className="text-[length:var(--fs-9)] text-warn block">轻度低蛋白血症</span>
                 </div>
-                <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40 text-xs">
+                <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40 text-xs">
                   <span className="text-ink-muted text-[length:var(--fs-10)] block">体质指数 (BMI)</span>
                   <span className="font-mono font-bold text-sm text-danger">{markers.bmi.value}</span>
                   <span className="text-[length:var(--fs-9)] text-danger block">消瘦消耗状态</span>
@@ -171,14 +171,14 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
           </div>
 
           {/* 临床病史与诊断表型 */}
-          <div className="lg:col-span-7 p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs space-y-3">
+          <div className="lg:col-span-7 p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs space-y-3">
             <h3 className="text-xs font-semibold text-ink pb-2 border-b border-line-2 flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-accent" /> 临床病史与诊断表型
             </h3>
 
             <div>
               <span className="text-[length:var(--fs-10)] text-ink-muted block">主诉与现病史:</span>
-              <p className="text-ink text-[length:var(--fs-11)] leading-relaxed mt-0.5 bg-[#0c1429] p-2.5 rounded border border-line/30">
+              <p className="text-ink text-[length:var(--fs-11)] leading-relaxed mt-0.5 bg-surface-2 p-2.5 rounded border border-line/30">
                 {patient.chiefComplaint}
               </p>
             </div>
@@ -190,7 +190,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                   {patient.diagnosticTags.map((tag, i) => (
                     <span
                       key={i}
-                      className="px-2 py-0.5 rounded bg-[#152347] text-accent text-[length:var(--fs-10)] border border-[#20cfff]/30"
+                      className="px-2 py-0.5 rounded bg-track text-accent text-[length:var(--fs-10)] border border-accent/30"
                     >
                       {tag}
                     </span>
@@ -204,7 +204,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                   {patient.pastMedications.map((med, i) => (
                     <div
                       key={i}
-                      className="p-1.5 rounded bg-[#0c1429] text-ink text-[length:var(--fs-11)] border border-line/30"
+                      className="p-1.5 rounded bg-surface-2 text-ink text-[length:var(--fs-11)] border border-line/30"
                     >
                       {med}
                     </div>
@@ -213,7 +213,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
               </div>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-[#241121] border border-[#ff536c]/30 text-[length:var(--fs-11)]">
+            <div className="p-2.5 rounded-lg bg-tint-danger border border-danger/30 text-[length:var(--fs-11)]">
               <span className="text-danger font-semibold flex items-center gap-1 mb-0.5">
                 <AlertCircle className="w-3.5 h-3.5" /> 药物/食物过敏警示:
               </span>
@@ -221,23 +221,23 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-              <div className="p-2 rounded bg-[#0c1429] border border-line/40 text-center">
+              <div className="p-2 rounded bg-surface-2 border border-line/40 text-center">
                 <span className="text-ink-muted text-[length:var(--fs-10)] block">疾病分期</span>
                 <span className="text-ink text-[length:var(--fs-11)] font-semibold block mt-0.5">{patient.stage}</span>
               </div>
-              <div className="p-2 rounded bg-[#0c1429] border border-line/40 text-center">
+              <div className="p-2 rounded bg-surface-2 border border-line/40 text-center">
                 <span className="text-ink-muted text-[length:var(--fs-10)] block">前白蛋白</span>
                 <span className="font-mono text-ink text-[length:var(--fs-11)] font-semibold block mt-0.5">
                   {markers.prealbumin.value} {markers.prealbumin.unit}
                 </span>
               </div>
-              <div className="p-2 rounded bg-[#0c1429] border border-line/40 text-center">
+              <div className="p-2 rounded bg-surface-2 border border-line/40 text-center">
                 <span className="text-ink-muted text-[length:var(--fs-10)] block">营养风险</span>
                 <span className="text-warn text-[length:var(--fs-11)] font-semibold block mt-0.5">
                   {patient.adaptability.nutritionalRisk}
                 </span>
               </div>
-              <div className="p-2 rounded bg-[#0c1429] border border-line/40 text-center">
+              <div className="p-2 rounded bg-surface-2 border border-line/40 text-center">
                 <span className="text-ink-muted text-[length:var(--fs-10)] block">禁忌症</span>
                 <span className="text-ok text-[length:var(--fs-11)] font-semibold block mt-0.5">
                   {patient.adaptability.contraindications}
@@ -278,7 +278,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
               />
             </div>
           ) : (
-            <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-xl text-xs space-y-3 min-h-[480px]">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-xl text-xs space-y-3 min-h-[480px]">
               <div className="flex items-center justify-between pb-2 border-b border-line-2">
                 <h4 className="font-semibold text-ink flex items-center gap-1.5">
                   <Layers className="w-4 h-4 text-accent" />
@@ -306,7 +306,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                           setSelectedTaxon(t);
                           setMicrobiomeView('network');
                         }}
-                        className="hover:bg-[#152347]/60 cursor-pointer transition-colors"
+                        className="hover:bg-track/60 cursor-pointer transition-colors"
                       >
                         <td className="py-2">
                           <span className="font-semibold text-ink block">{t.chineseName}</span>
@@ -316,12 +316,12 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                           <span
                             className={`px-1.5 py-0.5 rounded text-[length:var(--fs-10)] ${
                               t.category === 'beneficial'
-                                ? 'bg-[#23e6b1]/20 text-ok'
+                                ? 'bg-ok/20 text-ok'
                                 : t.category === 'pathogen'
-                                ? 'bg-[#ff536c]/20 text-danger'
+                                ? 'bg-danger/20 text-danger'
                                 : t.category === 'opportunistic'
-                                ? 'bg-[#ffb84d]/20 text-warn'
-                                : 'bg-[#815cff]/20 text-violet'
+                                ? 'bg-warn/20 text-warn'
+                                : 'bg-violet/20 text-violet'
                             }`}
                           >
                             {t.category === 'beneficial'
@@ -354,7 +354,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
           )}
 
           {/* 微生态关键指标与失衡特征分析 */}
-          <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs">
+          <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
             <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
               <h4 className="font-semibold text-ink flex items-center gap-1.5">
                 <Dna className="w-3.5 h-3.5 text-accent" />
@@ -364,7 +364,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40 text-center">
+              <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40 text-center">
                 <span className="text-ink-muted text-[length:var(--fs-10)] block">香农多样性指数</span>
                 <span className="font-mono font-bold text-lg text-danger block my-0.5">
                   {stats.shannonDiversity.toFixed(2)} ↓
@@ -372,7 +372,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                 <span className="text-[length:var(--fs-10)] text-ink-muted">正常参考: 4.5 - 5.5</span>
               </div>
 
-              <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40 text-center">
+              <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40 text-center">
                 <span className="text-ink-muted text-[length:var(--fs-10)] block">有益菌丰度占比</span>
                 <span className="font-mono font-bold text-lg text-warn block my-0.5">
                   {stats.beneficialRatio}% ↓
@@ -380,7 +380,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                 <span className="text-[length:var(--fs-10)] text-ink-muted">有益菌群严重受损</span>
               </div>
 
-              <div className="p-2.5 rounded-lg border border-[#ff536c]/40 text-center bg-[#241121]/50">
+              <div className="p-2.5 rounded-lg border border-danger/40 text-center bg-tint-danger/50">
                 <span className="text-danger text-[length:var(--fs-10)] block font-semibold">炎症/条件致病菌负荷</span>
                 <span className="font-mono font-bold text-lg text-danger block my-0.5">
                   {stats.pathogenLoad}% ↑
@@ -402,17 +402,17 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
       {activeTab === 'pathway' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* FMT 适应性安全评估 */}
-          <div className="lg:col-span-5 p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs">
+          <div className="lg:col-span-5 p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
             <h3 className="text-xs font-semibold text-ink pb-2 mb-3 border-b border-line-2 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <ShieldAlert className="w-3.5 h-3.5 text-accent" /> FMT 适应性安全评估
               </span>
-              <span className="px-1.5 py-0.5 rounded text-[length:var(--fs-10)] bg-[#23e6b1]/20 text-ok font-bold">
+              <span className="px-1.5 py-0.5 rounded text-[length:var(--fs-10)] bg-ok/20 text-ok font-bold">
                 门控通过
               </span>
             </h3>
 
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0c1429] border border-[#20cfff]/30 mb-3">
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-surface-2 border border-accent/30 mb-3">
               <div className="relative w-16 h-16 flex items-center justify-center">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                   <path
@@ -485,7 +485,7 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
           </div>
 
           {/* 菌群功能通路损伤评估 */}
-          <div className="lg:col-span-7 p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs">
+          <div className="lg:col-span-7 p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
             <h3 className="text-xs font-semibold text-ink pb-2 mb-3 border-b border-line-2 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5 text-accent" /> 菌群功能通路损伤评估
@@ -495,18 +495,18 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
 
             <div className="space-y-2">
               {pathways.map(pw => (
-                <div key={pw.id} className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40">
+                <div key={pw.id} className="p-2.5 rounded-lg bg-surface-2 border border-line/40">
                   <div className="flex items-center justify-between gap-3">
                     <span className="font-medium text-ink text-[length:var(--fs-11)] flex items-center gap-1.5 min-w-0">
                       <span
                         className={`px-1.5 py-0.5 rounded text-[length:var(--fs-9)] shrink-0 ${
                           pw.category === '代谢功能'
-                            ? 'bg-[#20cfff]/15 text-accent'
+                            ? 'bg-accent/15 text-accent'
                             : pw.category === '免疫调节'
-                            ? 'bg-[#815cff]/15 text-violet'
+                            ? 'bg-violet/15 text-violet'
                             : pw.category === '屏障保护'
-                            ? 'bg-[#23e6b1]/15 text-ok'
-                            : 'bg-[#ff536c]/15 text-danger'
+                            ? 'bg-ok/15 text-ok'
+                            : 'bg-danger/15 text-danger'
                         }`}
                       >
                         {pw.category}
@@ -527,14 +527,14 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                       相关度 {pw.relevanceScore}
                     </span>
                   </div>
-                  <div className="w-full h-1 rounded-full bg-[#0c1429] mt-1.5 overflow-hidden">
+                  <div className="w-full h-1 rounded-full bg-surface-2 mt-1.5 overflow-hidden">
                     <div
                       className={`h-full rounded-full ${
                         pw.status === 'suppressed'
-                          ? 'bg-[#ff536c]'
+                          ? 'bg-danger'
                           : pw.status === 'activated'
-                          ? 'bg-[#ffb84d]'
-                          : 'bg-[#23e6b1]'
+                          ? 'bg-warn'
+                          : 'bg-ok'
                       }`}
                       style={{ width: `${Math.min(100, pw.relevanceScore)}%` }}
                     />
@@ -545,12 +545,12 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
           </div>
 
           {/* 推荐临床策略（AI 决策辅助）—— 原先的跳转按钮改为屏内结论 */}
-          <div className="lg:col-span-12 p-4 rounded-xl bg-gradient-to-br from-[#101a33] to-[#15274d] border border-[#397cff]/50 shadow-lg text-xs">
+          <div className="lg:col-span-12 p-4 rounded-xl bg-gradient-to-br from-surface to-tint-info border border-info/50 shadow-lg text-xs">
             <div className="flex items-center gap-1.5 text-accent font-semibold mb-1.5">
               <Sparkles className="w-3.5 h-3.5" /> 推荐临床策略 (AI决策辅助)
             </div>
             <p className="text-ink text-[length:var(--fs-11)] leading-relaxed">{aiAdvice}</p>
-            <p className="mt-2.5 pt-2.5 border-t border-[#397cff]/25 text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
+            <p className="mt-2.5 pt-2.5 border-t border-info/25 text-[length:var(--fs-10)] text-ink-muted leading-relaxed">
               <span className="text-warn font-semibold">本模块不替代医生最终决策。</span>
               供受体配型与处方参数在「供受体智能匹配」屏独立完成，本屏结论仅作为其输入依据。
             </p>

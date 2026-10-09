@@ -209,7 +209,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
         badges={
           <>
             <ScreenSlotBadge slot={3} />
-            <span className="px-2 py-0.5 rounded text-[length:var(--fs-10)] font-bold bg-[#20cfff]/20 text-accent border border-[#20cfff]/40 font-mono">
+            <span className="px-2 py-0.5 rounded text-[length:var(--fs-10)] font-bold bg-accent/20 text-accent border border-accent/40 font-mono">
               推荐供体 {evaluation.donorCode}
             </span>
           </>
@@ -249,10 +249,10 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* 左列：六维雷达 */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
               <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
                 <div className="flex items-center gap-2">
-                  <span className="p-1 rounded bg-[#20cfff]/20 text-accent">
+                  <span className="p-1 rounded bg-accent/20 text-accent">
                     <Sparkles className="w-3.5 h-3.5" />
                   </span>
                   <div>
@@ -352,9 +352,9 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                           <span>{d.label}</span>
                           <span className="font-mono font-bold text-ink">{(score * 100).toFixed(0)}%</span>
                         </div>
-                        <div className="w-full h-1.5 rounded-full bg-[#0c1429] mt-0.5 overflow-hidden">
+                        <div className="w-full h-1.5 rounded-full bg-surface-2 mt-0.5 overflow-hidden">
                           <div
-                            className="h-full rounded-full bg-gradient-to-r from-[#397cff] to-[#20cfff]"
+                            className="h-full rounded-full bg-gradient-to-r from-info to-accent"
                             style={{ width: `${score * 100}%` }}
                           ></div>
                         </div>
@@ -365,7 +365,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
               </div>
 
               {!activeScore?.isRecommended && (
-                <div className="mt-2 p-2 rounded bg-[#1a1c29] border border-[#ffb84d]/40 text-[length:var(--fs-10)] text-warn flex items-start gap-1.5">
+                <div className="mt-2 p-2 rounded bg-tint-neutral border border-warn/40 text-[length:var(--fs-10)] text-warn flex items-start gap-1.5">
                   <Info className="w-3 h-3 mt-0.5 shrink-0" />
                   <span>
                     当前查看的是候选供体 {selectedDonor.code} 的推导得分（由多样性、历史治愈率、耐药风险与筛查状态计算）。
@@ -376,7 +376,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
             </div>
 
             {/* 候选供体速览 */}
-            <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
               <h3 className="text-xs font-semibold text-ink pb-2 mb-3 border-b border-line-2 flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5 text-accent" />
                 候选供体池（点击切换雷达对比）
@@ -388,14 +388,14 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                     onClick={() => setSelectedDonor(donor)}
                     className={`p-2.5 rounded-lg cursor-pointer transition-all border ${
                       selectedDonor.id === donor.id
-                        ? 'bg-[#152347] border-[#20cfff] shadow-[0_0_12px_rgba(32,207,255,0.25)]'
-                        : 'bg-[#0c1429] border-line/40 hover:border-line'
+                        ? 'bg-track border-accent shadow-[0_0_12px_rgba(32,207,255,0.25)]'
+                        : 'bg-surface-2 border-line/40 hover:border-line'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-bold text-xs text-ink font-mono">{donor.code}</span>
                       <span className={`px-1.5 py-0.5 rounded text-[length:var(--fs-10)] font-bold ${
-                        donor.rating === 'A+' ? 'bg-[#23e6b1]/20 text-ok' : 'bg-[#20cfff]/20 text-accent'
+                        donor.rating === 'A+' ? 'bg-ok/20 text-ok' : 'bg-accent/20 text-accent'
                       }`}>
                         {donor.rating}
                       </span>
@@ -418,7 +418,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
           {/* 右列：候选对比 + 可解释理由 */}
           <div className="lg:col-span-7 space-y-4">
             {/* 候选供体六维得分横向对比 */}
-            <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
               <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
                 <h3 className="text-xs font-semibold text-ink flex items-center gap-1.5">
                   <TrendingUp className="w-3.5 h-3.5 text-accent" />
@@ -433,7 +433,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                     key={donor.id}
                     onClick={() => setSelectedDonor(donor)}
                     className={`p-2.5 rounded-lg cursor-pointer border transition-all ${
-                      selectedDonor.id === donor.id ? 'bg-[#152347] border-[#20cfff]' : 'bg-[#0c1429] border-line/40 hover:border-line'
+                      selectedDonor.id === donor.id ? 'bg-track border-accent' : 'bg-surface-2 border-line/40 hover:border-line'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -441,16 +441,16 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                         <span className="font-mono font-bold text-ink">{donor.code}</span>
                         <span className="text-[length:var(--fs-10)] text-ink-muted">{donor.donorType}</span>
                         {isRecommended && (
-                          <span className="px-1.5 py-0.5 rounded bg-[#23e6b1]/20 text-ok text-[length:var(--fs-10)] font-bold">
+                          <span className="px-1.5 py-0.5 rounded bg-ok/20 text-ok text-[length:var(--fs-10)] font-bold">
                             推荐
                           </span>
                         )}
                       </span>
                       <span className="font-mono font-bold text-accent">{overall.toFixed(1)}%</span>
                     </div>
-                    <div className="w-full h-2 rounded-full bg-[#091127] overflow-hidden">
+                    <div className="w-full h-2 rounded-full bg-track overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-[#397cff] via-[#20cfff] to-[#23e6b1]"
+                        className="h-full rounded-full bg-gradient-to-r from-info via-accent to-ok"
                         style={{ width: `${overall}%` }}
                       ></div>
                     </div>
@@ -468,7 +468,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
             </div>
 
             {/* 可解释 AI 配型理由 */}
-            <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs space-y-3">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs space-y-3">
               <h3 className="text-xs font-semibold text-accent pb-2 border-b border-line-2 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" /> 可解释配型理由 · 系统推荐 {evaluation.donorCode} (Explainable Rationales)
               </h3>
@@ -479,8 +479,8 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                 </span>
                 <ul className="space-y-1.5 text-[length:var(--fs-11)] text-ink">
                   {evaluation.advantages.map((adv, i) => (
-                    <li key={i} className="flex items-start gap-1.5 bg-[#0c1429] p-2 rounded border border-line/40">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#23e6b1] mt-1.5 shrink-0"></span>
+                    <li key={i} className="flex items-start gap-1.5 bg-surface-2 p-2 rounded border border-line/40">
+                      <span className="w-1.5 h-1.5 rounded-full bg-ok mt-1.5 shrink-0"></span>
                       <span>{adv}</span>
                     </li>
                   ))}
@@ -493,22 +493,22 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                 </span>
                 <ul className="space-y-1.5 text-[length:var(--fs-11)] text-ink-muted">
                   {evaluation.potentialRisks.map((risk, i) => (
-                    <li key={i} className="flex items-start gap-1.5 bg-[#0c1429] p-2 rounded border border-[#ffb84d]/30">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#ffb84d] mt-1.5 shrink-0"></span>
+                    <li key={i} className="flex items-start gap-1.5 bg-surface-2 p-2 rounded border border-warn/30">
+                      <span className="w-1.5 h-1.5 rounded-full bg-warn mt-1.5 shrink-0"></span>
                       <span className="text-ink">{risk}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="p-2.5 rounded-lg bg-[#0c1e38] border border-[#20cfff]/40 text-[length:var(--fs-11)]">
+              <div className="p-2.5 rounded-lg bg-tint-info border border-accent/40 text-[length:var(--fs-11)]">
                 <span className="font-semibold text-accent block mb-0.5">AI综合决策建议:</span>
                 <p className="text-ink leading-relaxed">{evaluation.aiRecommendation}</p>
               </div>
 
               <button
                 onClick={() => setActiveTab('protocol')}
-                className="w-full py-1.5 rounded-lg bg-[#20cfff]/20 text-accent hover:bg-[#20cfff]/30 border border-[#20cfff]/50 font-medium transition-all text-xs flex items-center justify-center gap-1.5"
+                className="w-full py-1.5 rounded-lg bg-accent/20 text-accent hover:bg-accent/30 border border-accent/50 font-medium transition-all text-xs flex items-center justify-center gap-1.5"
               >
                 采纳该配型，进入精准移植处方
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -529,7 +529,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
               { label: '已释放可用批次', value: libraryStats.availableBatches, unit: '批', sub: `批次总数 ${matchedBatches.length} 批`, color: 'text-info', icon: <Database className="w-4 h-4 text-info" /> },
               { label: '待复筛 / 临期供体', value: libraryStats.pendingScreen, unit: '位', sub: '暂停用于新配型', color: 'text-warn', icon: <AlertTriangle className="w-4 h-4 text-warn" /> }
             ].map((stat, i) => (
-              <div key={i} className="p-3.5 rounded-xl bg-[#101a33] border border-line/60 shadow-lg">
+              <div key={i} className="p-3.5 rounded-xl bg-surface border border-line/60 shadow-lg">
                 <div className="flex items-center justify-between text-ink-muted text-xs">
                   <span>{stat.label}</span>
                   {stat.icon}
@@ -546,7 +546,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* 左列：供体库 */}
             <div className="lg:col-span-5">
-              <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs h-full">
+              <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs h-full">
                 <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
                   <h3 className="font-semibold text-ink flex items-center gap-1.5">
                     <Database className="w-4 h-4 text-accent" />
@@ -572,21 +572,21 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                         }}
                         className={`p-3 rounded-lg cursor-pointer transition-all border ${
                           selectedDonor.id === donor.id
-                            ? 'bg-[#152347] border-[#20cfff] shadow-[0_0_12px_rgba(32,207,255,0.25)]'
-                            : 'bg-[#0c1429] border-line/40 hover:border-line'
+                            ? 'bg-track border-accent shadow-[0_0_12px_rgba(32,207,255,0.25)]'
+                            : 'bg-surface-2 border-line/40 hover:border-line'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1">
                           <span className="flex items-center gap-2">
                             <span className="font-bold text-sm text-ink font-mono">{donor.code}</span>
                             {isRecommended && (
-                              <span className="px-1.5 py-0.5 rounded bg-[#23e6b1]/20 text-ok text-[length:var(--fs-10)] font-bold">
+                              <span className="px-1.5 py-0.5 rounded bg-ok/20 text-ok text-[length:var(--fs-10)] font-bold">
                                 系统推荐
                               </span>
                             )}
                           </span>
                           <span className={`px-1.5 py-0.5 rounded text-[length:var(--fs-10)] font-bold ${
-                            donor.rating === 'A+' ? 'bg-[#23e6b1]/20 text-ok' : donor.rating === 'A' ? 'bg-[#20cfff]/20 text-accent' : 'bg-[#ffb84d]/20 text-warn'
+                            donor.rating === 'A+' ? 'bg-ok/20 text-ok' : donor.rating === 'A' ? 'bg-accent/20 text-accent' : 'bg-warn/20 text-warn'
                           }`}>
                             {donor.rating} 级
                           </span>
@@ -602,8 +602,8 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                         <div className="mt-2 flex items-center justify-between text-[length:var(--fs-10)]">
                           <span className={`px-1.5 py-0.5 rounded ${
                             donor.screeningStatus === '合格(有效期待定)'
-                              ? 'bg-[#23e6b1]/15 text-ok'
-                              : 'bg-[#ffb84d]/15 text-warn'
+                              ? 'bg-ok/15 text-ok'
+                              : 'bg-warn/15 text-warn'
                           }`}>
                             筛查: {donor.screeningStatus}
                           </span>
@@ -619,7 +619,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
             {/* 右列：选中供体档案 + 批次表 */}
             <div className="lg:col-span-7 space-y-4">
               {/* 供体档案详情 */}
-              <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs">
+              <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
                 <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
                   <h3 className="font-semibold text-ink flex items-center gap-1.5">
                     <Microscope className="w-4 h-4 text-accent" />
@@ -629,13 +629,13 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
-                  <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40 flex justify-between items-center">
+                  <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40 flex justify-between items-center">
                     <span className="text-ink-muted text-[length:var(--fs-11)]">供体病原筛查全套 (38项):</span>
                     <span className="text-ok font-semibold flex items-center gap-1 text-[length:var(--fs-11)]">
                       <CheckCircle2 className="w-3.5 h-3.5" /> {selectedDonor.pathogenTest}
                     </span>
                   </div>
-                  <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40 flex justify-between items-center">
+                  <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40 flex justify-between items-center">
                     <span className="text-ink-muted text-[length:var(--fs-11)]">高危耐药基因 (AMR):</span>
                     <span className="text-ok font-semibold text-[length:var(--fs-11)]">{selectedDonor.amrGeneRisk}</span>
                   </div>
@@ -648,7 +648,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {selectedDonor.dominantTaxa.map((taxa, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded bg-[#20cfff]/12 text-[#a2e8ff] border border-[#20cfff]/25 text-[length:var(--fs-10)] font-mono">
+                        <span key={i} className="px-2 py-0.5 rounded bg-accent/12 text-accent border border-accent/25 text-[length:var(--fs-10)] font-mono">
                           {taxa}
                         </span>
                       ))}
@@ -661,7 +661,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {selectedDonor.idealIndications.map((ind, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded bg-[#23e6b1]/12 text-[#8ff0d0] border border-[#23e6b1]/25 text-[length:var(--fs-10)]">
+                        <span key={i} className="px-2 py-0.5 rounded bg-ok/12 text-ok border border-ok/25 text-[length:var(--fs-10)]">
                           {ind}
                         </span>
                       ))}
@@ -671,17 +671,17 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
               </div>
 
               {/* 冷链批次表 */}
-              <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs">
+              <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
                 <div className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-3 border-b border-line-2">
                   <h3 className="font-semibold text-ink flex items-center gap-1.5">
                     <Thermometer className="w-4 h-4 text-accent" />
                     活菌批次与超低温冷链追踪
                   </h3>
-                  <div className="flex items-center p-0.5 rounded-lg bg-[#091127] border border-line/60 text-[length:var(--fs-11)]">
+                  <div className="flex items-center p-0.5 rounded-lg bg-chrome border border-line/60 text-[length:var(--fs-11)]">
                     <button
                       onClick={() => setBatchScope('donor')}
                       className={`px-2 py-0.5 rounded-md transition-all ${
-                        batchScope === 'donor' ? 'bg-[#20cfff]/20 text-accent font-semibold' : 'text-ink-muted hover:text-ink'
+                        batchScope === 'donor' ? 'bg-accent/20 text-accent font-semibold' : 'text-ink-muted hover:text-ink'
                       }`}
                     >
                       仅看 {selectedDonor.code} ({batchesOfSelectedDonor.length})
@@ -689,7 +689,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                     <button
                       onClick={() => setBatchScope('all')}
                       className={`px-2 py-0.5 rounded-md transition-all ${
-                        batchScope === 'all' ? 'bg-[#20cfff]/20 text-accent font-semibold' : 'text-ink-muted hover:text-ink'
+                        batchScope === 'all' ? 'bg-accent/20 text-accent font-semibold' : 'text-ink-muted hover:text-ink'
                       }`}
                     >
                       全部批次 ({matchedBatches.length})
@@ -707,24 +707,24 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                       const isSelected = selectedBatch.batchNumber === batch.batchNumber;
                       const statusColor =
                         batch.status === '已释放(可使用)'
-                          ? 'bg-[#23e6b1]/15 text-ok'
+                          ? 'bg-ok/15 text-ok'
                           : batch.status === '检测中'
-                          ? 'bg-[#20cfff]/15 text-accent'
+                          ? 'bg-accent/15 text-accent'
                           : batch.status === '已临期'
-                          ? 'bg-[#ff536c]/15 text-danger'
-                          : 'bg-[#8996b8]/15 text-ink-2';
+                          ? 'bg-danger/15 text-danger'
+                          : 'bg-ink-muted/15 text-ink-2';
                       return (
                         <div
                           key={batch.batchNumber}
                           onClick={() => setSelectedBatch(batch)}
                           className={`p-2.5 rounded-lg cursor-pointer transition-all border ${
-                            isSelected ? 'bg-[#152347] border-[#20cfff]' : 'bg-[#0c1429] border-line/40 hover:bg-[#101c3d]'
+                            isSelected ? 'bg-track border-accent' : 'bg-surface-2 border-line/40 hover:bg-tint-info'
                           }`}
                         >
                           <div className="flex items-center justify-between mb-1.5">
                             <div className="flex items-center gap-2">
                               <span className="font-mono font-bold text-ink">{batch.batchNumber}</span>
-                              <span className="px-1.5 py-0.5 rounded bg-[#815cff]/15 text-[#b592ff] text-[length:var(--fs-10)] font-mono">
+                              <span className="px-1.5 py-0.5 rounded bg-violet/15 text-violet text-[length:var(--fs-10)] font-mono">
                                 {batch.donorCode}
                               </span>
                             </div>
@@ -762,20 +762,20 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* 左列：处方正文 */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs space-y-3">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-line-2">
                 <div className="flex items-center gap-2">
                   <FileCheck className="w-4 h-4 text-accent" />
                   <h3 className="font-semibold text-ink">精准菌群移植方案 (FMT Treatment Prescription)</h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded bg-[#20cfff]/20 text-accent font-mono text-[length:var(--fs-10)] font-bold">
+                  <span className="px-2 py-0.5 rounded bg-accent/20 text-accent font-mono text-[length:var(--fs-10)] font-bold">
                     {protocol.protocolVersion}
                   </span>
                   <span className={`px-2 py-0.5 rounded text-[length:var(--fs-10)] font-bold ${
                     protocol.approvalStatus === '医生已签署'
-                      ? 'bg-[#23e6b1]/20 text-ok'
-                      : 'bg-[#ffb84d]/20 text-warn'
+                      ? 'bg-ok/20 text-ok'
+                      : 'bg-warn/20 text-warn'
                   }`}>
                     {protocol.approvalStatus}
                   </span>
@@ -783,28 +783,28 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40">
+                <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40">
                   <span className="text-ink-muted text-[length:var(--fs-10)] block">移植给药路径:</span>
                   <span className="font-bold text-ink text-xs mt-0.5 flex items-center gap-1">
                     <Pill className="w-3.5 h-3.5 text-accent" /> {protocol.administrationRoute}
                   </span>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40">
+                <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40">
                   <span className="text-ink-muted text-[length:var(--fs-10)] block">推荐活菌剂量:</span>
                   <span className="font-mono font-bold text-ink text-xs mt-0.5 block">
                     {protocol.recommendedDose}
                   </span>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40">
+                <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40">
                   <span className="text-ink-muted text-[length:var(--fs-10)] block">给药频次与疗程:</span>
                   <span className="font-medium text-ink text-xs mt-0.5 block">
                     {protocol.frequency} · {protocol.treatmentDuration}
                   </span>
                 </div>
 
-                <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40">
+                <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40">
                   <span className="text-ink-muted text-[length:var(--fs-10)] block">肠道准备:</span>
                   <span className="font-medium text-ink text-xs mt-0.5 block">
                     {protocol.bowelPreparation}
@@ -812,7 +812,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-lg bg-[#0c1429] border border-line/40 text-[length:var(--fs-11)] space-y-1">
+              <div className="p-2.5 rounded-lg bg-surface-2 border border-line/40 text-[length:var(--fs-11)] space-y-1">
                 <div>
                   <span className="text-ink-muted">移植前处理: </span>
                   <span className="text-ink">{protocol.preTreatment}</span>
@@ -828,7 +828,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
               </div>
 
               {/* 本次执行的菌源批次 */}
-              <div className="p-2.5 rounded-lg bg-[#0c1e38] border border-[#20cfff]/40 flex flex-wrap items-center justify-between gap-2 text-[length:var(--fs-11)]">
+              <div className="p-2.5 rounded-lg bg-tint-info border border-accent/40 flex flex-wrap items-center justify-between gap-2 text-[length:var(--fs-11)]">
                 <span className="text-ink-muted">
                   本次处方菌源批次:
                   <strong className="text-ink font-mono ml-1">{selectedBatch.batchNumber}</strong>
@@ -844,8 +844,8 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                 </span>
                 <div className="space-y-1.5">
                   {protocol.reviewMilestones.map((milestone, i) => (
-                    <div key={i} className="flex items-start gap-2 p-2 rounded bg-[#0c1429] border border-line/40 text-[length:var(--fs-11)]">
-                      <span className="w-5 h-5 rounded-full bg-[#20cfff]/15 text-accent text-[length:var(--fs-10)] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                    <div key={i} className="flex items-start gap-2 p-2 rounded bg-surface-2 border border-line/40 text-[length:var(--fs-11)]">
+                      <span className="w-5 h-5 rounded-full bg-accent/15 text-accent text-[length:var(--fs-10)] font-bold flex items-center justify-center shrink-0 mt-0.5">
                         {i + 1}
                       </span>
                       <span className="text-ink leading-relaxed">{milestone}</span>
@@ -858,7 +858,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
 
           {/* 右列：安全门控 + 签署 */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs">
               <div className="flex items-center justify-between pb-2 mb-3 border-b border-line-2">
                 <span className="font-semibold text-ink flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-ok" />
@@ -872,9 +872,9 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
               </div>
 
               {/* 通过率进度条 */}
-              <div className="w-full h-1.5 rounded-full bg-[#091127] overflow-hidden mb-3">
+              <div className="w-full h-1.5 rounded-full bg-track overflow-hidden mb-3">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#23e6b1] to-[#20cfff]"
+                  className="h-full rounded-full bg-gradient-to-r from-ok to-accent"
                   style={{ width: `${(passedGates / Math.max(1, ruleGates.length)) * 100}%` }}
                 ></div>
               </div>
@@ -892,7 +892,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                     </div>
                     <div className="space-y-1.5">
                       {gates.map(gate => (
-                        <div key={gate.id} className="p-2 rounded-lg bg-[#0c1429] border border-line-2">
+                        <div key={gate.id} className="p-2 rounded-lg bg-surface-2 border border-line-2">
                           <div className="flex items-start justify-between gap-2">
                             <span className="text-[length:var(--fs-11)] text-ink leading-snug">{gate.name}</span>
                             <span className={`shrink-0 text-[length:var(--fs-10)] font-bold flex items-center gap-0.5 ${
@@ -916,7 +916,7 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
             </div>
 
             {/* 签署与下发 */}
-            <div className="p-4 rounded-xl bg-[#101a33] border border-line/60 shadow-lg text-xs space-y-3">
+            <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-lg text-xs space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-line-2">
                 <h3 className="font-semibold text-ink flex items-center gap-1.5">
                   <UserCheck className="w-4 h-4 text-accent" />
@@ -944,14 +944,14 @@ export const DonorMatchingProtocol: React.FC<DonorMatchingProtocolProps> = ({ pa
                 </div>
               </div>
 
-              <div className="flex items-start gap-1.5 p-2 rounded bg-[#1a1c29] border border-[#ffb84d]/30 text-[length:var(--fs-10)] text-warn">
+              <div className="flex items-start gap-1.5 p-2 rounded bg-tint-neutral border border-warn/30 text-[length:var(--fs-10)] text-warn">
                 <History className="w-3 h-3 mt-0.5 shrink-0" />
                 <span>下发后系统将自动开启定植率与炎症指标的纵向随访轨道，并按里程碑推送复查提醒。</span>
               </div>
 
               {/* 分屏约束：本屏不向其他模块跳转。签署后的流转说明就地呈现，
                   执行状态由本屏门控进度与医师签署动作驱动。 */}
-              <div className="p-3 rounded-lg bg-[#0c1429] border border-line/50 space-y-1.5 text-[length:var(--fs-11)]">
+              <div className="p-3 rounded-lg bg-surface-2 border border-line/50 space-y-1.5 text-[length:var(--fs-11)]">
                 <div className="flex items-center justify-between">
                   <span className="text-ink-muted">门控进度</span>
                   <span

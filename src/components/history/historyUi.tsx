@@ -24,9 +24,9 @@ export const UI = {
   red: 'var(--color-danger)',
   muted: 'var(--color-ink-muted)',
   // 以下三项是「面」不是「字」，不参与高对比档的提亮，保持字面值
-  panel: '#101a33',
-  panelDeep: '#0c1429',
-  line: '#2b4170'
+  panel: 'var(--color-surface)',
+  panelDeep: 'var(--color-surface-2)',
+  line: 'var(--color-line)'
 } as const;
 
 export function toneColor(score: number): string {
@@ -238,7 +238,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   className = '',
   bodyClassName = ''
 }) => (
-  <div className={`rounded-xl bg-[#101a33] border border-line/60 shadow-lg ${className}`}>
+  <div className={`rounded-xl bg-surface border border-line/60 shadow-lg ${className}`}>
     <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 border-b border-line-2">
       <h3 className="text-xs font-semibold text-ink flex items-center gap-1.5">
         {icon}
@@ -282,8 +282,8 @@ export const PairBar: React.FC<PairBarProps> = ({
 
   return (
     <div
-      className={`p-2 rounded-lg border bg-[#0c1429] ${
-        flagged ? 'border-[#ffb84d]/60' : 'border-line/40'
+      className={`p-2 rounded-lg border bg-surface-2 ${
+        flagged ? 'border-warn/60' : 'border-line/40'
       }`}
     >
       <div className="flex items-center justify-between text-[length:var(--fs-10)] mb-1.5">
@@ -300,15 +300,15 @@ export const PairBar: React.FC<PairBarProps> = ({
       <div className="space-y-1">
         <div className="flex items-center gap-1.5">
           <span className="text-[length:var(--fs-9)] text-violet w-8 shrink-0">历史</span>
-          <div className="flex-1 h-1.5 rounded-full bg-[#091127] overflow-hidden">
-            <div className="h-full rounded-full bg-[#815cff]" style={{ width: `${(sampleValue / max) * 100}%` }} />
+          <div className="flex-1 h-1.5 rounded-full bg-track overflow-hidden">
+            <div className="h-full rounded-full bg-violet" style={{ width: `${(sampleValue / max) * 100}%` }} />
           </div>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="text-[length:var(--fs-9)] text-accent w-8 shrink-0">当前</span>
-          <div className="flex-1 h-1.5 rounded-full bg-[#091127] overflow-hidden">
+          <div className="flex-1 h-1.5 rounded-full bg-track overflow-hidden">
             <div
-              className="h-full rounded-full bg-[#20cfff]"
+              className="h-full rounded-full bg-accent"
               style={{ width: `${(currentValue / max) * 100}%` }}
             />
           </div>
@@ -414,7 +414,7 @@ export const TwinSnapshotStrip: React.FC<{ snapshot: TwinSnapshot; tone?: string
       return (
         <div key={item.key} className="flex items-center gap-2 text-[length:var(--fs-10)]">
           <span className="text-ink-muted w-16 shrink-0">{item.label}</span>
-          <div className="flex-1 h-1.5 rounded-full bg-[#091127] overflow-hidden">
+          <div className="flex-1 h-1.5 rounded-full bg-track overflow-hidden">
             <div className="h-full rounded-full" style={{ width: `${value}%`, background: color }} />
           </div>
           <span className="font-mono w-7 text-right" style={{ color }}>
@@ -462,7 +462,7 @@ export const RatioBar: React.FC<{ label: string; value: number; tone?: string; s
         {suffix}
       </span>
     </div>
-    <div className="h-1.5 rounded-full bg-[#091127] overflow-hidden">
+    <div className="h-1.5 rounded-full bg-track overflow-hidden">
       <div className="h-full rounded-full" style={{ width: `${Math.min(100, value)}%`, background: tone }} />
     </div>
   </div>
