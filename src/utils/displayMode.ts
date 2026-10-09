@@ -68,29 +68,47 @@ export type DisplayToggleKey = 'contrast' | 'largeText' | 'largeCursor';
 export const DEFAULT_DISPLAY_MODE: DisplayMode = {
   contrast: false,
   largeText: false,
-  largeCursor: false,
+  // 默认开：多屏 + 远距离是这个平台的主场景，且「看得见」才算有这个功能。
+  // 单屏近距离用不着的人，顶栏点一下就能关掉。
+  largeCursor: true,
   background: DEFAULT_BACKGROUND,
 };
 
-const STORAGE_KEY = 'microfmt.displayMode';
+/** v2：大光标改为默认开，键名升版以丢弃旧的 false（见 loadDisplayMode 的迁移注释）。 */
+const STORAGE_KEY = 'microfmt.displayMode.v2';
+const LEGACY_STORAGE_KEY = 'microfmt.displayMode';
+
+/** 把任意来路的对象收敛成合法的 DisplayMode。坏值一律退回默认，不让页面起不来。 */
+function normalize(parsed: Partial<DisplayMode> | null): DisplayMode {
+  const p = parsed ?? {};
+  return {
+    contrast: p.contrast === true,
+    largeText: p.largeText === true,
+    largeCursor: p.largeCursor === true,
+    // 校验取值：旧版本存的档位、或手改过的 localStorage 都可能在 BACKGROUNDS 之外，
+    // 直接塞进 data-bg 会得到一个没有样式的属性，页面看上去像「背景坏了」。
+    background:
+      typeof p.background === 'string' && BACKGROUND_IDS.includes(p.background)
+        ? (p.background as BackgroundId)
+        : DEFAULT_BACKGROUND,
+  };
+}
 
 /** 读取上次选择。任何异常都退回默认值，不能因为一个坏值让整个应用起不来。 */
 export function loadDisplayMode(): DisplayMode {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_DISPLAY_MODE;
-    const parsed = JSON.parse(raw) as Partial<DisplayMode>;
-    return {
-      contrast: parsed.contrast === true,
-      largeText: parsed.largeText === true,
-      largeCursor: parsed.largeCursor === true,
-      // 校验取值：旧版本存的档位、或手改过的 localStorage 都可能在 BACKGROUNDS 之外，
-      // 直接塞进 data-bg 会得到一个没有样式的属性，页面看上去像「背景坏了」。
-      background:
-        typeof parsed.background === 'string' && BACKGROUND_IDS.includes(parsed.background)
-          ? (parsed.background as BackgroundId)
-          : DEFAULT_BACKGROUND,
-    };
+    if (raw) return normalize(JSON.parse(raw) as Partial<DisplayMode>);
+
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (legacy) {
+      // 一次性迁移：旧键时代「大光标」是后加的、默认关，而且当时确实没在屏幕上
+      // 生效过 —— 用户没机会对它形成偏好。所以迁移时直接按新默认（开）走，
+      // 只沿用用户真正选过的对比度 / 大字号 / 背景。
+      return { ...normalize(JSON.parse(legacy) as Partial<DisplayMode>), largeCursor: true };
+    }
+
+    return DEFAULT_DISPLAY_MODE;
   } catch {
     return DEFAULT_DISPLAY_MODE;
   }
