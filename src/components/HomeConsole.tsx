@@ -16,6 +16,7 @@ import { ClinicalPatient, ModuleTab } from '../types';
 import { getPatientDataPackage } from '../data/mockMicroFmtData';
 import { historicalSamples } from '../data/historicalSamples';
 import { SCREEN_SLOTS, SCREEN_SLOT_COUNT } from '../data/screenSlots';
+import { SCENARIOS, STAGES } from '../data/fmtContent';
 import { ContextBar, ScreenSlotBadge } from './ui';
 
 interface HomeConsoleProps {
@@ -70,8 +71,10 @@ export const HomeConsole: React.FC<HomeConsoleProps> = ({
    */
   const SLOT_METRICS: Record<ModuleTab, ReadonlyArray<{ label: string; value: React.ReactNode; tone: string }>> = {
     workbench: [
-      { label: '在管队列', value: '197 例', tone: 'text-accent' },
-      { label: '随访监测期', value: '51%', tone: 'text-warn' }
+      /* 屏 1 已整屏交给 FMT 推演系统，摘要改成该模块自己的结构量
+         （阶段数 / 情景分支数），仍从 fmtContent 派生，不另存快照。 */
+      { label: '推演阶段', value: `${STAGES.length} 阶段`, tone: 'text-accent' },
+      { label: '情景分支', value: `${Object.keys(SCENARIOS).length} 支`, tone: 'text-warn' }
     ],
     patient_center: [
       { label: 'FMT 适应度', value: currentPatient.adaptability.overallScore, tone: 'text-accent' },

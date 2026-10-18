@@ -1,7 +1,7 @@
 // MicroFMT Platform Types & Interfaces
 
 export type ModuleTab = 
-  | 'workbench'          // 工作台 (3D微生态孪生驾驶舱)
+  | 'workbench'          // 工作台 (FMT 全链路 3D 推演系统)
   | 'patient_center'      // 患者精准诊疗中心 (菌群画像与生态网络)
   | 'donor_matching'      // 供受体智能匹配与精准方案
   | 'efficacy_tracker'    // 疗效与菌群重构监测

@@ -14,6 +14,11 @@ coverage/
 # 兜底：后续新增的同类目录一律忽略
 .shots*/
 
+# 无头截图 / 批量改色的临时脚本（跑完即弃，不是项目源码）
+.diag.mjs
+.recolor*.mjs
+.shot.mjs
+
 # 项目用 bun（bun.lock 已被跟踪），package-lock.json 是 npx 的副产物
 package-lock.json
 

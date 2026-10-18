@@ -71,7 +71,14 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen app-bg text-ink font-sans flex flex-col selection:bg-accent selection:text-on-bright">
+    /* 应用外壳用**确定高度**（h-dvh）而不是 min-h-screen。
+     * 差别很关键：min-h-screen 只是下限，容器高度仍由内容决定，于是
+     * main 的 flex-1 拿不到确定高度，`h-full` 的子节点会解析成 auto ——
+     * 屏 1 的 WebGL 画布正是靠这个高度定尺寸的，一旦变成 auto 就会
+     * 「画布撑高自己 → 容器跟着变高 → 画布再撑高」，实测画布涨到 2013px。
+     * 改成 h-dvh 后 main 成为唯一滚动容器（它本来就带 overflow-y-auto，
+     * 页内锚点导航也按这个 id 定位），顶栏与页脚恒定不动。 */
+    <div className="h-dvh overflow-hidden app-bg text-ink font-sans flex flex-col selection:bg-accent selection:text-on-bright">
       {/* 1. Universal Top Header
           侧边导航已移除，顶栏的「启动台」按钮是模块屏回到主屏的唯一回路。 */}
       <TopHeader
@@ -95,10 +102,13 @@ export default function App() {
         <div
           className={`mx-auto w-full ${
             /* 屏 1 部署在 49 寸 5120×1440（32:9）带鱼屏上，1600px 上限会让
-               两侧各空出 1760px。工作台因此解除宽度上限，改用三栏超宽布局
-               （见 WorkbenchCockpit 的 3xl: 断点）；其余模块仍维持 1600px，
-               避免在普通 16:9 屏上被拉成过宽的一行字。 */
-            view === 'workbench' ? 'max-w-none' : 'max-w-[1600px]'
+               两侧各空出 1760px。该屏现已整屏交给 FMT 推演系统（它自带
+               3D 视口 + 循证面板的两栏版面），因此解除宽度上限、整幅铺开，
+               并补 h-full 让它撑满 main 的内容盒 —— 推演系统内部的 WebGL
+               画布必须拿到**确定高度**，否则会反向撑高自己（见 index.css
+               的 .fmt-stage-h 注释）。其余模块仍维持 1600px，避免在普通
+               16:9 屏上被拉成过宽的一行字。 */
+            view === 'workbench' ? 'max-w-none h-full' : 'max-w-[1600px]'
           }`}
         >
           {view === 'home' && (

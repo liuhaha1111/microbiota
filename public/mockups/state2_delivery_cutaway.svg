@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" width="1440" height="900">
+  <!-- 纯色低反射医疗暗场背景 (#0F141C) -->
+  <rect width="1440" height="900" fill="#0F141C" />
+
+  <!-- 顶部标题栏 -->
+  <rect x="0" y="0" width="1440" height="56" fill="#141B26" stroke="#243042" stroke-width="1" />
+  <text x="24" y="25" fill="#F1F5F9" font-family="sans-serif" font-size="16" font-weight="600">粪菌移植（FMT）临床全链路与微生态定植 3D 推演系统</text>
+  <text x="24" y="44" fill="#94A3B8" font-family="sans-serif" font-size="12">链路：供体筛查与厌氧制备  →  跨消化道靶向递送与黏膜定植  →  微生态稳态与临床缓解区间评估</text>
+  <rect x="1220" y="14" width="196" height="28" rx="4" fill="#1E293B" stroke="#475569" stroke-width="1" />
+  <text x="1318" y="32" fill="#E2E8F0" font-family="sans-serif" font-size="12" text-anchor="middle">演示数据 · 非诊疗用途</text>
+
+  <!-- 左侧 3D 场景视口 (宽 960px = 2/3) -->
+  <rect x="0" y="56" width="960" height="772" fill="#0F141C" stroke="#243042" stroke-width="1" />
+
+  <!-- 相机与尺度工程标注框 -->
+  <rect x="20" y="74" width="390" height="62" rx="4" fill="#161F2C" stroke="#2D3D54" stroke-width="1" />
+  <text x="32" y="96" fill="#94A3B8" font-family="monospace" font-size="12">CAMERA: Pos[0.0, 1.8, 5.2] | Target[0.0, 0.0, 0.0] | FOV 40°</text>
+  <text x="32" y="118" fill="#2B9EB3" font-family="sans-serif" font-size="12">视角：宏观肠段 45° 纵切半剖面（Macro Cutaway）</text>
+
+  <!-- 3D 主体：结肠段三维纵切半剖面网格 (次表面散射质感 #C87A72 + 结肠袋半月襞) -->
+  <g transform="translate(110, 220)">
+    <!-- 浆膜与肌层外廓 -->
+    <path d="M 40 80 Q 190 45, 360 75 T 700 65 L 700 335 Q 530 355, 360 325 T 40 330 Z" fill="#6E3835" stroke="#8F4B46" stroke-width="3" />
+    <!-- 黏膜层与半月襞 (Haustral folds) 次表面散射柔和色阶 -->
+    <path d="M 55 100 Q 190 70, 360 95 T 685 85 L 685 315 Q 530 335, 360 305 T 55 310 Z" fill="#9E554F" />
+    <!-- 肠腔内壁暗部与半月襞隔脊 -->
+    <path d="M 70 120 L 670 110 L 670 290 L 70 290 Z" fill="#4A2422" />
+    <path d="M 210 90 Q 225 200, 210 310" fill="none" stroke="#C87A72" stroke-width="18" stroke-linecap="round" />
+    <path d="M 410 95 Q 395 200, 410 305" fill="none" stroke="#C87A72" stroke-width="18" stroke-linecap="round" />
+    <path d="M 570 90 Q 585 200, 570 310" fill="none" stroke="#C87A72" stroke-width="18" stroke-linecap="round" />
+
+    <!-- 下消化道电子结肠镜导管实体网格 (Endoscopic Catheter Mesh) -->
+    <path d="M 10 215 Q 140 210, 265 195" fill="none" stroke="#334155" stroke-width="22" stroke-linecap="round" />
+    <path d="M 10 215 Q 140 210, 265 195" fill="none" stroke="#64748B" stroke-width="14" stroke-linecap="round" />
+    <circle cx="268" cy="195" r="9" fill="#94A3B8" />
+
+    <!-- 菌液递送层流流线 (Streamlines #2B9EB3) -->
+    <path d="M 278 195 C 360 175, 460 140, 620 135" fill="none" stroke="#2B9EB3" stroke-width="3" />
+    <path d="M 278 195 C 370 195, 480 190, 640 200" fill="none" stroke="#2B9EB3" stroke-width="3.5" />
+    <path d="M 278 195 C 360 220, 450 265, 610 270" fill="none" stroke="#2B9EB3" stroke-width="3" />
+
+    <!-- 供体共生菌粒子云 (#2B9EB3 低饱和哑光粒子) -->
+    <circle cx="330" cy="185" r="5" fill="#2B9EB3" />
+    <circle cx="365" cy="205" r="6" fill="#2B9EB3" />
+    <circle cx="405" cy="165" r="5" fill="#2B9EB3" />
+    <circle cx="445" cy="225" r="6" fill="#2B9EB3" />
+    <circle cx="490" cy="180" r="5.5" fill="#2B9EB3" />
+    <circle cx="535" cy="245" r="5" fill="#2B9EB3" />
+    <circle cx="585" cy="160" r="6" fill="#2B9EB3" />
+
+    <!-- 原籍失衡致病菌残存簇 (#E06D3B 暖琥珀色) -->
+    <circle cx="475" cy="272" r="6" fill="#E06D3B" />
+    <circle cx="495" cy="278" r="5.5" fill="#E06D3B" />
+    <circle cx="615" cy="268" r="6" fill="#E06D3B" />
+
+    <!-- 微观下钻聚焦环 (点击可推进至阶段 4 微观黏液层视角，热区 ≥ 44x44px) -->
+    <circle cx="490" cy="275" r="28" fill="#132E38" fill-opacity="0.45" stroke="#2B9EB3" stroke-width="2" stroke-dasharray="5 3" />
+    <text x="490" y="322" fill="#2B9EB3" font-family="sans-serif" font-size="12" font-weight="600" text-anchor="middle">[点击下钻至黏液层微观视角]</text>
+  </g>
+
+  <!-- 2D 锚定浮标 1 -->
+  <line x1="378" y1="415" x2="290" y2="210" stroke="#2B9EB3" stroke-width="1.5" />
+  <circle cx="378" cy="415" r="4" fill="#2B9EB3" />
+  <rect x="120" y="155" width="330" height="54" rx="4" fill="#161F2C" stroke="#2B9EB3" stroke-width="1" />
+  <text x="134" y="177" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">● 下消化道内镜灌注（直达结肠生态位）</text>
+  <text x="134" y="197" fill="#94A3B8" font-family="sans-serif" font-size="12">规避胃酸与小肠胆盐损耗 · 证据等级：高</text>
+
+  <!-- 2D 锚定浮标 2 -->
+  <line x1="590" y1="365" x2="590" y2="230" stroke="#2B9EB3" stroke-width="1.5" />
+  <circle cx="590" cy="365" r="4" fill="#2B9EB3" />
+  <rect x="480" y="175" width="360" height="54" rx="4" fill="#161F2C" stroke="#2B9EB3" stroke-width="1" />
+  <text x="494" y="197" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">● 肠溶胶囊递送 vs 结肠镜灌注</text>
+  <text x="494" y="217" fill="#94A3B8" font-family="sans-serif" font-size="12">rCDI 缓解区间总体相当 (78%–88%) · 证据等级：高</text>
+
+  <!-- 2D 锚定浮标 3 -->
+  <line x1="680" y1="505" x2="680" y2="615" stroke="#9488B0" stroke-width="1.5" stroke-dasharray="4 3" />
+  <circle cx="680" cy="505" r="4" fill="#9488B0" />
+  <rect x="490" y="615" width="370" height="54" rx="4" fill="#161F2C" stroke="#9488B0" stroke-width="1" stroke-dasharray="5 3" />
+  <text x="504" y="637" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">◆ 肠腔停留时间（Retention Time）波动</text>
+  <text x="504" y="657" fill="#94A3B8" font-family="sans-serif" font-size="12">受腹泻排空动力与解剖袋形显著影响 · 证据等级：专家共识</text>
+
+  <!-- 左下角视角控制热区 -->
+  <rect x="20" y="758" width="132" height="48" rx="6" fill="#161F2C" stroke="#2D3D54" stroke-width="1" />
+  <text x="86" y="787" fill="#E2E8F0" font-family="sans-serif" font-size="13" text-anchor="middle">复位剖面视角</text>
+
+  <!-- 右侧知识面板 (宽 480px = 1/3) -->
+  <rect x="960" y="56" width="480" height="772" fill="#141B26" stroke="#243042" stroke-width="1" />
+
+  <!-- 右侧顶部：三个常驻读数 -->
+  <rect x="960" y="56" width="480" height="176" fill="#182230" stroke="#243042" stroke-width="1" />
+  <text x="980" y="80" fill="#94A3B8" font-family="sans-serif" font-size="12" font-weight="600">常驻三读数（倾向与参考区间 · 演示数据）</text>
+
+  <text x="980" y="106" fill="#E2E8F0" font-family="sans-serif" font-size="13">1. 菌群多样性指数 (Shannon 倾向)</text>
+  <text x="1420" y="106" fill="#2B9EB3" font-family="monospace" font-size="12" text-anchor="end">● 管腔载荷涌入期</text>
+  <rect x="980" y="114" width="440" height="10" rx="5" fill="#0F141C" />
+  <rect x="1150" y="114" width="170" height="10" rx="5" fill="#2B9EB3" />
+
+  <text x="980" y="146" fill="#E2E8F0" font-family="sans-serif" font-size="13">2. 炎症信号水平 (黏膜促炎倾向)</text>
+  <text x="1420" y="146" fill="#E06D3B" font-family="monospace" font-size="12" text-anchor="end">▲ 待定植下调</text>
+  <rect x="980" y="154" width="440" height="10" rx="5" fill="#0F141C" />
+  <rect x="1180" y="154" width="130" height="10" rx="5" fill="#E06D3B" />
+
+  <text x="980" y="186" fill="#E2E8F0" font-family="sans-serif" font-size="13">3. 缓解概率区间 (rCDI 78%–88% | UC 25%–45%)</text>
+  <text x="1420" y="186" fill="#2B9EB3" font-family="monospace" font-size="12" text-anchor="end">● 途径非劣效区间</text>
+  <rect x="980" y="194" width="440" height="10" rx="5" fill="#0F141C" />
+  <rect x="1250" y="194" width="130" height="10" rx="5" fill="#2B9EB3" />
+
+  <!-- 右侧面板主体 -->
+  <text x="980" y="264" fill="#F1F5F9" font-family="sans-serif" font-size="18" font-weight="600">阶段 3：跨消化道移植递送</text>
+  <rect x="1310" y="242" width="110" height="44" rx="6" fill="#1E293B" stroke="#475569" stroke-width="1" />
+  <text x="1365" y="269" fill="#E2E8F0" font-family="sans-serif" font-size="12" text-anchor="middle">↻ 重放该阶段</text>
+
+  <rect x="980" y="282" width="310" height="28" rx="4" fill="#132E38" stroke="#2B9EB3" stroke-width="1" />
+  <text x="992" y="300" fill="#2B9EB3" font-family="sans-serif" font-size="12" font-weight="600">● 证据充分（rCDI 胶囊 vs 结肠镜非劣效：高）</text>
+
+  <text x="980" y="338" fill="#CBD5E1" font-family="sans-serif" font-size="13">· 下消化道结肠镜灌注直接抵达病变肠段，初始生物量高。</text>
+  <text x="980" y="362" fill="#CBD5E1" font-family="sans-serif" font-size="13">· 口服肠溶胶囊依从性高，存在 1–2 周定植动力学延迟。</text>
+  <text x="980" y="386" fill="#9488B0" font-family="sans-serif" font-size="13">· 非 rCDI 慢性炎症适应证最佳递送频次尚属【专家共识/待确认】。</text>
+
+  <!-- 阶段 3 专属唯一控件：递送途径切换开关 (热区 ≥ 44px) -->
+  <rect x="980" y="412" width="440" height="112" rx="6" fill="#182230" stroke="#2D3D54" stroke-width="1" />
+  <text x="996" y="438" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">本阶段专属控件：递送途径选择（热区 ≥44px）</text>
+  <rect x="996" y="454" width="200" height="48" rx="6" fill="#132E38" stroke="#2B9EB3" stroke-width="1.5" />
+  <text x="1096" y="483" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600" text-anchor="middle">● 下消化道结肠镜</text>
+  <rect x="1204" y="454" width="200" height="48" rx="6" fill="#0F141C" stroke="#334155" stroke-width="1" />
+  <text x="1304" y="483" fill="#94A3B8" font-family="sans-serif" font-size="13" text-anchor="middle">上消化道肠溶胶囊</text>
+
+  <!-- 折叠项 -->
+  <rect x="980" y="544" width="440" height="48" rx="6" fill="#182230" stroke="#2D3D54" stroke-width="1" />
+  <text x="996" y="573" fill="#E2E8F0" font-family="sans-serif" font-size="13" font-weight="600">▸ 展开：递送途径因果表与文献来源 (Kao et al., JAMA)</text>
+  <rect x="980" y="604" width="440" height="48" rx="6" fill="#182230" stroke="#2D3D54" stroke-width="1" />
+  <text x="996" y="633" fill="#E06D3B" font-family="sans-serif" font-size="13" font-weight="600">▸ 展开：模型局限性清单（胃肠动力与采样偏差等 6 项）</text>
+
+  <!-- 底部流程步骤条 -->
+  <rect x="0" y="828" width="1440" height="72" fill="#141B26" stroke="#243042" stroke-width="1" />
+  <rect x="24" y="840" width="240" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="144" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">1. 供体筛查</text>
+  <rect x="280" y="840" width="240" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="400" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">2. 菌群制备</text>
+  <rect x="536" y="840" width="240" height="48" rx="6" fill="#132E38" stroke="#2B9EB3" stroke-width="2" />
+  <text x="656" y="869" fill="#F1F5F9" font-family="sans-serif" font-size="14" font-weight="600" text-anchor="middle">3. 移植递送 (当前激活)</text>
+  <rect x="792" y="840" width="340" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="962" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">4. 定植与屏障修复 (含微观4步)</text>
+  <rect x="1148" y="840" width="268" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="1282" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">5. 疗效评估</text>
+</svg>

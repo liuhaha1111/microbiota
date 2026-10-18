@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" width="1440" height="900">
+  <!-- 纯色低反射医疗暗场背景 (#0F141C) -->
+  <rect width="1440" height="900" fill="#0F141C" />
+
+  <!-- 顶部标题栏 -->
+  <rect x="0" y="0" width="1440" height="56" fill="#141B26" stroke="#243042" stroke-width="1" />
+  <text x="24" y="25" fill="#F1F5F9" font-family="sans-serif" font-size="16" font-weight="600">粪菌移植（FMT）临床全链路与微生态定植 3D 推演系统</text>
+  <text x="24" y="44" fill="#94A3B8" font-family="sans-serif" font-size="12">链路：供体筛查与厌氧制备  →  跨消化道靶向递送与黏膜定植  →  微生态稳态与临床缓解区间评估</text>
+  <rect x="1220" y="14" width="196" height="28" rx="4" fill="#1E293B" stroke="#475569" stroke-width="1" />
+  <text x="1318" y="32" fill="#E2E8F0" font-family="sans-serif" font-size="12" text-anchor="middle">演示数据 · 非诊疗用途</text>
+
+  <!-- 左侧 3D 场景视口 (宽 960px = 2/3) -->
+  <rect x="0" y="56" width="960" height="772" fill="#0F141C" stroke="#243042" stroke-width="1" />
+
+  <!-- 相机与失败模式工程标注框 -->
+  <rect x="20" y="74" width="450" height="62" rx="4" fill="#361E15" stroke="#E06D3B" stroke-width="1" />
+  <text x="32" y="96" fill="#F1F5F9" font-family="monospace" font-size="12">CAMERA: Pos[-1.8, 1.35, 3.8] | Target[0.0, -0.1, 0] | FOV 36°</text>
+  <text x="32" y="118" fill="#E06D3B" font-family="sans-serif" font-size="12" font-weight="600">▲ 失败模式推演：情景 C（受体近期广谱抗生素暴露 · 定植坍塌）</text>
+
+  <!-- 3D 主体：抗生素暴露下的黏液层剥脱、共生菌清除与肠漏通道 -->
+  <g transform="translate(80, 195)">
+    <!-- 剥脱受损的外黏液层 -->
+    <rect x="0" y="55" width="310" height="80" rx="8" fill="#361E15" fill-opacity="0.35" stroke="#E06D3B" stroke-width="1" stroke-dasharray="8 6" />
+    <rect x="460" y="65" width="340" height="70" rx="8" fill="#361E15" fill-opacity="0.35" stroke="#E06D3B" stroke-width="1" stroke-dasharray="8 6" />
+
+    <!-- 极少量残存供体共生菌 (#2B9EB3 稀疏) vs 爆发的机会致病菌 (#E06D3B) -->
+    <rect x="110" y="90" width="24" height="9" rx="4.5" fill="#2B9EB3" opacity="0.5" />
+    <polygon points="240,80 258,88 248,104 232,96" fill="#E06D3B" />
+    <polygon points="360,95 378,103 368,119 352,111" fill="#E06D3B" />
+    <polygon points="410,85 428,93 418,109 402,101" fill="#E06D3B" />
+    <polygon points="520,88 538,96 528,112 512,104" fill="#E06D3B" />
+    <polygon points="640,82 658,90 648,106 632,98" fill="#E06D3B" />
+
+    <!-- 内黏液层变薄断裂 -->
+    <rect x="0" y="185" width="330" height="28" fill="#361E15" fill-opacity="0.5" stroke="#E06D3B" stroke-width="1" />
+    <rect x="440" y="185" width="360" height="28" fill="#361E15" fill-opacity="0.5" stroke="#E06D3B" stroke-width="1" />
+
+    <!-- 柱状上皮水肿与紧密连接断裂 (ZO-1 缺失，出现肠漏流线 #E06D3B) -->
+    <g transform="translate(20, 225)">
+      <rect x="0" y="0" width="110" height="145" rx="14" fill="#A84A42" stroke="#6E3835" stroke-width="2" />
+      <rect x="140" y="0" width="110" height="145" rx="14" fill="#A84A42" stroke="#6E3835" stroke-width="2" />
+      <!-- 断裂的间隙 (肠漏通道) -->
+      <rect x="295" y="0" width="110" height="145" rx="14" fill="#A84A42" stroke="#6E3835" stroke-width="2" />
+      <rect x="445" y="0" width="110" height="145" rx="14" fill="#A84A42" stroke="#6E3835" stroke-width="2" />
+      <rect x="590" y="0" width="110" height="145" rx="14" fill="#A84A42" stroke="#6E3835" stroke-width="2" />
+    </g>
+
+    <!-- 内毒素/PAMPs 跨上皮渗漏流线 (#E06D3B) -->
+    <path d="M 385 115 C 385 190, 290 250, 290 420" fill="none" stroke="#E06D3B" stroke-width="3.5" stroke-dasharray="8 4" />
+    <path d="M 415 115 C 415 190, 445 250, 445 420" fill="none" stroke="#E06D3B" stroke-width="3.5" stroke-dasharray="8 4" />
+
+    <!-- 固有层促炎风暴 (Th17/TNF-a/IL-6 升高) -->
+    <rect x="0" y="375" width="800" height="135" fill="#361E15" fill-opacity="0.55" stroke="#E06D3B" stroke-width="1.5" />
+    <circle cx="290" cy="445" r="24" fill="#361E15" stroke="#E06D3B" stroke-width="2" />
+    <text x="290" y="450" fill="#E06D3B" font-family="sans-serif" font-size="11" font-weight="600" text-anchor="middle">Th17▲</text>
+    <circle cx="445" cy="445" r="24" fill="#361E15" stroke="#E06D3B" stroke-width="2" />
+    <text x="445" y="450" fill="#E06D3B" font-family="sans-serif" font-size="11" font-weight="600" text-anchor="middle">TNF-α▲</text>
+  </g>
+
+  <!-- 2D 锚定浮标 1 (反直觉钩子核心体现) -->
+  <line x1="465" y1="290" x2="465" y2="205" stroke="#E06D3B" stroke-width="1.5" />
+  <circle cx="465" cy="290" r="4" fill="#E06D3B" />
+  <rect x="230" y="148" width="470" height="56" rx="4" fill="#361E15" stroke="#E06D3B" stroke-width="1.5" />
+  <text x="246" y="170" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">▲ 反直觉钩子：残留广谱抗生素无差别清除供体厌氧共生菌</text>
+  <text x="246" y="191" fill="#E06D3B" font-family="sans-serif" font-size="12">即使输入高多样性供体菌群，生态位真空仍诱发耐药菌扩增 · 证据：高</text>
+
+  <!-- 2D 锚定浮标 2 -->
+  <line x1="370" y1="510" x2="250" y2="510" stroke="#E06D3B" stroke-width="1.5" />
+  <circle cx="370" cy="510" r="4" fill="#E06D3B" />
+  <rect x="24" y="482" width="295" height="54" rx="4" fill="#161F2C" stroke="#E06D3B" stroke-width="1" />
+  <text x="38" y="503" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">▲ 黏液屏障剥脱与 ZO-1 断裂</text>
+  <text x="38" y="523" fill="#94A3B8" font-family="sans-serif" font-size="12">丁酸盐匮乏导致通透性反弹与促炎上行</text>
+
+  <!-- 右侧知识面板 -->
+  <rect x="960" y="56" width="480" height="772" fill="#141B26" stroke="#243042" stroke-width="1" />
+
+  <!-- 右侧顶部：三个常驻读数 (在情景 C 下显著向失衡风险区间偏移) -->
+  <rect x="960" y="56" width="480" height="176" fill="#182230" stroke="#243042" stroke-width="1" />
+  <text x="980" y="80" fill="#94A3B8" font-family="sans-serif" font-size="12" font-weight="600">常驻三读数（倾向与参考区间 · 演示数据）</text>
+
+  <text x="980" y="106" fill="#E2E8F0" font-family="sans-serif" font-size="13">1. 菌群多样性指数 (Shannon 倾向)</text>
+  <text x="1420" y="106" fill="#E06D3B" font-family="monospace" font-size="12" text-anchor="end">▲ 脉冲后坍塌区间</text>
+  <rect x="980" y="114" width="440" height="10" rx="5" fill="#0F141C" />
+  <rect x="995" y="114" width="85" height="10" rx="5" fill="#E06D3B" />
+
+  <text x="980" y="146" fill="#E2E8F0" font-family="sans-serif" font-size="13">2. 炎症信号水平 (黏膜促炎倾向)</text>
+  <text x="1420" y="146" fill="#E06D3B" font-family="monospace" font-size="12" text-anchor="end">▲ 高风险持续反弹</text>
+  <rect x="980" y="154" width="440" height="10" rx="5" fill="#0F141C" />
+  <rect x="1260" y="154" width="145" height="10" rx="5" fill="#E06D3B" />
+
+  <text x="980" y="186" fill="#E2E8F0" font-family="sans-serif" font-size="13">3. 缓解概率区间 (围移植期抗生素暴露)</text>
+  <text x="1420" y="186" fill="#E06D3B" font-family="monospace" font-size="12" text-anchor="end">▲ 显著下移 (&lt;50%)</text>
+  <rect x="980" y="194" width="440" height="10" rx="5" fill="#0F141C" />
+  <rect x="1030" y="194" width="130" height="10" rx="5" fill="#E06D3B" />
+
+  <!-- 右侧面板主体 -->
+  <text x="980" y="264" fill="#F1F5F9" font-family="sans-serif" font-size="18" font-weight="600">阶段 5：疗效评估与失败模式复盘</text>
+  <rect x="1310" y="242" width="110" height="44" rx="6" fill="#1E293B" stroke="#475569" stroke-width="1" />
+  <text x="1365" y="269" fill="#E2E8F0" font-family="sans-serif" font-size="12" text-anchor="middle">↻ 重放该阶段</text>
+
+  <rect x="980" y="282" width="355" height="28" rx="4" fill="#361E15" stroke="#E06D3B" stroke-width="1" />
+  <text x="992" y="300" fill="#E06D3B" font-family="sans-serif" font-size="12" font-weight="600">▲ 失败模式高证据警示（Ianiro et al., CGH 2018：高）</text>
+
+  <text x="980" y="338" fill="#CBD5E1" font-family="sans-serif" font-size="13">· 移植前洗脱不足或早期（&lt;7d）使用广谱抗生素导致定植失败。</text>
+  <text x="980" y="362" fill="#CBD5E1" font-family="sans-serif" font-size="13">· 症状改善与内镜黏膜愈合常存在时间解耦（随访截断偏倚）。</text>
+
+  <!-- 阶段 5 专属唯一控件：随访时间窗与情景切换 (热区 ≥ 44px) -->
+  <rect x="980" y="388" width="440" height="110" rx="6" fill="#182230" stroke="#2D3D54" stroke-width="1" />
+  <text x="996" y="414" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">本阶段专属控件：随访评估时间窗（热区 ≥44px）</text>
+  <rect x="996" y="430" width="130" height="48" rx="6" fill="#0F141C" stroke="#334155" stroke-width="1" />
+  <text x="1061" y="459" fill="#94A3B8" font-family="sans-serif" font-size="13" text-anchor="middle">第 1 周 (冲刷期)</text>
+  <rect x="1135" y="430" width="130" height="48" rx="6" fill="#0F141C" stroke="#334155" stroke-width="1" />
+  <text x="1200" y="459" fill="#94A3B8" font-family="sans-serif" font-size="13" text-anchor="middle">第 4 周 (驻留期)</text>
+  <rect x="1274" y="430" width="130" height="48" rx="6" fill="#361E15" stroke="#E06D3B" stroke-width="1.5" />
+  <text x="1339" y="459" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600" text-anchor="middle">● 第 8–12 周</text>
+
+  <!-- 默认展开：局限性清单与合规面板 -->
+  <rect x="980" y="512" width="440" height="292" rx="6" fill="#182230" stroke="#E06D3B" stroke-width="1" />
+  <text x="996" y="538" fill="#E06D3B" font-family="sans-serif" font-size="13" font-weight="600">▾ 临床不确定性与模型局限性清单（6 项完整披露）</text>
+  <text x="996" y="564" fill="#CBD5E1" font-family="sans-serif" font-size="12">1. 个体基线差异：原籍残存菌群定植抵抗与宿主遗传多态性</text>
+  <text x="996" y="588" fill="#CBD5E1" font-family="sans-serif" font-size="12">2. 合并用药干扰：PPI、激素、生物制剂及隐藏抗生素暴露</text>
+  <text x="996" y="612" fill="#CBD5E1" font-family="sans-serif" font-size="12">3. 采样偏差：粪便测序主要反映管腔游离菌而非黏膜定植菌</text>
+  <text x="996" y="636" fill="#CBD5E1" font-family="sans-serif" font-size="12">4. 随访失访：失访人群常富集无应答者，远期区间存乐观偏倚</text>
+  <text x="996" y="660" fill="#CBD5E1" font-family="sans-serif" font-size="12">5. 检测方法差异：16S 扩增子与宏基因组测序分辨率及批次误差</text>
+  <text x="996" y="684" fill="#CBD5E1" font-family="sans-serif" font-size="12">6. 非细菌组分盲区：噬菌体群落 (Virome) 与真菌互作未完全量化</text>
+  <line x1="996" y1="704" x2="1404" y2="704" stroke="#334155" stroke-width="1" />
+  <text x="996" y="728" fill="#94A3B8" font-family="sans-serif" font-size="12" font-weight="600">合规边界声明（演示数据 · 非诊疗用途）：</text>
+  <text x="996" y="750" fill="#94A3B8" font-family="sans-serif" font-size="11">· 不含任何真实患者信息 (Zero PHI)；不输出处方建议、给药剂量或预后承诺。</text>
+  <text x="996" y="770" fill="#94A3B8" font-family="sans-serif" font-size="11">· 若未来用于临床决策支持，必须按医疗器械软件 (SaMD) 路径另行评估。</text>
+
+  <!-- 底部流程步骤条 -->
+  <rect x="0" y="828" width="1440" height="72" fill="#141B26" stroke="#243042" stroke-width="1" />
+  <rect x="24" y="840" width="240" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="144" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">1. 供体筛查</text>
+  <rect x="280" y="840" width="240" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="400" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">2. 菌群制备</text>
+  <rect x="536" y="840" width="240" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="656" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">3. 移植递送</text>
+  <rect x="792" y="840" width="340" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="962" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">4. 定植与屏障修复 (含微观4步)</text>
+  <rect x="1148" y="840" width="268" height="48" rx="6" fill="#361E15" stroke="#E06D3B" stroke-width="2" />
+  <text x="1282" y="869" fill="#F1F5F9" font-family="sans-serif" font-size="14" font-weight="600" text-anchor="middle">5. 疗效评估 (当前激活)</text>
+</svg>

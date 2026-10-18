@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" width="1440" height="900">
+  <!-- 纯色低反射医疗暗场背景 (#0F141C)，无渐变光晕 -->
+  <rect width="1440" height="900" fill="#0F141C" />
+
+  <!-- 顶部标题栏 (高 56px) -->
+  <rect x="0" y="0" width="1440" height="56" fill="#141B26" stroke="#243042" stroke-width="1" />
+  <text x="24" y="25" fill="#F1F5F9" font-family="sans-serif" font-size="16" font-weight="600">粪菌移植（FMT）临床全链路与微生态定植 3D 推演系统</text>
+  <text x="24" y="44" fill="#94A3B8" font-family="sans-serif" font-size="12">链路：供体筛查与厌氧制备  →  跨消化道靶向递送与黏膜定植  →  微生态稳态与临床缓解区间评估</text>
+  <rect x="1220" y="14" width="196" height="28" rx="4" fill="#1E293B" stroke="#475569" stroke-width="1" />
+  <text x="1318" y="32" fill="#E2E8F0" font-family="sans-serif" font-size="12" text-anchor="middle">演示数据 · 非诊疗用途</text>
+
+  <!-- 左侧 3D 场景视口 (宽 960px = 2/3, 高 772px) -->
+  <rect x="0" y="56" width="960" height="772" fill="#0F141C" stroke="#243042" stroke-width="1" />
+
+  <!-- 相机与尺度工程标注框 (左上角 HUD) -->
+  <rect x="20" y="74" width="380" height="62" rx="4" fill="#161F2C" stroke="#2D3D54" stroke-width="1" />
+  <text x="32" y="96" fill="#94A3B8" font-family="monospace" font-size="12">CAMERA: Pos[-4.2, 2.6, 6.8] | Target[-0.5, 0.2, 0] | FOV 38°</text>
+  <text x="32" y="118" fill="#2B9EB3" font-family="sans-serif" font-size="12">视角：宏观体外厌氧纯化剖视 + 远景受体结肠定位</text>
+
+  <!-- 3D 主体 1：远景受体全结肠半透明解剖参考网格 (右侧背景) -->
+  <g opacity="0.32" transform="translate(560, 180)">
+    <path d="M 60 360 C 50 260, 55 150, 90 100 C 140 50, 240 60, 280 110 C 310 160, 300 280, 270 340 C 240 390, 180 410, 175 470" fill="none" stroke="#C87A72" stroke-width="46" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 60 360 C 50 260, 55 150, 90 100 C 140 50, 240 60, 280 110 C 310 160, 300 280, 270 340 C 240 390, 180 410, 175 470" fill="none" stroke="#6E3835" stroke-width="48" stroke-dasharray="18 10" stroke-linecap="round" />
+    <text x="175" y="240" fill="#C87A72" font-family="sans-serif" font-size="13" text-anchor="middle">远景受体结肠解剖参考 (Mesh)</text>
+  </g>
+
+  <!-- 3D 主体 2：多级厌氧分离纯化柱 (左侧核心实体网格 + 内部粒子系统 + 层流流线) -->
+  <g transform="translate(220, 170)">
+    <!-- 316L 医疗不锈钢顶盖与底法兰 -->
+    <rect x="40" y="20" width="220" height="28" rx="6" fill="#475569" stroke="#64748B" stroke-width="1.5" />
+    <rect x="25" y="450" width="250" height="32" rx="6" fill="#475569" stroke="#64748B" stroke-width="1.5" />
+    <!-- 磨砂玻璃柱体 -->
+    <rect x="50" y="48" width="200" height="402" fill="#162230" fill-opacity="0.75" stroke="#475569" stroke-width="2" />
+    <!-- 多级孔径滤膜网格 -->
+    <line x1="50" y1="165" x2="250" y2="165" stroke="#94A3B8" stroke-width="3" stroke-dasharray="8 4" />
+    <line x1="50" y1="295" x2="250" y2="295" stroke="#2B9EB3" stroke-width="2.5" stroke-dasharray="4 3" />
+
+    <!-- 上层截留风险杂菌与残渣粒子 (#E06D3B 暖琥珀色) -->
+    <circle cx="95" cy="115" r="7" fill="#E06D3B" />
+    <circle cx="135" cy="135" r="8" fill="#E06D3B" />
+    <circle cx="175" cy="105" r="6" fill="#E06D3B" />
+    <circle cx="205" cy="140" r="7" fill="#E06D3B" />
+    <circle cx="115" cy="148" r="5" fill="#E06D3B" />
+
+    <!-- 厌氧层流流线 (Streamlines #2B9EB3) -->
+    <path d="M 100 70 C 100 180, 90 300, 110 430" fill="none" stroke="#2B9EB3" stroke-width="2.5" stroke-dasharray="10 5" />
+    <path d="M 150 70 C 150 180, 150 300, 150 430" fill="none" stroke="#2B9EB3" stroke-width="2.5" />
+    <path d="M 200 70 C 200 180, 210 300, 190 430" fill="none" stroke="#2B9EB3" stroke-width="2.5" stroke-dasharray="10 5" />
+
+    <!-- 下层富集的高活性专性厌氧共生菌粒子系统 (#2B9EB3 哑光青绿蓝胶囊群) -->
+    <rect x="85" y="330" width="16" height="7" rx="3.5" fill="#2B9EB3" />
+    <rect x="115" y="355" width="18" height="7" rx="3.5" fill="#2B9EB3" />
+    <rect x="145" y="325" width="16" height="7" rx="3.5" fill="#2B9EB3" />
+    <rect x="178" y="360" width="18" height="7" rx="3.5" fill="#2B9EB3" />
+    <rect x="98" y="390" width="16" height="7" rx="3.5" fill="#2B9EB3" />
+    <rect x="135" y="405" width="18" height="7" rx="3.5" fill="#2B9EB3" />
+    <rect x="168" y="395" width="16" height="7" rx="3.5" fill="#2B9EB3" />
+    <rect x="195" y="340" width="15" height="7" rx="3.5" fill="#2B9EB3" />
+  </g>
+
+  <!-- 2D 锚定浮标 1 -->
+  <line x1="395" y1="295" x2="510" y2="255" stroke="#E06D3B" stroke-width="1.5" />
+  <circle cx="395" cy="295" r="4" fill="#E06D3B" />
+  <rect x="510" y="225" width="320" height="54" rx="4" fill="#161F2C" stroke="#E06D3B" stroke-width="1" />
+  <text x="524" y="247" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">▲ 病原学与耐药基因拦截（一级筛查）</text>
+  <text x="524" y="267" fill="#94A3B8" font-family="sans-serif" font-size="12">排除产 ESBL 菌株与潜伏病毒 · 证据等级：高</text>
+
+  <!-- 2D 锚定浮标 2 -->
+  <line x1="420" y1="440" x2="520" y2="415" stroke="#2B9EB3" stroke-width="1.5" />
+  <circle cx="420" cy="440" r="4" fill="#2B9EB3" />
+  <rect x="520" y="385" width="350" height="54" rx="4" fill="#161F2C" stroke="#2B9EB3" stroke-width="1" />
+  <text x="534" y="407" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">● 严格厌氧操作窗（≤2h）与过滤纯化</text>
+  <text x="534" y="427" fill="#94A3B8" font-family="sans-serif" font-size="12">保护专性厌氧梭菌簇 IV/XIVa 活菌载荷 · 证据等级：中</text>
+
+  <!-- 2D 锚定浮标 3 -->
+  <line x1="405" y1="565" x2="510" y2="565" stroke="#9488B0" stroke-width="1.5" stroke-dasharray="4 3" />
+  <circle cx="405" cy="565" r="4" fill="#9488B0" />
+  <rect x="510" y="538" width="360" height="54" rx="4" fill="#161F2C" stroke="#9488B0" stroke-width="1" stroke-dasharray="5 3" />
+  <text x="524" y="560" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">◆ 核心产丁酸菌功能丰度基线</text>
+  <text x="524" y="580" fill="#94A3B8" font-family="sans-serif" font-size="12">单维高多样性≠必然匹配受体 · 证据等级：专家共识</text>
+
+  <!-- 左下角视角控制热区 (≥44x44px) -->
+  <rect x="20" y="758" width="132" height="48" rx="6" fill="#161F2C" stroke="#2D3D54" stroke-width="1" />
+  <text x="86" y="787" fill="#E2E8F0" font-family="sans-serif" font-size="13" text-anchor="middle">复位当前视角</text>
+  <rect x="164" y="758" width="240" height="48" rx="6" fill="#161F2C" stroke="#2D3D54" stroke-width="1" />
+  <text x="284" y="787" fill="#94A3B8" font-family="sans-serif" font-size="12" text-anchor="middle">单指拖拽旋转 · 双指缩放 · 热区 ≥44px</text>
+
+  <!-- 右侧知识面板 (宽 480px = 1/3, 高 772px) -->
+  <rect x="960" y="56" width="480" height="772" fill="#141B26" stroke="#243042" stroke-width="1" />
+
+  <!-- 右侧顶部：三个常驻读数 (不随步骤隐藏，全部表达为倾向+区间) -->
+  <rect x="960" y="56" width="480" height="176" fill="#182230" stroke="#243042" stroke-width="1" />
+  <text x="980" y="80" fill="#94A3B8" font-family="sans-serif" font-size="12" font-weight="600">常驻三读数（倾向与参考区间 · 演示数据）</text>
+
+  <!-- 读数 1 -->
+  <text x="980" y="106" fill="#E2E8F0" font-family="sans-serif" font-size="13">1. 菌群多样性指数 (Shannon 倾向)</text>
+  <text x="1420" y="106" fill="#2B9EB3" font-family="monospace" font-size="12" text-anchor="end">● 中高稳态区间</text>
+  <rect x="980" y="114" width="440" height="10" rx="5" fill="#0F141C" />
+  <rect x="1220" y="114" width="150" height="10" rx="5" fill="#2B9EB3" />
+
+  <!-- 读数 2 -->
+  <text x="980" y="146" fill="#E2E8F0" font-family="sans-serif" font-size="13">2. 炎症信号水平 (黏膜促炎倾向)</text>
+  <text x="1420" y="146" fill="#2B9EB3" font-family="monospace" font-size="12" text-anchor="end">● 基线无外源触发</text>
+  <rect x="980" y="154" width="440" height="10" rx="5" fill="#0F141C" />
+  <rect x="1010" y="154" width="90" height="10" rx="5" fill="#2B9EB3" />
+
+  <!-- 读数 3 -->
+  <text x="980" y="186" fill="#E2E8F0" font-family="sans-serif" font-size="13">3. 缓解概率区间 (rCDI 75%–90% | UC 25%–45%)</text>
+  <text x="1420" y="186" fill="#2B9EB3" font-family="monospace" font-size="12" text-anchor="end">● 正向基线支撑</text>
+  <rect x="980" y="194" width="440" height="10" rx="5" fill="#0F141C" />
+  <rect x="1260" y="194" width="120" height="10" rx="5" fill="#2B9EB3" />
+
+  <!-- 右侧主体：当前阶段标题 + 证据标签 + 重放按钮 -->
+  <text x="980" y="264" fill="#F1F5F9" font-family="sans-serif" font-size="18" font-weight="600">阶段 1–2：供体筛查与菌群制备</text>
+  <rect x="1310" y="242" width="110" height="44" rx="6" fill="#1E293B" stroke="#475569" stroke-width="1" />
+  <text x="1365" y="269" fill="#E2E8F0" font-family="sans-serif" font-size="12" text-anchor="middle">↻ 重放该阶段</text>
+
+  <!-- 证据状态标签 -->
+  <rect x="980" y="282" width="290" height="28" rx="4" fill="#132E38" stroke="#2B9EB3" stroke-width="1" />
+  <text x="992" y="300" fill="#2B9EB3" font-family="sans-serif" font-size="12" font-weight="600">● 证据充分（筛查安全性/冻存非劣效：高）</text>
+
+  <!-- 机制说明 -->
+  <text x="980" y="338" fill="#CBD5E1" font-family="sans-serif" font-size="13">· 严格多维筛查排除耐药菌（如 ESBL）与潜伏致病因子。</text>
+  <text x="980" y="362" fill="#CBD5E1" font-family="sans-serif" font-size="13">· 厌氧操作窗（≤2h）与甘油冻存保护专性厌氧共生菌活性。</text>
+  <text x="980" y="386" fill="#9488B0" font-family="sans-serif" font-size="13">· 反直觉钩子：供体 α-多样性更高 ≠ 对特定受体疗效更好。</text>
+
+  <!-- 阶段专属唯一控件区 (热区 ≥ 44px) -->
+  <rect x="980" y="412" width="440" height="112" rx="6" fill="#182230" stroke="#2D3D54" stroke-width="1" />
+  <text x="996" y="438" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">本阶段专属控件：供体基线情景选择（热区 ≥44px）</text>
+  <rect x="996" y="454" width="200" height="48" rx="6" fill="#132E38" stroke="#2B9EB3" stroke-width="1.5" />
+  <text x="1096" y="483" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600" text-anchor="middle">● 高多样性供体</text>
+  <rect x="1204" y="454" width="200" height="48" rx="6" fill="#0F141C" stroke="#334155" stroke-width="1" />
+  <text x="1304" y="483" fill="#94A3B8" font-family="sans-serif" font-size="13" text-anchor="middle">常规合格供体</text>
+
+  <!-- 折叠项：因果表与模型局限性清单 -->
+  <rect x="980" y="544" width="440" height="48" rx="6" fill="#182230" stroke="#2D3D54" stroke-width="1" />
+  <text x="996" y="573" fill="#E2E8F0" font-family="sans-serif" font-size="13" font-weight="600">▸ 展开：本阶段因果表（输入 → 倾向+区间）</text>
+
+  <rect x="980" y="604" width="440" height="190" rx="6" fill="#182230" stroke="#2D3D54" stroke-width="1" />
+  <text x="996" y="630" fill="#E06D3B" font-family="sans-serif" font-size="13" font-weight="600">▾ 模型局限性与不确定性清单（常驻可查）</text>
+  <text x="996" y="655" fill="#94A3B8" font-family="sans-serif" font-size="12">1. 个体基线差异：受体原籍菌群定植抵抗与宿主遗传异质性</text>
+  <text x="996" y="677" fill="#94A3B8" font-family="sans-serif" font-size="12">2. 合并用药干扰：PPI、免疫抑制剂及隐藏抗生素非线性削弱</text>
+  <text x="996" y="699" fill="#94A3B8" font-family="sans-serif" font-size="12">3. 采样偏差：粪便测序反映管腔游离菌，不等同于黏膜定植菌</text>
+  <text x="996" y="721" fill="#94A3B8" font-family="sans-serif" font-size="12">4. 随访失访与时间窗截断：短期缓解不等于远期微生态稳态</text>
+  <text x="996" y="743" fill="#94A3B8" font-family="sans-serif" font-size="12">5. 检测方法差异：16S 与宏基因组鸟枪法分辨率及批次偏差</text>
+  <text x="996" y="772" fill="#64748B" font-family="sans-serif" font-size="11">合规边界：非医疗器械软件 (Non-SaMD)，不输出剂量或诊疗建议</text>
+
+  <!-- 底部流程步骤条 (高 72px，按大阶段分组，热区 ≥ 44px) -->
+  <rect x="0" y="828" width="1440" height="72" fill="#141B26" stroke="#243042" stroke-width="1" />
+  <rect x="24" y="840" width="240" height="48" rx="6" fill="#132E38" stroke="#2B9EB3" stroke-width="2" />
+  <text x="144" y="869" fill="#F1F5F9" font-family="sans-serif" font-size="14" font-weight="600" text-anchor="middle">1. 供体筛查 (当前激活)</text>
+
+  <rect x="280" y="840" width="240" height="48" rx="6" fill="#182230" stroke="#2B9EB3" stroke-width="1" />
+  <text x="400" y="869" fill="#E2E8F0" font-family="sans-serif" font-size="14" text-anchor="middle">2. 菌群制备</text>
+
+  <rect x="536" y="840" width="240" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="656" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">3. 移植递送</text>
+
+  <rect x="792" y="840" width="340" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="962" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">4. 定植与屏障修复 (含微观4步)</text>
+
+  <rect x="1148" y="840" width="268" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="1282" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">5. 疗效评估</text>
+</svg>

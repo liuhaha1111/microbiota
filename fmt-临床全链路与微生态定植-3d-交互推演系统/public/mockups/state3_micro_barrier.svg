@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" width="1440" height="900">
+  <!-- 纯色低反射医疗暗场背景 (#0F141C) -->
+  <rect width="1440" height="900" fill="#0F141C" />
+
+  <!-- 顶部标题栏 -->
+  <rect x="0" y="0" width="1440" height="56" fill="#141B26" stroke="#243042" stroke-width="1" />
+  <text x="24" y="25" fill="#F1F5F9" font-family="sans-serif" font-size="16" font-weight="600">粪菌移植（FMT）临床全链路与微生态定植 3D 推演系统</text>
+  <text x="24" y="44" fill="#94A3B8" font-family="sans-serif" font-size="12">链路：供体筛查与厌氧制备  →  跨消化道靶向递送与黏膜定植  →  微生态稳态与临床缓解区间评估</text>
+  <rect x="1220" y="14" width="196" height="28" rx="4" fill="#1E293B" stroke="#475569" stroke-width="1" />
+  <text x="1318" y="32" fill="#E2E8F0" font-family="sans-serif" font-size="12" text-anchor="middle">演示数据 · 非诊疗用途</text>
+
+  <!-- 左侧 3D 场景视口 (宽 960px = 2/3) -->
+  <rect x="0" y="56" width="960" height="772" fill="#0F141C" stroke="#243042" stroke-width="1" />
+
+  <!-- 相机与尺度过渡工程标注框 -->
+  <rect x="20" y="74" width="420" height="62" rx="4" fill="#161F2C" stroke="#2D3D54" stroke-width="1" />
+  <text x="32" y="96" fill="#94A3B8" font-family="monospace" font-size="12">CAMERA: Pos[0.6, 0.4, 2.35] | Target[0.0, -0.15, 0] | FOV 32°</text>
+  <text x="32" y="118" fill="#2B9EB3" font-family="sans-serif" font-size="12">尺度切换：宏观肠段淡出(8%) → 微观黏液双层+上皮隐窝展开</text>
+
+  <!-- 3D 视口内嵌「微观下钻 4 步切换器」(每个按钮高 44px) -->
+  <rect x="460" y="78" width="480" height="52" rx="8" fill="#161F2C" stroke="#2D3D54" stroke-width="1" />
+  <rect x="466" y="82" width="112" height="44" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="522" y="109" fill="#94A3B8" font-family="sans-serif" font-size="13" text-anchor="middle">4.1 黏附</text>
+  <rect x="584" y="82" width="112" height="44" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="640" y="109" fill="#94A3B8" font-family="sans-serif" font-size="13" text-anchor="middle">4.2 定植</text>
+  <rect x="702" y="82" width="112" height="44" rx="6" fill="#132E38" stroke="#2B9EB3" stroke-width="1.5" />
+  <text x="758" y="109" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600" text-anchor="middle">● 4.3 代谢</text>
+  <rect x="820" y="82" width="114" height="44" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="877" y="109" fill="#94A3B8" font-family="sans-serif" font-size="13" text-anchor="middle">4.4 免疫互作</text>
+
+  <!-- 微观 3D 主体：四层组织学结构 (外松散黏液层 + 内致密黏液层 + 柱状上皮与紧密连接 + 固有层) -->
+  <g transform="translate(80, 195)">
+    <!-- 1. 外松散黏液层 (Outer Loose Mucus Layer - 纤维状半透明网格) -->
+    <rect x="0" y="40" width="800" height="125" rx="8" fill="#1A333D" fill-opacity="0.45" stroke="#2B9EB3" stroke-width="1" stroke-dasharray="6 4" />
+    <text x="785" y="62" fill="#2B9EB3" font-family="sans-serif" font-size="12" text-anchor="end">外松散黏液层 (MUC2 糖链锚定区)</text>
+
+    <!-- 供体共生菌群粒子 (#2B9EB3 产丁酸菌) 与被排斥的致病菌 (#E06D3B) -->
+    <rect x="120" y="75" width="28" height="11" rx="5.5" fill="#2B9EB3" />
+    <rect x="195" y="95" width="28" height="11" rx="5.5" fill="#2B9EB3" />
+    <rect x="310" y="80" width="28" height="11" rx="5.5" fill="#2B9EB3" />
+    <rect x="440" y="90" width="28" height="11" rx="5.5" fill="#2B9EB3" />
+    <rect x="570" y="78" width="28" height="11" rx="5.5" fill="#2B9EB3" />
+    <!-- 脱离生态位的致病菌 (#E06D3B) -->
+    <polygon points="660,45 675,52 668,66 652,60" fill="#E06D3B" />
+    <polygon points="710,35 725,42 718,56 702,50" fill="#E06D3B" />
+
+    <!-- 2. 内致密黏液层 (Inner Dense Mucus Layer - 物理隔离带) -->
+    <rect x="0" y="165" width="800" height="65" fill="#1F424F" fill-opacity="0.65" stroke="#2B9EB3" stroke-width="1.5" />
+    <text x="785" y="202" fill="#E2E8F0" font-family="sans-serif" font-size="12" text-anchor="end">内致密无菌黏液层 (物理屏障)</text>
+
+    <!-- SCFAs 丁酸盐代谢流线 (从外黏液层穿过内层进入上皮细胞 #2B9EB3) -->
+    <path d="M 210 106 C 210 160, 205 210, 205 265" fill="none" stroke="#2B9EB3" stroke-width="3" />
+    <path d="M 325 91 C 325 155, 345 210, 345 265" fill="none" stroke="#2B9EB3" stroke-width="3" />
+    <path d="M 455 101 C 455 155, 485 210, 485 265" fill="none" stroke="#2B9EB3" stroke-width="3" />
+
+    <!-- 3. 单层柱状上皮细胞阵列 (Columnar Epithelium - 次表面散射暖珊瑚色 #C87A72) 与紧密连接 ZO-1 -->
+    <g transform="translate(20, 230)">
+      <rect x="0" y="0" width="115" height="145" rx="14" fill="#C87A72" stroke="#8F4B46" stroke-width="2" />
+      <ellipse cx="57" cy="95" rx="22" ry="30" fill="#8F4B46" />
+      <rect x="135" y="0" width="115" height="145" rx="14" fill="#C87A72" stroke="#8F4B46" stroke-width="2" />
+      <ellipse cx="192" cy="95" rx="22" ry="30" fill="#8F4B46" />
+      <rect x="270" y="0" width="115" height="145" rx="14" fill="#C87A72" stroke="#8F4B46" stroke-width="2" />
+      <ellipse cx="327" cy="95" rx="22" ry="30" fill="#8F4B46" />
+      <rect x="405" y="0" width="115" height="145" rx="14" fill="#C87A72" stroke="#8F4B46" stroke-width="2" />
+      <ellipse cx="462" cy="95" rx="22" ry="30" fill="#8F4B46" />
+      <rect x="540" y="0" width="115" height="145" rx="14" fill="#C87A72" stroke="#8F4B46" stroke-width="2" />
+      <ellipse cx="597" cy="95" rx="22" ry="30" fill="#8F4B46" />
+      <rect x="675" y="0" width="95" height="145" rx="14" fill="#C87A72" stroke="#8F4B46" stroke-width="2" />
+
+      <!-- 紧密连接蛋白桥接环 (ZO-1 / Occludin #2B9EB3 闭合修复态) -->
+      <rect x="112" y="18" width="26" height="12" rx="4" fill="#2B9EB3" />
+      <rect x="247" y="18" width="26" height="12" rx="4" fill="#2B9EB3" />
+      <rect x="382" y="18" width="26" height="12" rx="4" fill="#2B9EB3" />
+      <rect x="517" y="18" width="26" height="12" rx="4" fill="#2B9EB3" />
+      <rect x="652" y="18" width="26" height="12" rx="4" fill="#2B9EB3" />
+    </g>
+
+    <!-- 4. 固有层免疫微环境 (Lamina Propria - 含机制推测虚线流 #9488B0 与 Treg 细胞) -->
+    <rect x="0" y="375" width="800" height="135" fill="#221929" fill-opacity="0.7" stroke="#9488B0" stroke-width="1" stroke-dasharray="6 4" />
+    <path d="M 345 375 C 345 415, 390 435, 430 450" fill="none" stroke="#9488B0" stroke-width="2.5" stroke-dasharray="6 4" />
+    <circle cx="455" cy="455" r="22" fill="#132E38" stroke="#2B9EB3" stroke-width="2" />
+    <text x="455" y="460" fill="#2B9EB3" font-family="sans-serif" font-size="11" font-weight="600" text-anchor="middle">Treg</text>
+    <text x="785" y="492" fill="#9488B0" font-family="sans-serif" font-size="12" text-anchor="end">固有层免疫微环境 (GPR43/AhR 通路 · 机制推测)</text>
+  </g>
+
+  <!-- 2D 锚定浮标 1 -->
+  <line x1="405" y1="286" x2="450" y2="175" stroke="#2B9EB3" stroke-width="1.5" />
+  <circle cx="405" cy="286" r="4" fill="#2B9EB3" />
+  <rect x="110" y="148" width="350" height="50" rx="4" fill="#161F2C" stroke="#2B9EB3" stroke-width="1" />
+  <text x="124" y="169" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">● 次级胆汁酸转化与碳源竞争（证据等级：高）</text>
+  <text x="124" y="188" fill="#94A3B8" font-family="sans-serif" font-size="12">7α-脱羟基酶生成 DCA/LCA，抑制艰难梭菌孢子萌发</text>
+
+  <!-- 2D 锚定浮标 2 -->
+  <line x1="347" y1="448" x2="260" y2="448" stroke="#2B9EB3" stroke-width="1.5" />
+  <circle cx="347" cy="448" r="4" fill="#2B9EB3" />
+  <rect x="24" y="422" width="310" height="52" rx="4" fill="#161F2C" stroke="#2B9EB3" stroke-width="1" />
+  <text x="38" y="443" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">● 丁酸盐供能与 ZO-1 修复（证据：中）</text>
+  <text x="38" y="463" fill="#94A3B8" font-family="sans-serif" font-size="12">上皮 β-氧化耗氧维持腔内厌氧，收窄肠漏</text>
+
+  <!-- 2D 锚定浮标 3 -->
+  <line x1="535" y1="650" x2="600" y2="650" stroke="#9488B0" stroke-width="1.5" stroke-dasharray="4 3" />
+  <circle cx="535" cy="650" r="4" fill="#9488B0" />
+  <rect x="600" y="622" width="335" height="54" rx="4" fill="#161F2C" stroke="#9488B0" stroke-width="1" stroke-dasharray="5 3" />
+  <text x="614" y="643" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">◆ Foxp3+ Treg 扩增与 Th17 抑制</text>
+  <text x="614" y="663" fill="#9488B0" font-family="sans-serif" font-size="12">人体局部黏膜免疫重编程个体异质性大 · 机制推测</text>
+
+  <!-- 左下角返回宏观视角按钮 -->
+  <rect x="20" y="758" width="180" height="48" rx="6" fill="#132E38" stroke="#2B9EB3" stroke-width="1.5" />
+  <text x="110" y="787" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600" text-anchor="middle">↑ 返回宏观肠段剖面</text>
+
+  <!-- 右侧知识面板 -->
+  <rect x="960" y="56" width="480" height="772" fill="#141B26" stroke="#243042" stroke-width="1" />
+
+  <!-- 右侧顶部：三个常驻读数 -->
+  <rect x="960" y="56" width="480" height="176" fill="#182230" stroke="#243042" stroke-width="1" />
+  <text x="980" y="80" fill="#94A3B8" font-family="sans-serif" font-size="12" font-weight="600">常驻三读数（倾向与参考区间 · 演示数据）</text>
+
+  <text x="980" y="106" fill="#E2E8F0" font-family="sans-serif" font-size="13">1. 菌群多样性指数 (Shannon 倾向)</text>
+  <text x="1420" y="106" fill="#2B9EB3" font-family="monospace" font-size="12" text-anchor="end">● 稳态定植上升带</text>
+  <rect x="980" y="114" width="440" height="10" rx="5" fill="#0F141C" />
+  <rect x="1240" y="114" width="145" height="10" rx="5" fill="#2B9EB3" />
+
+  <text x="980" y="146" fill="#E2E8F0" font-family="sans-serif" font-size="13">2. 炎症信号水平 (黏膜促炎倾向)</text>
+  <text x="1420" y="146" fill="#2B9EB3" font-family="monospace" font-size="12" text-anchor="end">● 阶梯式回落区间</text>
+  <rect x="980" y="154" width="440" height="10" rx="5" fill="#0F141C" />
+  <rect x="1050" y="154" width="110" height="10" rx="5" fill="#2B9EB3" />
+
+  <text x="980" y="186" fill="#E2E8F0" font-family="sans-serif" font-size="13">3. 缓解概率区间 (rCDI 80%–92% | UC 25%–45%)</text>
+  <text x="1420" y="186" fill="#2B9EB3" font-family="monospace" font-size="12" text-anchor="end">● 高分位缓解倾向</text>
+  <rect x="980" y="194" width="440" height="10" rx="5" fill="#0F141C" />
+  <rect x="1280" y="194" width="120" height="10" rx="5" fill="#2B9EB3" />
+
+  <!-- 右侧面板主体 -->
+  <text x="980" y="264" fill="#F1F5F9" font-family="sans-serif" font-size="18" font-weight="600">阶段 4：定植与屏障修复 (4.3 代谢)</text>
+  <rect x="1310" y="242" width="110" height="44" rx="6" fill="#1E293B" stroke="#475569" stroke-width="1" />
+  <text x="1365" y="269" fill="#E2E8F0" font-family="sans-serif" font-size="12" text-anchor="middle">↻ 重放该阶段</text>
+
+  <rect x="980" y="282" width="350" height="28" rx="4" fill="#23202E" stroke="#9488B0" stroke-width="1" stroke-dasharray="4 2" />
+  <text x="992" y="300" fill="#9488B0" font-family="sans-serif" font-size="12" font-weight="600">◆ 分步证据：4.2定植(高) · 4.3代谢(中) · 4.4免疫(推测)</text>
+
+  <text x="980" y="338" fill="#CBD5E1" font-family="sans-serif" font-size="13">· 产丁酸菌发酵可溶性膳食纤维生成丁酸盐（Butyrate）。</text>
+  <text x="980" y="362" fill="#CBD5E1" font-family="sans-serif" font-size="13">· 结肠上皮细胞通过 β-氧化消耗丁酸并耗氧，维持管腔低氧。</text>
+  <text x="980" y="386" fill="#CBD5E1" font-family="sans-serif" font-size="13">· 稳定 HIF-1α 并促进紧密连接蛋白 ZO-1/Occludin 闭合。</text>
+
+  <!-- 阶段 4 专属唯一控件：三情景分支切换器 (热区 ≥ 44px) -->
+  <rect x="980" y="412" width="440" height="168" rx="6" fill="#182230" stroke="#2D3D54" stroke-width="1" />
+  <text x="996" y="438" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">本阶段专属控件：临床情景分支推演（热区 ≥44px）</text>
+  <rect x="996" y="452" width="408" height="44" rx="6" fill="#132E38" stroke="#2B9EB3" stroke-width="1.5" />
+  <text x="1012" y="479" fill="#F1F5F9" font-family="sans-serif" font-size="13" font-weight="600">● 情景 A：高多样性供体 + 标准洗脱准备</text>
+  <rect x="996" y="502" width="198" height="44" rx="6" fill="#0F141C" stroke="#334155" stroke-width="1" />
+  <text x="1095" y="529" fill="#94A3B8" font-family="sans-serif" font-size="13" text-anchor="middle">情景 B：常规供体</text>
+  <rect x="1206" y="502" width="198" height="44" rx="6" fill="#361E15" stroke="#E06D3B" stroke-width="1" />
+  <text x="1305" y="529" fill="#E06D3B" font-family="sans-serif" font-size="13" text-anchor="middle">▲ 情景 C：近期抗生素暴露</text>
+
+  <!-- 折叠项 -->
+  <rect x="980" y="596" width="440" height="48" rx="6" fill="#182230" stroke="#2D3D54" stroke-width="1" />
+  <text x="996" y="625" fill="#E2E8F0" font-family="sans-serif" font-size="13" font-weight="600">▸ 展开：微观 4 步（黏附/定植/代谢/免疫）因果证据表</text>
+  <rect x="980" y="656" width="440" height="48" rx="6" fill="#182230" stroke="#2D3D54" stroke-width="1" />
+  <text x="996" y="685" fill="#E06D3B" font-family="sans-serif" font-size="13" font-weight="600">▸ 展开：模型局限性清单（6 项临床不确定性来源）</text>
+
+  <!-- 底部流程步骤条 -->
+  <rect x="0" y="828" width="1440" height="72" fill="#141B26" stroke="#243042" stroke-width="1" />
+  <rect x="24" y="840" width="240" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="144" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">1. 供体筛查</text>
+  <rect x="280" y="840" width="240" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="400" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">2. 菌群制备</text>
+  <rect x="536" y="840" width="240" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="656" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">3. 移植递送</text>
+  <rect x="792" y="840" width="340" height="48" rx="6" fill="#132E38" stroke="#2B9EB3" stroke-width="2" />
+  <text x="962" y="869" fill="#F1F5F9" font-family="sans-serif" font-size="14" font-weight="600" text-anchor="middle">4. 定植与屏障修复 (微观下钻激活)</text>
+  <rect x="1148" y="840" width="268" height="48" rx="6" fill="#182230" stroke="#334155" stroke-width="1" />
+  <text x="1282" y="869" fill="#94A3B8" font-family="sans-serif" font-size="14" text-anchor="middle">5. 疗效评估</text>
+</svg>

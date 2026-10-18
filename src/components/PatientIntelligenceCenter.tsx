@@ -8,11 +8,13 @@ import {
   Sparkles,
   Layers,
   AlertCircle,
-  UserCheck
+  UserCheck,
+  Scan
 } from 'lucide-react';
 import { ClinicalPatient, MicrobialTaxon } from '../types';
 import { getPatientDataPackage } from '../data/mockMicroFmtData';
 import { MicrobiomeKnowledgeGraph } from './MicrobiomeKnowledgeGraph';
+import { ThreeGutDigitalTwin } from './ThreeGutDigitalTwin';
 import { ContextBar, SecondaryNav, SecondaryNavItem, SegmentedControl, ScreenSlotBadge } from './ui';
 
 interface PatientIntelligenceCenterProps {
@@ -20,7 +22,7 @@ interface PatientIntelligenceCenterProps {
 }
 
 type PatientTab = 'clinical' | 'microbiome' | 'pathway';
-type MicrobiomeView = 'network' | 'taxa_list';
+type MicrobiomeView = 'network' | 'taxa_list' | 'colon_anatomy';
 
 const PATIENT_TABS: ReadonlyArray<SecondaryNavItem<PatientTab>> = [
   { id: 'clinical', label: '临床画像', icon: FileText, hint: '检验指标、病史、用药与过敏警示' },
@@ -29,12 +31,15 @@ const PATIENT_TABS: ReadonlyArray<SecondaryNavItem<PatientTab>> = [
 ];
 
 /**
- * 可视化形式切换（同一份菌群数据的两种画法），层级低于内容 Tab，
+ * 可视化形式切换（同一份菌群数据的三种画法），层级低于内容 Tab，
  * 因此用 SegmentedControl 而非 SecondaryNav，且只在「菌群画像」切面内出现。
+ * 三种画法互为补充：网络看「谁与谁共生」、丰度表看「谁多谁少」、
+ * 解剖孪生看「失衡发生在哪一段肠管」。
  */
 const MICROBIOME_VIEWS: ReadonlyArray<{ id: MicrobiomeView; label: string; icon: typeof Dna }> = [
   { id: 'network', label: '菌群生态网络拓扑', icon: Dna },
-  { id: 'taxa_list', label: '优势/差异菌丰度表', icon: Layers }
+  { id: 'taxa_list', label: '优势/差异菌丰度表', icon: Layers },
+  { id: 'colon_anatomy', label: '肠道解剖孪生', icon: Scan }
 ];
 
 export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps> = ({ patient }) => {
@@ -255,10 +260,10 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
             items={MICROBIOME_VIEWS}
             active={microbiomeView}
             onChange={setMicrobiomeView}
-            trailing="支持全屏展开与节点详情自适应折叠"
+            trailing="网络 / 丰度 / 解剖三种画法，支持全屏展开与节点详情自适应折叠"
           />
 
-          {microbiomeView === 'network' ? (
+          {microbiomeView === 'network' && (
             <div className="rounded-xl overflow-hidden shadow-xl">
               <MicrobiomeKnowledgeGraph
                 mode="ecological"
@@ -277,7 +282,9 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                 }}
               />
             </div>
-          ) : (
+          )}
+
+          {microbiomeView === 'taxa_list' && (
             <div className="p-5 rounded-xl bg-surface border border-line/60 shadow-xl text-xs space-y-3 min-h-[480px]">
               <div className="flex items-center justify-between pb-2 border-b border-line-2">
                 <h4 className="font-semibold text-ink flex items-center gap-1.5">
@@ -350,6 +357,16 @@ export const PatientIntelligenceCenter: React.FC<PatientIntelligenceCenterProps>
                   </tbody>
                 </table>
               </div>
+            </div>
+          )}
+
+          {/* 肠道解剖孪生：8 段结肠结构与病变节段定位。
+              原先挂载于屏 1 的 3D 舱，现迁移至此 —— 它表达的是「该受体的菌群
+              在哪个肠段失衡」，属于患者个体画像，与生态网络、丰度表是同一份
+              数据的三种画法，因此并入本切面的视图切换器，而不是留在工作台。 */}
+          {microbiomeView === 'colon_anatomy' && (
+            <div className="rounded-xl overflow-hidden shadow-xl">
+              <ThreeGutDigitalTwin className="h-[640px] min-h-[560px]" patient={patient} />
             </div>
           )}
 

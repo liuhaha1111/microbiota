@@ -32,10 +32,10 @@ export const SCREEN_SLOTS: ReadonlyArray<ScreenSlot> = [
   {
     slot: 1,
     tab: 'workbench',
-    name: '工作台驾驶舱',
-    sub: '3D微生态数字孪生',
+    name: 'FMT 全链路推演',
+    sub: '五阶段 3D 推演与循证边界',
     icon: LayoutDashboard,
-    role: '肠道微生态三维孪生映射，以及全流程患者队列的阶段分布'
+    role: '供体筛查 → 制备 → 递送 → 定植 → 评估的全链路 3D 推演与循证边界'
   },
   {
     slot: 2,
