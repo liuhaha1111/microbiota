@@ -1160,6 +1160,110 @@ export const FmtThreeStage: React.FC<FmtThreeStageProps> = ({
     };
     document.addEventListener('visibilitychange', onVisibilityChange);
 
+    // ---------------------------------------------------------------------
+    // 12.1 视口适配留白（Viewport Fit Dolly）
+    // ---------------------------------------------------------------------
+    // 问题：分镜机位是**按 16:9 标定的定值**（position + fov），而 resize 只改
+    // camera.aspect。于是视口一变矮/变窄，纵向就装不下 —— 实测 1247×755 下
+    // 离心管底座被视口下沿切掉一截，2560 宽下同样切；反过来 3379×1121 又空得发虚。
+    //
+    // 解法：不动分镜的**方向**，只沿视线把机位往后退，退到内容包围球刚好装下。
+    // 三条纪律：
+    //   ① 只退不进（clamp 下限 1）—— 机位是分镜意图，能装下就别动它，
+    //      否则第 4 阶段的微观特写会被强行拉远，失去「下钻」的意义；
+    //   ② 按包围球而不是固定系数算 —— 五个阶段 + 四个微观步骤的内容尺寸差好几倍，
+    //      写死 1.25 必然有的阶段过头、有的不够；
+    //   ③ 留 12% 边距 —— 浮标卡片压在四角，模型贴边就会被压住。
+    const _fitBox = new THREE.Box3();
+    const _fitCam = new THREE.PerspectiveCamera();
+    const _fitDir = new THREE.Vector3();
+    const _fitProj = new THREE.Vector3();
+    const _fitCorners = Array.from({ length: 8 }, () => new THREE.Vector3());
+    const _fitPos = new THREE.Vector3();
+    let viewDolly = 1;
+    let fitDirty = true;
+    let lastFitStageId = -1;
+    let lastFitMicroId = '';
+
+    const recomputeViewDolly = () => {
+      const w = containerEl.clientWidth || 960;
+      const h = containerEl.clientHeight || 720;
+      scene.updateMatrixWorld(true);
+      _fitBox.makeEmpty();
+      // 取景的「主体」而不是「全部可见物」：
+      //   第 1-2 阶段 = 制备舱 + 肠段（两个主体并列，都要装下）；
+      //   第 3 阶段 = 肠段剖面（制备舱已隐藏）；
+      //   第 4 阶段 = **只取黏膜微观组** —— 此时整段结肠退成背景，
+      //     若把它也算进去，算出的距离会把微观特写拉成远景（实测 dolly 顶到 2.6 仍不够）。
+      const subjects = microGroup.visible
+        ? [microGroup]
+        : [prepGroup, colonGroup].filter((g) => g.visible);
+      let hasContent = false;
+      for (const group of subjects) {
+        _fitBox.expandByObject(group);
+        hasContent = true;
+      }
+      const s = stateRef.current;
+      if (!hasContent || _fitBox.isEmpty()) {
+        viewDolly = 1;
+        return;
+      }
+
+      // 用**包围盒的 8 个角**投影求解，而不是包围球。
+      // 包围球的半径是盒对角线的一半，遇到「制备舱 + 右侧肠段」这种又宽又扁的构图时
+      // 会被横向跨度主导，算出的距离明显偏大 —— 实测模型只占视口 48%，留白过多。
+      // 角点投影是精确的：把 8 个角投到 NDC，看最远的那个超出多少，按比例退相机。
+      // 透视投影下距离与 NDC 近似成反比，迭代 3 次足够收敛。
+      const lookAt = s.targetCamLookAt;
+      _fitDir.copy(s.targetCamPos).sub(lookAt);
+      const baseDist = _fitDir.length();
+      if (baseDist < 1e-4) {
+        viewDolly = 1;
+        return;
+      }
+      _fitDir.normalize();
+
+      _fitCam.fov = s.targetFov;
+      _fitCam.aspect = w / h;
+      _fitCam.updateProjectionMatrix();
+
+      const mn = _fitBox.min;
+      const mx = _fitBox.max;
+      let ci = 0;
+      for (let xi = 0; xi < 2; xi++)
+        for (let yi = 0; yi < 2; yi++)
+          for (let zi = 0; zi < 2; zi++)
+            _fitCorners[ci++].set(
+              xi ? mx.x : mn.x,
+              yi ? mx.y : mn.y,
+              zi ? mx.z : mn.z
+            );
+
+      // 0.84 = 内容最多占视口半幅的 84%（上下各留 8%），给四角的浮标卡片让位
+      const targetFill = 0.84;
+      let dist = baseDist;
+      for (let iter = 0; iter < 4; iter++) {
+        _fitCam.position.copy(lookAt).addScaledVector(_fitDir, dist);
+        _fitCam.lookAt(lookAt);
+        _fitCam.updateMatrixWorld(true);
+        let maxAbs = 0;
+        for (const corner of _fitCorners) {
+          _fitProj.copy(corner).project(_fitCam);
+          maxAbs = Math.max(maxAbs, Math.abs(_fitProj.x), Math.abs(_fitProj.y));
+        }
+        if (maxAbs < 1e-4) break;
+        const next = dist * (maxAbs / targetFill);
+        if (Math.abs(next - dist) < 1e-3) {
+          dist = next;
+          break;
+        }
+        dist = next;
+      }
+
+      // 只退不进：机位是分镜意图，能装下就别动它
+      viewDolly = THREE.MathUtils.clamp(dist / baseDist, 1, 3.0);
+    };
+
     const onResize = () => {
       if (!containerEl) return;
       const w = containerEl.clientWidth || 960;
@@ -1167,6 +1271,7 @@ export const FmtThreeStage: React.FC<FmtThreeStageProps> = ({
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
+      fitDirty = true;
     };
     window.addEventListener('resize', onResize);
     const resizeObserver = new ResizeObserver(onResize);
@@ -1198,21 +1303,27 @@ export const FmtThreeStage: React.FC<FmtThreeStageProps> = ({
 
       // 13.1 Smooth Camera Flight
       if (s.cameraFlightActive && !s.userInteracting) {
+        // 沿视线把分镜机位退到「内容刚好装下」的位置（viewDolly = 1 时等于原机位）
+        _fitPos
+          .copy(s.targetCamPos)
+          .sub(s.targetCamLookAt)
+          .multiplyScalar(viewDolly)
+          .add(s.targetCamLookAt);
         camera.position.x = THREE.MathUtils.damp(
           camera.position.x,
-          s.targetCamPos.x,
+          _fitPos.x,
           4.2,
           delta
         );
         camera.position.y = THREE.MathUtils.damp(
           camera.position.y,
-          s.targetCamPos.y,
+          _fitPos.y,
           4.2,
           delta
         );
         camera.position.z = THREE.MathUtils.damp(
           camera.position.z,
-          s.targetCamPos.z,
+          _fitPos.z,
           4.2,
           delta
         );
@@ -1554,6 +1665,20 @@ export const FmtThreeStage: React.FC<FmtThreeStageProps> = ({
         });
 
         setProjectedBuoys(projected);
+      }
+
+      // 13.5.1 视口适配重算：阶段 / 微观步骤切换（内容尺寸变了）或视口尺寸变化后重算。
+      // 放在 13.2 的可见性编排**之后**——可见性决定哪些内容组参与包围球计算，
+      // 若放在前面会拿上一帧的可见性算出错误的留白。
+      if (
+        fitDirty ||
+        s.currentStage.id !== lastFitStageId ||
+        s.microStepId !== lastFitMicroId
+      ) {
+        lastFitStageId = s.currentStage.id;
+        lastFitMicroId = s.microStepId;
+        fitDirty = false;
+        recomputeViewDolly();
       }
 
       // 13.6 Update FPS & Performance Telemetry + Auto-Downgrade Watchdog (Round 4)
